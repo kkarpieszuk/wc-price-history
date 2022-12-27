@@ -1,0 +1,19 @@
+{
+    "name": "Konrad Karpieszuk/prior-price",
+    "description": "Track Woocommerce Products prices history and display the lowest price in the last 30 days. This plugin allows your WC shop to be compliant with European Commision Directive 98/6/EC Article 6a which specyfies price reduction annoucment policy.",
+    "type": "project",
+    "license": "BSD",
+    "authors": [
+        {
+            "name": "Konrad Karpieszuk",
+            "email": "kkarpieszuk@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "PriorPrice\\": "app/PriorPrice"
+        }
+    }
+}
