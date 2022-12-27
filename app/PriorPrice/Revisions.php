@@ -26,10 +26,10 @@ class Revisions {
 		}
 
 		$parent  = get_post( $parent_id );
-		$_regular_price = get_post_meta( $parent->ID, '_regular_price', true );
+		$_price = get_post_meta( $parent->ID, '_price', true );
 
-		if ( false !== $_regular_price ) {
-			add_metadata( 'post', $post_id, '_regular_price', $_regular_price );
+		if ( false !== $_price ) {
+			add_metadata( 'post', $post_id, '_price', $_price );
 		}
 
 	}
