@@ -9,9 +9,6 @@ namespace PriorPrice;
  */
 class Factory {
 
-
-
-
 	/**
 	 * @since 1.0
 	 * 
@@ -19,23 +16,12 @@ class Factory {
 	 */
 	private static $shortcode;
 
-
-	/**
-	 * @since 1.0
-	 * 
-	 * @var Ajax|null
-	 */
-	private static $ajax;
-
 	/**
 	 * $since 1.0
 	 *
 	 * @var \PriorPrice\Revisions|null;
 	 */
 	private static $revisions;
-
-
-
 
 	/**
 	 * Create Shortcode instance.
@@ -49,21 +35,6 @@ class Factory {
 			self::$shortcode = new Shortcode();
 		}
 		return self::$shortcode;
-	}
-
-
-	/**
-	 * Create Ajax instance.
-	 * 
-	 * @since 1.0
-	 * 
-	 * @return Ajax
-	 */
-	public function createAjax() {
-		if ( ! self::$ajax ) {
-			self::$ajax = new Ajax();
-		}
-		return self::$ajax;
 	}
 
 	public function createRevisions() {

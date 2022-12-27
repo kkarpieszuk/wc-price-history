@@ -34,16 +34,12 @@ class Hooks {
 	 */
 	public function registerHooks() {
 
-		\add_action( 'wp_enqueue_scripts', [ $this->factory->createAjax(), 'enqueue' ] );
-		\add_action( 'wp_ajax_fetch_PriorPrice_ajax', [ $this->factory->createAjax(), 'fetchForAjax' ] );
-		\add_action( 'wp_ajax_nopriv_fetch_PriorPrice_ajax', [ $this->factory->createAjax(), 'fetchForAjax' ] );
-
-
 		\add_action( 'init', [ $this->factory->createShortcode(), 'registerShortcode' ], 11 );
 
 		add_filter( 'woocommerce_register_post_type_product', [ $this->factory->createRevisions(), 'enable_product_revisions' ] );
 		add_action( 'save_post', [ $this->factory->createRevisions(), 'save_price_revision' ] );
 
+		add_filter( 'woocommerce_get_price_html', [ new Prices(), 'price_html' ], 10, 2 );
 
 	}
 }
