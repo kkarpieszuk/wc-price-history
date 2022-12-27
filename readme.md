@@ -1,4 +1,4 @@
-# Prior Price plugin
+# Previous Prices plugin
 
 ## Description
 
