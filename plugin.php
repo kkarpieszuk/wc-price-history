@@ -10,10 +10,9 @@
  * Requires PHP: 7.2
  */
 
-use PriorPrice\Factory;
 use PriorPrice\Hooks;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-$hooks = new Hooks( new Factory() );
+$hooks = new Hooks();
 $hooks->registerHooks();
