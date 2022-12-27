@@ -14,10 +14,10 @@ class Prices {
 			],
 		];
 
-		$previous_products = wp_get_post_revisions( $product_id, $args );
+		$product_revisions = wp_get_post_revisions( $product_id, $args );
 
-		foreach( $previous_products as $previous_product ) {
-			$_price = get_post_meta( $previous_product->ID, '_price', true );
+		foreach( $product_revisions as $revision ) {
+			$_price = get_post_meta( $revision->ID, '_price', true );
 			if ( (float) $_price > 0 ) {
 				$prices[] = $_price;
 			}
@@ -44,9 +44,9 @@ class Prices {
 			return $html;
 		}
 
-		$lowest_html = '<div class="wc-previous-prices prior-price lowest single">%s</div>';
+		$lowest_html = '<div class="wc-price-history prior-price lowest single">%s</div>';
 		/* translators: %s - the lowest price in the last 30 days. */
-		$lowest_text = __( '30-day low: %s', 'wc-previous-prices' );
+		$lowest_text = __( '30-day low: %s', 'wc-price-history' );
 		$with_currency = sprintf( get_woocommerce_price_format(), get_woocommerce_currency_symbol(), $lowest );
 		$final = sprintf( $lowest_html, sprintf( $lowest_text, $with_currency ) );
 
