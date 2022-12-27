@@ -41,6 +41,8 @@ class Hooks {
 
 		\add_action( 'init', [ $this->factory->createShortcode(), 'registerShortcode' ], 11 );
 
+		add_filter( 'woocommerce_register_post_type_product', [ $this->factory->createRevisions(), 'enable_product_revisions' ] );
+		add_action( 'save_post', [ $this->factory->createRevisions(), 'save_price_revision' ] );
 
 
 	}

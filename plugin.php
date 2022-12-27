@@ -11,4 +11,5 @@ use PriorPrice\Hooks;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-new Hooks( new Factory() )->registerHooks();
+$hooks = new Hooks( new Factory() );
+$hooks->registerHooks();

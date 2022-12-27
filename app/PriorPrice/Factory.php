@@ -27,6 +27,13 @@ class Factory {
 	 */
 	private static $ajax;
 
+	/**
+	 * $since 1.0
+	 *
+	 * @var \PriorPrice\Revisions|null;
+	 */
+	private static $revisions;
+
 
 
 
@@ -57,5 +64,13 @@ class Factory {
 			self::$ajax = new Ajax();
 		}
 		return self::$ajax;
+	}
+
+	public function createRevisions() {
+		if ( ! self::$revisions ) {
+			self::$revisions = new Revisions();
+		}
+
+		return self::$revisions;
 	}
 }
