@@ -1,4 +1,4 @@
-# Previous Prices plugin
+# WC Price History
 
 ## Description
 
