@@ -45,6 +45,7 @@ class Prices {
 		}
 
 		$lowest_html = '<div class="wc-previous-prices prior-price lowest single">%s</div>';
+		/* translators: %s - the lowest price in the last 30 days. */
 		$lowest_text = __( '30-day low: %s', 'wc-previous-prices' );
 		$with_currency = sprintf( get_woocommerce_price_format(), get_woocommerce_currency_symbol(), $lowest );
 		$final = sprintf( $lowest_html, sprintf( $lowest_text, $with_currency ) );

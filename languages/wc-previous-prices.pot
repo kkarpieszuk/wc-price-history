@@ -1,0 +1,32 @@
+# Copyright (C) 2022 Konrad Karpieszuk
+# This file is distributed under the same license as the WC Previous Prices plugin.
+msgid ""
+msgstr ""
+"Project-Id-Version: WC Previous Prices 1.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wc-previous-prices\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2022-12-27T20:22:24+01:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.6.0\n"
+"X-Domain: wc-previous-prices\n"
+
+#. Plugin Name of the plugin
+msgid "WC Previous Prices"
+msgstr ""
+
+#. Description of the plugin
+msgid "Track Woocommerce Products prior prices history and display the lowest price in the last 30 days. This plugin allows your WC shop to be compliant with European Commission Directive 98/6/EC Article 6a which specifies price reduction announcement policy."
+msgstr ""
+
+#. Author of the plugin
+msgid "Konrad Karpieszuk"
+msgstr ""
+
+#. translators: %s - the lowest price in the last 30 days.
+#: app/PriorPrice/Prices.php:49
+msgid "30-day low: %s"
+msgstr ""
