@@ -14,7 +14,8 @@ class Prices {
 			],
 		];
 
-		$product_revisions = wp_get_post_revisions( $product_id, $args );
+		$product_revisions   = wp_get_post_revisions( $product_id, $args );
+		$product_revisions[] = get_post( $product_id ); // Include current product.
 
 		foreach( $product_revisions as $revision ) {
 			$_price = get_post_meta( $revision->ID, '_price', true );
