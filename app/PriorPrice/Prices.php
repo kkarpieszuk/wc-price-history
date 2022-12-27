@@ -4,12 +4,49 @@ namespace PriorPrice;
 
 class Prices {
 
-	public function get_lowest( $product_id, $days = 30 ) {
+	/**
+	 * Get the lowest price HTML.
+	 *
+	 * @since 1.0
+	 *
+	 * @param string      $html       HTML code which displays product price on front-end.
+	 * @param \WC_Product $wc_product WC Product.
+	 *
+	 * @return string
+	 */
+	public function lowest_price_html( $html, $wc_product ): string {
+
+		$lowest = $this->get_lowest( $wc_product->id );
+
+		if ( (float) $lowest < 1 ) {
+			return $html;
+		}
+
+		$lowest_html = '<div class="wc-price-history prior-price lowest single">%s</div>';
+		/* translators: %s - the lowest price in the last 30 days. */
+		$lowest_text = __( '30-day low: %s', 'wc-price-history' );
+		$with_currency = sprintf( get_woocommerce_price_format(), get_woocommerce_currency_symbol(), $lowest );
+		$final = sprintf( $lowest_html, sprintf( $lowest_text, $with_currency ) );
+
+		return $html . $final;
+	}
+
+	/**
+	 * Get the lowest price in time span.
+	 *
+	 * @since 1.0
+	 *
+	 * @param int $product_id Product ID.
+	 * @param int $days       Time span since today in days, default 30.
+	 *
+	 * @return float
+	 */
+	private function get_lowest( $product_id, $days = 30 ): float {
 
 		$args = [
 			'numberposts' => -1,
 			'date_query'  => [
-				'after'     => '30 days ago',
+				'after'     => sprintf( '%d days ago', $days ),
 				'inclusive' => true,
 			],
 		];
@@ -34,24 +71,5 @@ class Prices {
 		} );
 
 		return $min;
-
 	}
-
-	public function price_html( $html, $wc_product ) {
-
-		$lowest = $this->get_lowest( $wc_product->id );
-
-		if ( (float) $lowest < 1 ) {
-			return $html;
-		}
-
-		$lowest_html = '<div class="wc-price-history prior-price lowest single">%s</div>';
-		/* translators: %s - the lowest price in the last 30 days. */
-		$lowest_text = __( '30-day low: %s', 'wc-price-history' );
-		$with_currency = sprintf( get_woocommerce_price_format(), get_woocommerce_currency_symbol(), $lowest );
-		$final = sprintf( $lowest_html, sprintf( $lowest_text, $with_currency ) );
-
-		return $html . $final;
-	}
-
 }
