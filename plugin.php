@@ -6,6 +6,8 @@
  * Version: 1.0
  * Text Domain: wc-previous-prices
  * Domain Path: /languages/
+ * Requires at least: 5.8
+ * Requires PHP: 7.2
  */
 
 use PriorPrice\Factory;
