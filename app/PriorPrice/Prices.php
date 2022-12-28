@@ -76,6 +76,10 @@ class Prices {
 		$prices              = [];
 
 		foreach( $product_revisions as $revision ) {
+			if ( ! $revision instanceof \WP_Post ) {
+				continue;
+			}
+
 			$_price = get_post_meta( $revision->ID, '_price', true );
 			if ( (float) $_price > 0 ) {
 				$prices[] = $_price;
