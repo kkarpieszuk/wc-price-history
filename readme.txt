@@ -42,8 +42,3 @@ If this does not help, it might mean some 3rd party code is disabling it or disa
 
 = 1.0 =
 * Initial release.
-
-== Credits ==
-
-Konrad Karpieszuk <kkarpieszuk@gmail.com>
-
