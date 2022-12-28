@@ -21,6 +21,9 @@
         "phpstan/extension-installer": "^1.2"
     },
     "config": {
+        "platform": {
+          "php": "70200"
+        },
         "allow-plugins": {
             "phpstan/extension-installer": true
         }
