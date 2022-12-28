@@ -9,13 +9,13 @@ class Compatibility {
 	 *
 	 * @since 1.0
 	 *
-	 * @param WC_Product $wc_product WC Product.
+	 * @param \WC_Product $wc_product WC Product.
 	 *
 	 * @return bool
 	 */
 	public function check_revisions_settings( $wc_product ): bool {
 
-		return wp_revisions_to_keep( $wc_product ) === -1 || post_type_supports( 'product', 'revisions' );
+		return wp_revisions_to_keep( get_post( $wc_product->get_id() ) ) === -1 || post_type_supports( 'product', 'revisions' );
 	}
 
 	/**

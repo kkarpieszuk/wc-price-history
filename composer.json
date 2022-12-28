@@ -10,10 +10,23 @@
         }
     ],
     "minimum-stability": "stable",
-    "require": {},
     "autoload": {
         "psr-4": {
             "PriorPrice\\": "app/PriorPrice"
+        }
+    },
+    "require-dev": {
+        "phpstan/phpstan": "^1.9",
+        "szepeviktor/phpstan-wordpress": "^1.1",
+        "phpstan/extension-installer": "^1.2",
+        "php-stubs/woocommerce-stubs": "^7.2"
+    },
+    "config": {
+        "platform": {
+          "php": "7.2"
+        },
+        "allow-plugins": {
+            "phpstan/extension-installer": true
         }
     }
 }

@@ -16,7 +16,7 @@ class Revisions {
 	 * @param \WP_Post $latest_revision Latest post revision.
 	 * @param \WP_Post $post            Current version of the post.
 	 *
-	 * @return true
+	 * @return bool
 	 */
 	public function post_has_changed( $has_changed, $latest_revision, $post ): bool {
 
@@ -45,11 +45,11 @@ class Revisions {
 	 *
 	 * @since 1.0
 	 *
-	 * @param array $args Register post type args.
+	 * @param array<array<string>> $args Register post type args.
 	 *
-	 * @return array
+	 * @return array<array<string>>
 	 */
-	public function enable_product_revisions( $args ): array {
+	public function enable_product_revisions( array $args ): array {
 
 		$args['supports'][] = 'revisions';
 
