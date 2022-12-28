@@ -16,6 +16,7 @@ Clone this repository and run composer:
 git clone git@github.com:kkarpieszuk/wc-price-history.git
 cd wc-price-history
 composer install
+npm install
 ```
 
 ## How does it work?
