@@ -16,7 +16,7 @@ class Prices {
 	 *
 	 * @return string
 	 */
-	public function get_price_html( $html, $wc_product ) {
+	public function get_price_html( string $html, \WC_Product $wc_product ) {
 
 		if ( ! ( new Compatibility() )->check_revisions_settings( $wc_product ) ) {
 			return $html . ( new Compatibility() )->get_revisions_warning();
@@ -73,6 +73,7 @@ class Prices {
 
 		$product_revisions   = wp_get_post_revisions( $product_id, $args );
 		$product_revisions[] = get_post( $product_id ); // Include current product.
+		$prices              = [];
 
 		foreach( $product_revisions as $revision ) {
 			$_price = get_post_meta( $revision->ID, '_price', true );
@@ -90,6 +91,6 @@ class Prices {
 			return $item;
 		} );
 
-		return $min;
+		return (float) $min;
 	}
 }
