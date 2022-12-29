@@ -23,6 +23,25 @@ Track WooCommerce© Products prior prices history and display the lowest price i
 The plugin does not have any configuration screens. If enabled, it adds support the post revisions for WC products and tracks prices changes in those  revisions.
 When product is displayed in front-end, the plugin adds - below the product price - information about the lowest price in the last 30 days.
 
+== Shortcode ==
+
+If you want to display the lowest products price in other place than default, you can use shortcode `wc_price_history`. A few examples:
+
+Display the lowest price on single product page (without passing product ID as argument):
+```
+This product low is [wc_price_history]
+```
+
+Display the lowest price of the other product:
+```
+The product with ID 3 had the lowest price [wc_price_history id=3]
+```
+
+Manually add currency symbol (by default, returned price has currency symbol attached/prefixed):
+```
+The product with ID 3 had the lowest price USD [wc_price_history id=3 show_currency=0]
+```
+
 == Screenshots ==
 
 1. Lowest price information displayed on single product page.
@@ -42,3 +61,6 @@ If this does not help, it might mean some 3rd party code is disabling it or disa
 
 = 1.0 =
 * Initial release.
+
+= 1.1 =
+* Added wc_price_history shortcode support.

@@ -20,5 +20,6 @@ class Hooks {
 		add_filter( 'wp_save_post_revision_post_has_changed', [ new Revisions(), 'post_has_changed' ], 10, 3 );
 		add_action( 'save_post', [ new Revisions(), 'save_price_revision' ] );
 		add_filter( 'woocommerce_get_price_html', [ new Prices(), 'get_price_html' ], 10, 2 );
+		add_action( 'init', [ new Shortcode( new Prices() ), 'register_shortcode' ] );
 	}
 }

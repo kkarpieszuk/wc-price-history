@@ -61,7 +61,7 @@ class Prices {
 	 *
 	 * @return float
 	 */
-	private function get_lowest( $product_id, $days = 30 ): float {
+	public function get_lowest( $product_id, $days = 30 ): float {
 
 		$args = [
 			'numberposts' => -1,
