@@ -33,19 +33,18 @@ On the front-end on a single product page and product listings page, just under 
 
 If you want to display the lowest products price in other place than default, you can use shortcode `wc_price_history`. A few examples:
 
-Display the lowest price on single product page (without passing product ID as argument):
+Display the lowest price on single product page (without passing product ID as argument), currency symbol attached:
 ```
 This product low is [wc_price_history]
 ```
 
-Display the lowest price of the other product:
+Display the lowest price of the other product, currency symbol attached:
 ```
 The product with ID 3 had the lowest price [wc_price_history id=3]
 ```
 
-Manually add currency symbol (by default, returned price has currency symbol attached/prefixed):
+Display without currency symbol:
 ```
-The product with ID 3 had the lowest price USD [wc_price_history id=3 show_currency=0]
+The product with ID 3 had the lowest price [wc_price_history id=3 show_currency=0]
 ```
-
 
