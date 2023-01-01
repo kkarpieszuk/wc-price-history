@@ -42,7 +42,7 @@ class HistoryStorage {
 		);
 
 		// Reduce to the float with minimal value (but bigger than zero).
-		return array_reduce(
+		return (float) array_reduce(
 			$the_last,
 			static function( $carry, $item ) {
 
