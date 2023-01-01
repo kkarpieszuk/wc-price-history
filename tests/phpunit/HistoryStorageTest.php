@@ -61,15 +61,15 @@ class HistoryStorageTest extends TestCase {
 	public function data_provider_get_minimal() {
 
 		$history = [
-			time() - ( 31 * DAY_IN_SECONDS ) => '100',
-			time() - ( 30 * DAY_IN_SECONDS ) => '200',
-			time() - ( 29 * DAY_IN_SECONDS ) => '300',
+			time() - ( 31 * DAY_IN_SECONDS - 10 ) => '100',
+			time() - ( 30 * DAY_IN_SECONDS - 10 ) => '200',
+			time() - ( 29 * DAY_IN_SECONDS - 10 ) => '300',
 		];
 
 		$history_older_than_month = [
-			time() - ( 31 * DAY_IN_SECONDS ) => '100',
-			time() - ( 32 * DAY_IN_SECONDS ) => '200',
-			time() - ( 33 * DAY_IN_SECONDS ) => '300',
+			time() - ( 31 * DAY_IN_SECONDS - 10 ) => '110',
+			time() - ( 32 * DAY_IN_SECONDS - 10 ) => '220',
+			time() - ( 33 * DAY_IN_SECONDS - 10 ) => '330',
 		];
 
 		return [
