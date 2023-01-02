@@ -18,6 +18,9 @@ class Hooks {
 
 		$history_storage = new HistoryStorage();
 
+		$migrations = new Migrations( $history_storage );
+		$migrations->register_hooks();
+
 		$prices = new Prices( $history_storage );
 		$prices->register_hooks();
 

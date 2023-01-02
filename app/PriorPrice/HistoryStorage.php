@@ -79,6 +79,26 @@ class HistoryStorage {
 	}
 
 	/**
+	 * Add price to the history at given timestamp.
+	 *
+	 * @since 1.1
+	 *
+	 * @param int   $product_id
+	 * @param float $price
+	 * @param int   $timestamp
+	 *
+	 * @return int
+	 */
+	public function add_historical_price( int $product_id, float $price, int $timestamp ): int {
+
+		$history = $this->get_history( $product_id );
+
+		$history[ $timestamp ] = $price;
+
+		return $this->save_history( $product_id, $history );
+	}
+
+	/**
 	 * Get pricing history for $product_id.
 	 *
 	 * @since 1.1
