@@ -65,9 +65,14 @@ class HistoryStorage {
 	 *
 	 * @return int
 	 */
-	public function add_price( int $product_id, float $price ): int {
+	public function add_price( int $product_id, float $price, bool $on_change_only ): int {
 
-		$history           = $this->get_history( $product_id );
+		$history = $this->get_history( $product_id );
+
+		if ( $on_change_only && end( $history ) === $price ) {
+			return 0;
+		}
+
 		$history[ time() ] = $price;
 
 		return $this->save_history( $product_id, $history );
