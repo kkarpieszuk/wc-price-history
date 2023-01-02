@@ -38,5 +38,4 @@ class ProductUpdates {
 
 		$this->history_storage->add_price( $product_id, (float) $product_price, true );
 	}
-
 }

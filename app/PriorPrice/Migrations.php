@@ -94,5 +94,4 @@ class Migrations {
 
 		update_option( 'wc_price_history_products_to_migrate', empty( $products_to_migrate_all ) ? 'migration_finished' : $products_to_migrate_all );
 	}
-
 }
