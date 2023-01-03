@@ -4,7 +4,7 @@ namespace PriorPrice;
 
 class Migrations {
 
-	private const MIGRATION_1_1_OPTION_KEY = 'wc_price_history_migration_1_1_products_to_migrate_foo2';
+	private const MIGRATION_1_1_OPTION_KEY = 'wc_price_history_migration_1_1_products_to_migrate';
 
 	/**
 	 * @var \PriorPrice\HistoryStorage
