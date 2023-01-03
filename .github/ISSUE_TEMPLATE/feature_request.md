@@ -15,4 +15,4 @@ assignees: ''
 
 
 ---------------
-Hint: Are you waiting for the same feature to be implemented? Please react with ❤️ to this issue descriptions (features with most reactions will get higher priority)
+Hint: Are you waiting for the same feature to be implemented? Please react with ❤️ to this issue description (features with more reactions will get higher priority)
