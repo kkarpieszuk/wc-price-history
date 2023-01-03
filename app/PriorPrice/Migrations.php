@@ -4,7 +4,7 @@ namespace PriorPrice;
 
 class Migrations {
 
-	private const MIGRATION_1_1_OPTION_KEY = 'wc_price_history_migration_1_1_products_to_migrate';
+	private const MIGRATION_1_1_OPTION_KEY = 'wc_price_history_migration_1_1_products_to_migrate_foo2';
 
 	/**
 	 * @var \PriorPrice\HistoryStorage
@@ -64,6 +64,14 @@ class Migrations {
 					'post_type' => 'product',
 				]
 			);
+			if ( is_array( $products_to_migrate ) && ! empty( $products_to_migrate ) ) {
+				$products_to_migrate = array_map(
+					static function( $product ) {
+						return $product->ID;
+					},
+					$products_to_migrate
+				);
+			}
 			update_option( self::MIGRATION_1_1_OPTION_KEY, $products_to_migrate );
 		} elseif ( $products_to_migrate === 'migration_finished' ) {
 			return;
@@ -76,8 +84,8 @@ class Migrations {
 
 		$products_to_migrate = array_slice( $products_to_migrate, 0, 50 );
 
-		foreach ( $products_to_migrate as $id => $product ) {
-			$revisions = wp_get_post_revisions( $product->ID, [ 'check_enabled' => false ] );
+		foreach ( $products_to_migrate as $id => $product_id ) {
+			$revisions = wp_get_post_revisions( $product_id, [ 'check_enabled' => false ] );
 			// Migrate prices from revisions.
 			foreach ( $revisions as $revision ) {
 				if ( ! isset( $revision->ID ) ) {
@@ -87,7 +95,7 @@ class Migrations {
 				if ( $revision_price ) {
 					$revision_time = strtotime( $revision->post_modified_gmt );
 					if ( $revision_time ) {
-						$this->history_storage->add_historical_price( $product->ID, (float) $revision_price, $revision_time );
+						$this->history_storage->add_historical_price( $product_id, (float) $revision_price, $revision_time );
 					}
 				}
 			}
