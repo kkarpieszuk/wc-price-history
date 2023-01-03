@@ -4,6 +4,8 @@ namespace PriorPrice;
 
 class Migrations {
 
+	private const MIGRATION_1_1_OPTION_KEY = 'wc_price_history_migration_1_1_products_to_migrate';
+
 	/**
 	 * @var \PriorPrice\HistoryStorage
 	 */
@@ -23,7 +25,7 @@ class Migrations {
 
 		add_action( 'plugins_loaded', [ $this, 'migrate_1_1' ] );
 
-		$products_to_migrate = get_option( 'wc_price_history_products_to_migrate', false );
+		$products_to_migrate = get_option( self::MIGRATION_1_1_OPTION_KEY, false );
 		if ( is_array( $products_to_migrate ) && ! empty( $products_to_migrate ) ) {
 			add_filter( 'woocommerce_register_post_type_product', [ $this, 'enable_product_revisions' ] );
 		}
@@ -52,7 +54,7 @@ class Migrations {
 	 */
 	public function migrate_1_1(): void {
 
-		$products_to_migrate = get_option( 'wc_price_history_products_to_migrate', 'migration_never_started' );
+		$products_to_migrate = get_option( self::MIGRATION_1_1_OPTION_KEY, 'migration_never_started' );
 
 		if ( $products_to_migrate === 'migration_never_started' ) {
 			$products_to_migrate = get_posts(
@@ -62,11 +64,11 @@ class Migrations {
 					'post_type' => 'product',
 				]
 			);
-			update_option( 'wc_price_history_products_to_migrate', $products_to_migrate );
+			update_option( self::MIGRATION_1_1_OPTION_KEY, $products_to_migrate );
 		} elseif ( $products_to_migrate === 'migration_finished' ) {
 			return;
 		} elseif( is_array( $products_to_migrate ) && empty( $products_to_migrate ) ) {
-			update_option( 'wc_price_history_products_to_migrate', 'migration_finished' );
+			update_option( self::MIGRATION_1_1_OPTION_KEY, 'migration_finished' );
 			return;
 		}
 
@@ -92,6 +94,6 @@ class Migrations {
 			unset( $products_to_migrate_all[ $id ] );
 		}
 
-		update_option( 'wc_price_history_products_to_migrate', empty( $products_to_migrate_all ) ? 'migration_finished' : $products_to_migrate_all );
+		update_option( self::MIGRATION_1_1_OPTION_KEY, empty( $products_to_migrate_all ) ? 'migration_finished' : $products_to_migrate_all );
 	}
 }
