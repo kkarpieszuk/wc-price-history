@@ -18,6 +18,9 @@ class Hooks {
 
 		$history_storage = new HistoryStorage();
 
+		$settings = new SettingsPage();
+		$settings->register_hooks();
+
 		$migrations = new Migrations( $history_storage );
 		$migrations->register_hooks();
 

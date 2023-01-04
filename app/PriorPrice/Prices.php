@@ -27,16 +27,21 @@ class Prices {
 	/**
 	 * Get price HTML filter.
 	 *
-	 * Display under the price in front-end lowest price information or compatibility warning.
+	 * Display under the price in front-end the lowest price information.
 	 *
 	 * @since 1.0
+	 * @since 1.1 Check display conditions.
 	 *
 	 * @param string      $html       HTML code which displays product price on front-end.
 	 * @param \WC_Product $wc_product WC Product.
 	 *
 	 * @return string
 	 */
-	public function get_price_html( string $html, \WC_Product $wc_product ) {
+	public function get_price_html( string $html, \WC_Product $wc_product ) : string {
+
+		if ( $this->do_not_display_price_html() ) {
+			return $html;
+		}
 
 		return $html . $this->lowest_price_html( $wc_product );
 	}
@@ -65,5 +70,37 @@ class Prices {
 		$final         = sprintf( $lowest_html, sprintf( $lowest_text, $with_currency ) );
 
 		return $final;
+	}
+
+	/**
+	 * Check if the price HTML should be displayed.
+	 *
+	 * @since 1.1
+	 *
+	 * @return bool False if should not display, true otherwise.
+	 */
+	private function do_not_display_price_html() : bool {
+
+		$display_on = $this->get_display_on();
+
+		return (
+			( ! isset( $display_on['shop_page'] ) && is_shop() ) ||
+			( ! isset( $display_on['product_page'] ) && is_product() )
+		);
+	}
+
+	/**
+	 * Get the display on settings.
+	 *
+	 * @since 1.1
+	 *
+	 * @return array<array<bool>>
+	 */
+	private function get_display_on() : array {
+		$settings = get_option( 'wc_price_history_settings' );
+		if ( ! isset( $settings['display_on'] ) ) {
+			return [];
+		}
+		return $settings['display_on'];
 	}
 }
