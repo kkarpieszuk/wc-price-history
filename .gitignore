@@ -24,3 +24,6 @@ node_modules/
 
 composer.lock
 vendor/
+
+# phpunit
+.phpunit.result.cache

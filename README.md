@@ -21,9 +21,7 @@ npm install
 
 ## How does it work?
 
-This plugin logs prior prices in WordPress revisions, so make sure you have enabled them and are not limiting their number. If you do so, the plugin will display a warning message instead of 30-day low-price info on the front-end (only for logged-in site administrators).
-
-Every time you update your product description, regular price, or sale price, the prior price will be stored in the log.
+This plugin logs prior prices in custom field _wc_price_history. Every time you update your product the prior price will be stored in the log (if it differs from the last stored price).
 
 On the front-end on a single product page and product listings page, just under the product price, your visitors will see a 30-day low price:
 
