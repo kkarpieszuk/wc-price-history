@@ -5,7 +5,7 @@ Tags: WooCommerce, prices, history, prior, omnibus, european, 30days
 Requires at least: 5.8
 Tested up to: 6.1.1
 Requires PHP: 7.2
-Stable tag: 1.0
+Stable tag: 1.1
 License: MIT License
 License URI: https://mit-license.org/
 
@@ -20,7 +20,7 @@ Track WooCommerce© Products prior prices history and display the lowest price i
 
 == Usage ==
 
-The plugin does not have any configuration screens. If enabled, it adds support the post revisions for WC products and tracks prices changes in those  revisions.
+The plugin does not have any configuration screens. If enabled, it tracks prices changes and stores them in custom field `_wc_price_history`.
 When product is displayed in front-end, the plugin adds - below the product price - information about the lowest price in the last 30 days.
 
 == Screenshots ==
@@ -29,16 +29,15 @@ When product is displayed in front-end, the plugin adds - below the product pric
 
 == Frequently Asked Questions ==
 
-= I see error 'Lowest price display is not possible. Please enable WP revisions for WC products and set unlimited revisions numbers', what should I do? =
+= I have a problem with the plugin or I want to suggest a feature. Where can do this? =
 
-The plugin utilizes WP Revisions feature to store and track price changes. Please make sure
-the feature is enabled and configured to store unlimited number of revisions, you can enable it manually by adding to wp-config.hpp file line:
-
-`define( 'WP_POST_REVISIONS', true );`
-
-If this does not help, it might mean some 3rd party code is disabling it or disabling it for WC products. WC Price History plugin tries  to re-enable it but 3rd party plugin or theme might force it. Please review your other plugins and theme.
+Please submit the [GitHub issue](https://github.com/kkarpieszuk/wc-price-history/issues).
 
 == Changelog ==
 
 = 1.0 =
 * Initial release.
+
+= 1.1 =
+* Plugin rewritten to store prices log in custom fields instead of post revisions.
+* Added migration logic between revisions and custom fields.
