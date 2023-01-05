@@ -41,3 +41,11 @@ Please submit the [GitHub issue](https://github.com/kkarpieszuk/wc-price-history
 = 1.1 =
 * Plugin rewritten to store prices log in custom fields instead of post revisions.
 * Added migration logic between revisions and custom fields.
+
+= 1.2 =
+* Added settings screen
+* Added ability to define where the price history should be displayed
+* Added ability to define how many days should be considered when calculating the lowest price
+* Added ability to define if the price history should be displayed only for products with price reduction
+* Added ability to define if minimal price count should start from current day or the first day of the sale
+* Link to European Commission Directive 98/6/EC Article 6a added to plugin settings screen

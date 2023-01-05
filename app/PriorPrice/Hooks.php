@@ -24,10 +24,13 @@ class Hooks {
 		$migrations = new Migrations( $history_storage );
 		$migrations->register_hooks();
 
-		$prices = new Prices( $history_storage );
+		$prices = new Prices( $history_storage, new SettingsData() );
 		$prices->register_hooks();
 
 		$updates = new ProductUpdates( $history_storage );
 		$updates->register_hooks();
+
+		$admin_assets = new AdminAssets();
+		$admin_assets->register_hooks();
 	}
 }

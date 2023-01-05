@@ -9,9 +9,15 @@ class Prices {
 	 */
 	private $history_storage;
 
-	public function __construct( HistoryStorage $history_storage ) {
+	/**
+	 * @var \PriorPrice\SettingsData
+	 */
+	private $settings_data;
+
+	public function __construct( HistoryStorage $history_storage, SettingsData $settings_data ) {
 
 		$this->history_storage = $history_storage;
+		$this->settings_data   = $settings_data;
 	}
 
 	/**
@@ -39,7 +45,11 @@ class Prices {
 	 */
 	public function get_price_html( string $html, \WC_Product $wc_product ) : string {
 
-		if ( $this->do_not_display_price_html() ) {
+		if ( $this->is_not_correct_place() ) {
+			return $html;
+		}
+
+		if ( $this->is_not_correct_when( $wc_product ) ) {
 			return $html;
 		}
 
@@ -55,9 +65,16 @@ class Prices {
 	 *
 	 * @return string
 	 */
-	public function lowest_price_html( $wc_product ): string {
+	public function lowest_price_html( \WC_Product $wc_product ): string {
 
-		$lowest = $this->history_storage->get_minimal( $wc_product->get_id() );
+		$days_number = $this->settings_data->get_days_number();
+		$count_from  = $this->settings_data->get_count_from();
+
+		if ( $count_from === 'sale_start' && $wc_product->is_on_sale() ) {
+			$lowest = $this->history_storage->get_minimal_from_sale_start( $wc_product, $days_number );
+		} else {
+			$lowest = $this->history_storage->get_minimal( $wc_product->get_id(), $days_number );
+		}
 
 		if ( (float) $lowest < 1 ) {
 			return '';
@@ -73,15 +90,15 @@ class Prices {
 	}
 
 	/**
-	 * Check if the price HTML should be displayed.
+	 * Check the current screen if the price HTML should be displayed.
 	 *
-	 * @since 1.1
+	 * @since 1.2
 	 *
-	 * @return bool False if should not display, true otherwise.
+	 * @return bool
 	 */
-	private function do_not_display_price_html() : bool {
+	private function is_not_correct_place() : bool {
 
-		$display_on = $this->get_display_on();
+		$display_on = $this->settings_data->get_display_on();
 
 		return (
 			( ! isset( $display_on['shop_page'] ) && is_shop() ) ||
@@ -90,17 +107,22 @@ class Prices {
 	}
 
 	/**
-	 * Get the display on settings.
+	 * Check if product being on sale should be considered when displaying.
 	 *
-	 * @since 1.1
+	 * @since 1.2
 	 *
-	 * @return array<array<bool>>
+	 * @param \WC_Product $wc_product WC Product.
+	 *
+	 * @return bool
 	 */
-	private function get_display_on() : array {
-		$settings = get_option( 'wc_price_history_settings' );
-		if ( ! isset( $settings['display_on'] ) ) {
-			return [];
+	private function is_not_correct_when( \WC_Product $wc_product ) : bool {
+
+		$display_when = $this->settings_data->get_display_when();
+
+		if ( $display_when === 'on_sale' && ! $wc_product->is_on_sale() ) {
+			return true;
 		}
-		return $settings['display_on'];
+
+		return false;
 	}
 }

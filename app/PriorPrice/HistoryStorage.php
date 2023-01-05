@@ -55,6 +55,39 @@ class HistoryStorage {
 		);
 	}
 
+	public function get_minimal_from_sale_start( \WC_Product $wc_product, int $days = 30 ) {
+
+		if ( ! $wc_product->get_date_on_sale_from() ) {
+			return $this->get_minimal( $wc_product->get_id(), $days );
+		}
+
+		$history = $this->get_history( $wc_product->get_id() );
+
+		// Get only $days last items.
+		$the_last = array_filter(
+			$history,
+			static function( $timestamp ) use ( $days, $wc_product ) {
+				$sale_start = $wc_product->get_date_on_sale_from()->getTimestamp();
+
+				return $timestamp >= ( $sale_start - ( $days * DAY_IN_SECONDS ) ) && $timestamp <= $sale_start;
+			},
+			ARRAY_FILTER_USE_KEY
+		);
+
+		// Reduce to the float with minimal value (but bigger than zero).
+		return (float) array_reduce(
+			$the_last,
+			static function( $carry, $item ) {
+
+				if ( (float) $item > 0 && $carry > 0 ) {
+					return min( (float) $carry, (float) $item );
+				}
+
+				return (float) $item;
+			}
+		);
+	}
+
 	/**
 	 * Add price to the history.
 	 *
