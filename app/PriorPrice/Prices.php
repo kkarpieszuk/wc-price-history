@@ -107,7 +107,7 @@ class Prices {
 	}
 
 	/**
-	 * Check if product being on sale should be considered when displaying.
+	 * Check if product is on sale and site is set to display products on sale.
 	 *
 	 * @since 1.2
 	 *
