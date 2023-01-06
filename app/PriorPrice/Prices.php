@@ -36,7 +36,7 @@ class Prices {
 	 * Display under the price in front-end the lowest price information.
 	 *
 	 * @since 1.0
-	 * @since 1.1 Check display conditions.
+	 * @since 1.2 Check display conditions.
 	 *
 	 * @param string      $html       HTML code which displays product price on front-end.
 	 * @param \WC_Product $wc_product WC Product.
