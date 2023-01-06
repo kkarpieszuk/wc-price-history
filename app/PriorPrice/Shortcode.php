@@ -5,12 +5,12 @@ namespace PriorPrice;
 /**
  * Shortcode class.
  *
- * @since 1.1
+ * @since 1.2
  */
 class Shortcode {
 
 	/**
-	 * @since 1.1
+	 * @since 1.2
 	 *
 	 * @var \PriorPrice\HistoryStorage
 	 */
