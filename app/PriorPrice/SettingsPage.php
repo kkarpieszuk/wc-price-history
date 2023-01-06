@@ -93,6 +93,10 @@ class SettingsPage {
 								<?php esc_html_e( 'Product listing pages', 'wc-price-history' ); ?>
 							</label>
 							</p>
+								<p class="description">
+									<?php
+									printf( esc_html__( '...or you can display it anywhere with shortcode %s. Note that id and show_currency parameters are optional', 'wc-price-history' ), '<code>[wc_price_history id="3" show_currency="1"]</code>' ); ?>
+								</p>
 							</fieldset>
 						</td>
 					</tr>
