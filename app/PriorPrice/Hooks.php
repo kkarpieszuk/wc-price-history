@@ -18,13 +18,22 @@ class Hooks {
 
 		$history_storage = new HistoryStorage();
 
+		$settings_data = new SettingsData();
+		$settings_data->register_hooks();
+
+		$settings = new SettingsPage();
+		$settings->register_hooks();
+
 		$migrations = new Migrations( $history_storage );
 		$migrations->register_hooks();
 
-		$prices = new Prices( $history_storage );
+		$prices = new Prices( $history_storage, new SettingsData() );
 		$prices->register_hooks();
 
 		$updates = new ProductUpdates( $history_storage );
 		$updates->register_hooks();
+
+		$admin_assets = new AdminAssets();
+		$admin_assets->register_hooks();
 	}
 }

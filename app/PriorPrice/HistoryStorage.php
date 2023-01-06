@@ -56,6 +56,60 @@ class HistoryStorage {
 	}
 
 	/**
+	 * Get minimal price for $product_id in last $days from sale start.
+	 *
+	 * @since 1.2
+	 *
+	 * @param \WC_Product $wc_product WC Product.
+	 * @param int         $days       Days span.
+	 *
+	 * @return float
+	 */
+	public function get_minimal_from_sale_start( \WC_Product $wc_product, int $days = 30 ) : float {
+
+		$sale_start = $wc_product->get_date_on_sale_from();
+
+		if ( ! $sale_start ) {
+			$logger = wc_get_logger();
+			$link   = get_edit_post_link( $wc_product->get_id() );
+
+			$logger->error(
+				sprintf( esc_html__( 'Product #%d is on sale but has no sale start date. Please edit this product and set starting date for sale: %s', 'wc-price-history' ), $wc_product->get_id() , $link),
+				[
+					'source' => 'wc-price-history',
+				]
+			);
+
+			return $this->get_minimal( $wc_product->get_id(), $days );
+		}
+
+		$sale_start_timestamp = $sale_start->getTimestamp();
+		$history              = $this->get_history( $wc_product->get_id() );
+
+		// Get only $days last items.
+		$the_last = array_filter(
+			$history,
+			static function( $timestamp ) use ( $days, $sale_start_timestamp ) {
+				return $timestamp >= ( $sale_start_timestamp - ( $days * DAY_IN_SECONDS ) ) && $timestamp <= $sale_start_timestamp;
+			},
+			ARRAY_FILTER_USE_KEY
+		);
+
+		// Reduce to the float with minimal value (but bigger than zero).
+		return (float) array_reduce(
+			$the_last,
+			static function( $carry, $item ) {
+
+				if ( (float) $item > 0 && $carry > 0 ) {
+					return min( (float) $carry, (float) $item );
+				}
+
+				return (float) $item;
+			}
+		);
+	}
+
+	/**
 	 * Add price to the history.
 	 *
 	 * @since 1.1
