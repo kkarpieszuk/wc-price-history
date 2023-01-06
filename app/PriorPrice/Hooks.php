@@ -18,6 +18,9 @@ class Hooks {
 
 		$history_storage = new HistoryStorage();
 
+		$settings_data = new SettingsData();
+		$settings_data->register_hooks();
+
 		$settings = new SettingsPage();
 		$settings->register_hooks();
 

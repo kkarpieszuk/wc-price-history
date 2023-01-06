@@ -11,10 +11,9 @@ class SettingsPage {
 	 *
 	 * @return void
 	 */
-	public function register_hooks() {
+	public function register_hooks() : void {
 		add_action( 'admin_menu', [ $this, 'add_menu' ] );
 		add_action( 'admin_init', [ $this, 'register_settings' ] );
-		add_action( 'admin_init', [ $this, 'set_defaults' ] );
 	}
 
 	/**
@@ -24,7 +23,7 @@ class SettingsPage {
 	 *
 	 * @return void
 	 */
-	public function add_menu() {
+	public function add_menu() : void {
 		add_submenu_page(
 			'woocommerce',
 			__( 'Price History', 'wc-price-history' ),
@@ -42,31 +41,8 @@ class SettingsPage {
 	 *
 	 * @return void
 	 */
-	public function register_settings() {
+	public function register_settings() : void {
 		register_setting( 'wc_price_history_settings', 'wc_price_history_settings' );
-	}
-
-	/**
-	 * Set default settings.
-	 *
-	 * @since 1.2
-	 *
-	 * @return void
-	 */
-	public function set_defaults() {
-		$settings = get_option( 'wc_price_history_settings' );
-		if ( $settings === false ) {
-			$settings = [
-				'display_on'   => [
-					'product_page' => '1',
-					'shop_page'    => '1',
-				],
-				'display_when' => 'on_sale',
-				'days_number'  => '30',
-				'count_from'   => 'sale_start',
-			];
-			update_option( 'wc_price_history_settings', $settings );
-		}
 	}
 
 	/**

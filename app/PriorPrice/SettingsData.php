@@ -5,6 +5,40 @@ namespace PriorPrice;
 class SettingsData {
 
 	/**
+	 * Register hooks.
+	 *
+	 * @since 1.2
+	 *
+	 * @return void
+	 */
+	public function register_hooks() : void {
+		add_action( 'admin_init', [ $this, 'set_defaults' ] );
+	}
+
+	/**
+	 * Set default settings.
+	 *
+	 * @since 1.2
+	 *
+	 * @return void
+	 */
+	public function set_defaults() {
+		$settings = get_option( 'wc_price_history_settings' );
+		if ( $settings === false ) {
+			$settings = [
+				'display_on'   => [
+					'product_page' => '1',
+					'shop_page'    => '1',
+				],
+				'display_when' => 'on_sale',
+				'days_number'  => '30',
+				'count_from'   => 'sale_start',
+			];
+			update_option( 'wc_price_history_settings', $settings );
+		}
+	}
+
+	/**
 	 * Get the display on settings.
 	 *
 	 * @since 1.2
