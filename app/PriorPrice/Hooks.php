@@ -14,12 +14,29 @@ class Hooks {
 	 * 
 	 * @since 1.0
 	 */
-	public function registerHooks(): void {
+	public function register_hooks(): void {
 
-		add_filter( 'woocommerce_register_post_type_product', [ new Revisions(), 'enable_product_revisions' ] );
-		add_filter( 'wp_save_post_revision_post_has_changed', [ new Revisions(), 'post_has_changed' ], 10, 3 );
-		add_action( 'save_post', [ new Revisions(), 'save_price_revision' ] );
-		add_filter( 'woocommerce_get_price_html', [ new Prices(), 'get_price_html' ], 10, 2 );
-		add_action( 'init', [ new Shortcode( new Prices() ), 'register_shortcode' ] );
+		$history_storage = new HistoryStorage();
+
+		$settings_data = new SettingsData();
+		$settings_data->register_hooks();
+
+		$settings = new SettingsPage();
+		$settings->register_hooks();
+
+		$migrations = new Migrations( $history_storage );
+		$migrations->register_hooks();
+
+		$prices = new Prices( $history_storage, new SettingsData() );
+		$prices->register_hooks();
+
+		$updates = new ProductUpdates( $history_storage );
+		$updates->register_hooks();
+
+		$admin_assets = new AdminAssets();
+		$admin_assets->register_hooks();
+		
+		$shortcode = new Shortcode( $history_storage );
+		$shortcode->register_hooks();
 	}
 }

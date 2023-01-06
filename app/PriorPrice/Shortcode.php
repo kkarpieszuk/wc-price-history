@@ -12,20 +12,24 @@ class Shortcode {
 	/**
 	 * @since 1.1
 	 *
-	 * @var \PriorPrice\Prices
+	 * @var \PriorPrice\HistoryStorage
 	 */
-	private $prices;
+	private $history_storage;
 
 	/**
 	 * Constructor.
 	 *
-	 * @since 1.1
+	 * @since 1.2
 	 *
-	 * @param \PriorPrice\Prices $prices Prices object.
+	 * @param \PriorPrice\HistoryStorage $history_storage Prices object.
 	 */
-	public function __construct( Prices $prices ) {
+	public function __construct( HistoryStorage $history_storage ) {
 
-		$this->prices = $prices;
+		$this->history_storage = $history_storage;
+	}
+
+	public function register_hooks() : void {
+		add_action( 'init', [ $this, 'register_shortcode' ] );
 	}
 
 	/**
@@ -39,7 +43,7 @@ class Shortcode {
 	 * Display minimal price without currency symbol:
 	 * [wc_price_history show_currency=0]
 	 *
-	 * @since 1.1
+	 * @since 1.2
 	 */
 	public function register_shortcode(): void {
 		add_shortcode( 'wc_price_history', [ $this, 'shortcode_callback' ] );
@@ -48,7 +52,7 @@ class Shortcode {
 	/**
 	 * Shortcode callback.
 	 *
-	 * @since 1.1
+	 * @since 1.2
 	 *
 	 * @param array<string> $atts Shortcode attributes.
 	 */
@@ -70,7 +74,7 @@ class Shortcode {
 			return '';
 		}
 
-		$lowest = $this->prices->get_lowest( $id );
+		$lowest = $this->history_storage->get_minimal( $id );
 		$lowest = (bool) $atts['show_currency'] ? sprintf( get_woocommerce_price_format(), get_woocommerce_currency_symbol(), $lowest ) : $lowest;
 
 		return sprintf( '<div class="wc-price-history-shortcode">%s</div>', $lowest );
