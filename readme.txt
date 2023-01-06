@@ -86,7 +86,7 @@ Please submit the [GitHub issue](https://github.com/kkarpieszuk/wc-price-history
 * Added migration logic between revisions and custom fields.
 
 = 1.2 =
-* Added wc_price_history shortcode support.
+* Added wc_price_history shortcode support
 * Added settings screen
 * Added ability to define where the price history should be displayed
 * Added ability to define how many days should be considered when calculating the lowest price
