@@ -144,7 +144,7 @@ class SettingsPage {
 									value="on_sale"
 									<?php checked( isset( $settings['display_when'] ) ? $settings['display_when'] : false, 'on_sale' ); ?>
 								/>
-								<?php esc_html_e( 'Only if the product is On sale', 'wc-price-history' ); ?>
+								<?php esc_html_e( 'Only when product is On sale', 'wc-price-history' ); ?>
 							</label>
 							</p>
 							<p class="description" >
