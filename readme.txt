@@ -31,7 +31,7 @@ Plugin is configurable via `WooCommerce` > `Price History` screen. You can confi
 
 At the configuration screen you will find additional information how to configure the plugin to be compliant with Omnibus directive (European Commission Directive 98/6/EC Article 6a) and link to legal acts.
 
-== How to configure plugin to be compliant with Omnibus directive ==
+= How to configure plugin to be compliant with Omnibus directive =
 
 1. Go to `WooCommerce` > `Price History` screen
 2. Set `Display on` to `Single product page`
