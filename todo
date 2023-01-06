@@ -1,2 +1,3 @@
-- option to show only if product is on sale
+- optimize \PriorPrice\HistoryStorage::get_minimal_from_sale_start
+- add logging to \PriorPrice\HistoryStorage::get_minimal_from_sale_start, see \WooCommerce::log_errors
 - update readme files

@@ -11,11 +11,11 @@
  * Plugin URI: https://github.com/kkarpieszuk/wc-price-history
  */
 
-define( 'WC_PRICE_HISTORY_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
-
 use PriorPrice\Hooks;
 
 require_once __DIR__ . '/vendor/autoload.php';
+
+require_once __DIR__ . '/constants.php';
 
 $hooks = new Hooks();
 $hooks->register_hooks();

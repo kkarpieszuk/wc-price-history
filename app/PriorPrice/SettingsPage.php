@@ -182,8 +182,17 @@ class SettingsPage {
 									<?php esc_html_e( 'Omnibus: European Union Guidance requires displaying the lowest price before the sale started.', 'wc-price-history' ); ?>
 								</p>
 								<p class="description">
-									<span class="wc-price-history-warning"><?php esc_attr_e( 'Heads up!' ); ?></span>
-									<?php esc_html_e( 'Option "Day when product went on sale" works only for products with "Sale price dates" set on Edit product page (sale start date will be enough). If product does not have scheduled such date, minimal price will be counted from current day and this option will be ignored.', 'wc-price-history' ); ?>
+									<span class="wc-price-history-warning"><?php esc_attr_e( 'Heads up!' ); ?></span><br>
+									<?php esc_html_e( 'Option "Day when product went on sale" works only for products with "Sale price dates" set on Edit product page (setting sale start date will be enough).', 'wc-price-history' ); ?>
+									<br>
+									<?php esc_html_e( 'If product does not have scheduled such date, minimal price will be counted from current day and this option will be ignored.', 'wc-price-history' ); ?>
+									<br>
+									<?php
+									$admin_page_url = admin_url( 'admin.php?page=wc-status&tab=logs' );
+									$a_href         = sprintf( '<a href="%s">%s</a>', $admin_page_url, esc_html__( 'WooCommerce > Status > Logs', 'wc-price-history' ) );
+									/* translators: %s: URL to WooCommerce logs page, do not translate wc-price-history, it is a slug */
+									printf( esc_html__( 'All products which does not have set sale start date will be logged in %s (look for error log with name starting from wc-price-history).', 'wc-price-history' ), $a_href );
+									?>
 								</p>
 							</fieldset>
 						</td>

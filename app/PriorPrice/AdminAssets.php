@@ -30,8 +30,7 @@ class AdminAssets {
 		wp_enqueue_script( 'wc-price-history-admin', WC_PRICE_HISTORY_PLUGIN_URL . 'assets/js/admin.js', [ 'jquery' ], '1.2', true );
 	}
 
-	private function is_settings_page() {
+	private function is_settings_page() : bool {
 		return isset( $_GET['page'] ) && $_GET['page'] === 'wc-price-history';
 	}
-
 }

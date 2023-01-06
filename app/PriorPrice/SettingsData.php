@@ -52,8 +52,16 @@ class SettingsData {
 		return (int) $settings['days_number'];
 	}
 
-	public function get_count_from() {
-$settings = get_option( 'wc_price_history_settings' );
+	/**
+	 * Get count from setting.
+	 *
+	 * @since 1.2
+	 *
+	 * @return string
+	 */
+	public function get_count_from() : string {
+
+		$settings = get_option( 'wc_price_history_settings' );
 		if ( ! isset( $settings['count_from'] ) ) {
 			return 'sale_start';
 		}

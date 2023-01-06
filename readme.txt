@@ -49,3 +49,4 @@ Please submit the [GitHub issue](https://github.com/kkarpieszuk/wc-price-history
 * Added ability to define if the price history should be displayed only for products with price reduction
 * Added ability to define if minimal price count should start from current day or the first day of the sale
 * Link to European Commission Directive 98/6/EC Article 6a added to plugin settings screen
+* Added logging products which are on sale but do not have sale start date set
