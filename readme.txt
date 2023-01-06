@@ -40,6 +40,25 @@ At the configuration screen you will find additional information how to configur
 5. Set `Number of days to use when counting minimal price:` to `30 days`
 6. For each product being on sale, go to its edit screen and set `Sale price dates from` to the date when the product went on sale.
 
+= Shortcode =
+
+If you want to display the lowest products price in other place than default, you can use shortcode `wc_price_history`. A few examples:
+
+Display the lowest price on single product page (without passing product ID as argument), currency symbol attached:
+```
+This product low is [wc_price_history]
+```
+
+Display the lowest price of the other product, currency symbol attached:
+```
+The product with ID 3 had the lowest price [wc_price_history id=3]
+```
+
+Display without currency symbol:
+```
+The product with ID 3 had the lowest price [wc_price_history id=3 show_currency=0]
+```
+
 == Screenshots ==
 
 1. Lowest price information displayed on single product page.
@@ -67,6 +86,7 @@ Please submit the [GitHub issue](https://github.com/kkarpieszuk/wc-price-history
 * Added migration logic between revisions and custom fields.
 
 = 1.2 =
+* Added wc_price_history shortcode support
 * Added settings screen
 * Added ability to define where the price history should be displayed
 * Added ability to define how many days should be considered when calculating the lowest price
