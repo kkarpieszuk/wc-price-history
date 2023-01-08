@@ -28,6 +28,7 @@ Plugin is configurable via `WooCommerce` > `Price History` screen. You can confi
 - When to display minimal price (always or only when the product is on sale)
 - How to count minimal price (the minimal from the moment product went on sale to 30 days before that moment or the minimal price from today to 30 days ago)
 - How many days take into account when calculating minimal price (30 days by default)
+- How to display the price history information
 
 At the configuration screen you will find additional information how to configure the plugin to be compliant with Omnibus directive (European Commission Directive 98/6/EC Article 6a) and link to legal acts.
 
@@ -83,7 +84,8 @@ Please submit the [GitHub issue](https://github.com/kkarpieszuk/wc-price-history
 == Changelog ==
 
 = 1.3 =
-* Updated documentation and hint texts for better plugin usability.
+* New: "30-day low" text is configurable now on Settings screen
+* Updated documentation and hint texts for better plugin usability
 
 = 1.2 =
 * Added wc_price_history shortcode support
@@ -96,8 +98,8 @@ Please submit the [GitHub issue](https://github.com/kkarpieszuk/wc-price-history
 * Added logging products which are on sale but do not have sale start date set
 
 = 1.1 =
-* Plugin rewritten to store prices log in custom fields instead of post revisions.
-* Added migration logic between revisions and custom fields.
+* Plugin rewritten to store prices log in custom fields instead of post revisions
+* Added migration logic between revisions and custom fields
 
 = 1.0 =
 * Initial release.
