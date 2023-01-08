@@ -6,3 +6,54 @@
 .wc-price-history-warning {
 	color: #ff6600;
 }
+
+.wc-history-price-rating-stars {
+}
+
+a:hover .wc-history-price-rating-stars span {
+	animation: jumping-stars 1s infinite;
+	display: inline-block;
+}
+
+@keyframes jumping-stars {
+	0% {
+		transform: scale(1);
+	}
+	50% {
+		transform: scale(1.6);
+	}
+	100% {
+		transform: scale(1);
+	}
+
+}
+
+a:hover .wc-history-price-rating-stars span:nth-child(1) {
+	transform: rotate(-50deg);
+	position: relative;
+	bottom: -3px;
+}
+
+a:hover .wc-history-price-rating-stars span:nth-child(2) {
+	transform: rotate(-25deg);
+	position: relative;
+	bottom: 5px;
+}
+
+a:hover .wc-history-price-rating-stars span:nth-child(3) {
+	transform: rotate(0deg);
+	position: relative;
+	bottom: 8px;
+}
+
+a:hover .wc-history-price-rating-stars span:nth-child(4) {
+	transform: rotate(25deg);
+	position: relative;
+	bottom: 5px;
+}
+
+a:hover .wc-history-price-rating-stars span:nth-child(5) {
+	transform: rotate(50deg);
+	position: relative;
+	bottom: -3px;
+}
