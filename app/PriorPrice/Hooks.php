@@ -38,5 +38,8 @@ class Hooks {
 		
 		$shortcode = new Shortcode( $history_storage );
 		$shortcode->register_hooks();
+
+		$marketing = new Marketing();
+		$marketing->register_hooks();
 	}
 }
