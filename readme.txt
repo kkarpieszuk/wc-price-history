@@ -33,6 +33,10 @@ At the configuration screen you will find additional information how to configur
 
 = How to configure plugin to be compliant with Omnibus directive =
 
+You don't have to do anything special, the default settings are compliant with Omnibus directive!
+
+However, in case you misconfigured the plugin, here are steps to take to make it compliant again (please note similar suggestions hints you will see on Settings screen):
+
 1. Go to `WooCommerce` > `Price History` screen
 2. Set `Display on` to `Single product page`
 3. Set `Display minimal price` to `Only when product is on sale`
@@ -94,3 +98,6 @@ Please submit the [GitHub issue](https://github.com/kkarpieszuk/wc-price-history
 * Added ability to define if minimal price count should start from current day or the first day of the sale
 * Link to European Commission Directive 98/6/EC Article 6a added to plugin settings screen
 * Added logging products which are on sale but do not have sale start date set
+
+= 1.3 =
+* Updated documentation and hint texts for better plugin usability.
