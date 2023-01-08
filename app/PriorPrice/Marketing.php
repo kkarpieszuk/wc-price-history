@@ -82,7 +82,7 @@ class Marketing {
 				__( 'WC Price History has made your life easier? %1$sShow your support by leaving a review and %3$s rating%2$s! %4$s', 'wc-price-history' ),
 				'<a href="https://wordpress.org/support/plugin/wc-price-history/reviews/?filter=5#new-post" target="_blank">',
 				'</a>',
-				'&#11088;&#11088;&#11088;&#11088;&#11088;',
+				'<span class="wc-history-price-rating-stars"><span>&#11088;</span><span>&#11088;</span><span>&#11088;</span><span>&#11088;</span><span>&#11088;</span></span>',
 				'&#128525;'
 			),
 			wp_kses_allowed_html( 'post' )
