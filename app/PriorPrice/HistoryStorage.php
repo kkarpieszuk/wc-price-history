@@ -74,7 +74,8 @@ class HistoryStorage {
 			$link   = get_edit_post_link( $wc_product->get_id() );
 
 			$logger->error(
-				sprintf( esc_html__( 'Product #%d is on sale but has no sale start date. Please edit this product and set starting date for sale: %s', 'wc-price-history' ), $wc_product->get_id() , $link),
+				/* translators: %d product id, %s link to product edit screen. */
+				sprintf( esc_html__( 'Product #%1$d is on sale but has no sale start date. Please edit this product and set starting date for sale: %2$s', 'wc-price-history' ), $wc_product->get_id() , $link),
 				[
 					'source' => 'wc-price-history',
 				]
