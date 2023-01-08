@@ -197,6 +197,27 @@ class SettingsPage {
 						</td>
 					</tr>
 					<tr>
+						<th scope="row"><?php esc_html_e( 'Minimal price text:', 'wc-price-history' ); ?></th>
+						<td>
+							<fieldset>
+							<p>
+								<label>
+							<input
+								type="text"
+								name="wc_price_history_settings[display_text]"
+								<?php /* translators: Do not translate {price}, it is template slug! */ ?>
+								value="<?php echo isset( $settings['display_text'] ) ? $settings['display_text'] : __( '30-day low: {price}', 'wc-price-history' ); ?>"
+							/>
+								</label>
+							</p>
+							<p class="description" >
+								<?php /* translators: Do not translate {price} and {days}, those are template slugs! */ ?>
+								<?php esc_html_e( 'Use placeholder {price} to display price and {days} to display number of days.', 'wc-price-history' ); ?>
+							</p>
+							</fieldset>
+						</td>
+					</tr>
+					<tr>
 						<th scope="row"><?php esc_html_e( 'Read the legal acts:', 'wc-price-history' ); ?></th>
 						<td>
 							<p class="description">
