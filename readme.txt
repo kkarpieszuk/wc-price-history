@@ -82,12 +82,8 @@ Please submit the [GitHub issue](https://github.com/kkarpieszuk/wc-price-history
 
 == Changelog ==
 
-= 1.0 =
-* Initial release.
-
-= 1.1 =
-* Plugin rewritten to store prices log in custom fields instead of post revisions.
-* Added migration logic between revisions and custom fields.
+= 1.3 =
+* Updated documentation and hint texts for better plugin usability.
 
 = 1.2 =
 * Added wc_price_history shortcode support
@@ -99,5 +95,9 @@ Please submit the [GitHub issue](https://github.com/kkarpieszuk/wc-price-history
 * Link to European Commission Directive 98/6/EC Article 6a added to plugin settings screen
 * Added logging products which are on sale but do not have sale start date set
 
-= 1.3 =
-* Updated documentation and hint texts for better plugin usability.
+= 1.1 =
+* Plugin rewritten to store prices log in custom fields instead of post revisions.
+* Added migration logic between revisions and custom fields.
+
+= 1.0 =
+* Initial release.
