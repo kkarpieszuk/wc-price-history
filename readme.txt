@@ -5,7 +5,7 @@ Tags: WooCommerce, prices, history, prior, omnibus, european, 30days
 Requires at least: 5.8
 Tested up to: 6.1.1
 Requires PHP: 7.2
-Stable tag: 1.2
+Stable tag: 1.3
 License: MIT License
 License URI: https://mit-license.org/
 
@@ -28,10 +28,15 @@ Plugin is configurable via `WooCommerce` > `Price History` screen. You can confi
 - When to display minimal price (always or only when the product is on sale)
 - How to count minimal price (the minimal from the moment product went on sale to 30 days before that moment or the minimal price from today to 30 days ago)
 - How many days take into account when calculating minimal price (30 days by default)
+- How to display the price history information
 
 At the configuration screen you will find additional information how to configure the plugin to be compliant with Omnibus directive (European Commission Directive 98/6/EC Article 6a) and link to legal acts.
 
 = How to configure plugin to be compliant with Omnibus directive =
+
+You don't have to do anything special, the default settings are compliant with Omnibus directive!
+
+However, in case you misconfigured the plugin, here are steps to take to make it compliant again (please note similar suggestions hints you will see on Settings screen):
 
 1. Go to `WooCommerce` > `Price History` screen
 2. Set `Display on` to `Single product page`
@@ -78,12 +83,9 @@ Please submit the [GitHub issue](https://github.com/kkarpieszuk/wc-price-history
 
 == Changelog ==
 
-= 1.0 =
-* Initial release.
-
-= 1.1 =
-* Plugin rewritten to store prices log in custom fields instead of post revisions.
-* Added migration logic between revisions and custom fields.
+= 1.3 =
+* New: "30-day low" text is configurable now on Settings screen
+* Updated documentation and hint texts for better plugin usability
 
 = 1.2 =
 * Added wc_price_history shortcode support
@@ -94,3 +96,10 @@ Please submit the [GitHub issue](https://github.com/kkarpieszuk/wc-price-history
 * Added ability to define if minimal price count should start from current day or the first day of the sale
 * Link to European Commission Directive 98/6/EC Article 6a added to plugin settings screen
 * Added logging products which are on sale but do not have sale start date set
+
+= 1.1 =
+* Plugin rewritten to store prices log in custom fields instead of post revisions
+* Added migration logic between revisions and custom fields
+
+= 1.0 =
+* Initial release.

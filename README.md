@@ -27,6 +27,10 @@ On the front-end on a single product page and product listings page, just under 
 
 ![Single Product Page screenshot](https://ps.w.org/wc-price-history/assets/screenshot-1.png?rev=2840303)
 
+The plugin has configurable settings:
+
+![Settings screenshot](https://ps.w.org/wc-price-history/assets/screenshot-2.png?rev=2844611)
+
 ### Shortcode
 
 If you want to display the lowest products price in other place than default, you can use shortcode `wc_price_history`. A few examples:
