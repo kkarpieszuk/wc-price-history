@@ -41,18 +41,7 @@ class HistoryStorage {
 			ARRAY_FILTER_USE_KEY
 		);
 
-		// Reduce to the float with minimal value (but bigger than zero).
-		return (float) array_reduce(
-			$the_last,
-			static function( $carry, $item ) {
-
-				if ( (float) $item > 0 && $carry > 0 ) {
-					return min( (float) $carry, (float) $item );
-				}
-
-				return (float) $item;
-			}
-		);
+		return $this->reduce_to_minimal( $the_last );
 	}
 
 	/**
@@ -96,18 +85,7 @@ class HistoryStorage {
 			ARRAY_FILTER_USE_KEY
 		);
 
-		// Reduce to the float with minimal value (but bigger than zero).
-		return (float) array_reduce(
-			$the_last,
-			static function( $carry, $item ) {
-
-				if ( (float) $item > 0 && $carry > 0 ) {
-					return min( (float) $carry, (float) $item );
-				}
-
-				return (float) $item;
-			}
-		);
+		return $this->reduce_to_minimal( $the_last );
 	}
 
 	/**
@@ -181,5 +159,29 @@ class HistoryStorage {
 	 */
 	public function save_history( int $product_id, array $history ): int {
 		return (int) update_post_meta( $product_id, self::cf_key, $history );
+	}
+
+	/**
+	 * Reduce history to minimal price (but bigger than zero).
+	 *
+	 * @since 1.4
+	 *
+	 * @param array<float> $prices Prices.
+	 *
+	 * @return float Minimal price, bigger than zero.
+	 */
+	private function reduce_to_minimal( $prices ) : float {
+
+		return (float) array_reduce(
+			$prices,
+			static function( $carry, $item ) {
+
+				if ( (float) $item > 0 && $carry > 0 ) {
+					return min( (float) $carry, (float) $item );
+				}
+
+				return (float) $item;
+			}
+		);
 	}
 }
