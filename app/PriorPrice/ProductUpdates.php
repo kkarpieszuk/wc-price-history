@@ -36,6 +36,7 @@ class ProductUpdates {
 	public function update_price_history( int $product_id ): void {
 
 		$product_price = get_post_meta( $product_id, '_price', true );
+
 		$this->history_storage->add_price( $product_id, (float) $product_price, true );
 	}
 }
