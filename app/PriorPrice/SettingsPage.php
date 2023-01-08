@@ -226,6 +226,14 @@ class SettingsPage {
 							</p>
 						</td>
 					</tr>
+					<tr>
+						<th scope="row"><?php esc_html_e( 'Please rate the plugin! ', 'wc-price-history' ); ?></th>
+						<td>
+							<p class="description">
+								<?php do_action( 'wc_price_history_settings_page_rate_us_text' ); ?>
+							</p>
+						</td>
+					</tr>
 				</table>
 				<?php submit_button(); ?>
 			</form>
