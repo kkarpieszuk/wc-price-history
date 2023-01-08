@@ -17,5 +17,17 @@ require_once __DIR__ . '/vendor/autoload.php';
 
 require_once __DIR__ . '/constants.php';
 
+// Handle missing WooCommerce.
+if ( ! in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ), true ) ) {
+	add_action( 'admin_notices', function () {
+		?>
+		<div class="notice notice-error">
+			<p><?php esc_html_e( 'WooCommerce Price History plugin requires WooCommerce to be installed and active.', 'wc-price-history' ); ?></p>
+		</div>
+		<?php
+	} );
+	return;
+}
+
 $hooks = new Hooks();
 $hooks->register_hooks();

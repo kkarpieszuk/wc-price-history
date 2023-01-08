@@ -83,6 +83,9 @@ Please submit the [GitHub issue](https://github.com/kkarpieszuk/wc-price-history
 
 == Changelog ==
 
+= 1.4 =
+* Handle missing WooCommerce plugin
+
 = 1.3 =
 * New: "30-day low" text is configurable now on Settings screen
 * Updated documentation and hint texts for better plugin usability
