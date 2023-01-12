@@ -76,7 +76,9 @@ class Prices {
 			$lowest = $this->history_storage->get_minimal( $wc_product->get_id(), $days_number );
 		}
 
-		if ( (float) $lowest < 1 ) {
+		$lowest = $this->apply_taxes( $lowest, $wc_product );
+
+		if ( (float) $lowest <= 0 ) {
 			return '';
 		}
 
@@ -121,5 +123,22 @@ class Prices {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Apply taxes to the price.
+	 *
+	 * @since 1.4
+	 *
+	 * @param float       $price
+	 * @param \WC_Product $wc_product
+	 *
+	 * @return float
+	 */
+	private function apply_taxes( float $price, \WC_Product $wc_product ) : float {
+
+		return 'incl' === get_option( 'woocommerce_tax_display_shop' ) ?
+			(float) wc_get_price_including_tax( $wc_product, [ 'price' => $price ] ) :
+			(float) wc_get_price_excluding_tax( $wc_product, [ 'price' => $price ] );
 	}
 }
