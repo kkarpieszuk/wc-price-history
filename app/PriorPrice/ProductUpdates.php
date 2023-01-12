@@ -23,6 +23,7 @@ class ProductUpdates {
 
 		add_action( 'woocommerce_new_product', [ $this, 'update_price_history' ] );
 		add_action( 'woocommerce_update_product', [ $this, 'update_price_history' ] );
+		add_action( 'woocommerce_save_product_variation', [ $this, 'update_price_history' ] );
 	}
 
 	/**

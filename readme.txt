@@ -84,7 +84,9 @@ Please submit the [GitHub issue](https://github.com/kkarpieszuk/wc-price-history
 == Changelog ==
 
 = 1.4 =
-* Handled missing WooCommerce plugin
+* Handled variable products
+* Settings screen: count minimal price is not hidden now and label is adjusted to explain it applies only for products being on sale
+* Handled case when WooCommerce plugin is not active
 * Optimized minimal price calculation class
 
 = 1.3 =

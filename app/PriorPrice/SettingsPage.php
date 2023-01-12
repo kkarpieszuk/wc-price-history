@@ -134,8 +134,8 @@ class SettingsPage {
 							</fieldset>
 						</td>
 					</tr>
-					<tr class="<?php echo $settings['display_when'] === 'on_sale' ? '' : 'wc-history-price-hidden' ?> wc-history-price-settings-row count-from">
-						<th scope="row"><?php esc_html_e( 'Count minimal price from:', 'wc-price-history' ); ?></th>
+					<tr>
+						<th scope="row"><?php esc_html_e( 'For products being on sale, count minimal price from:', 'wc-price-history' ); ?></th>
 						<td>
 							<fieldset>
 							<p>
