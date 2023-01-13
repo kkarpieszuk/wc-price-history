@@ -143,8 +143,31 @@ class HistoryStorage {
 	public function get_history( int $product_id ) : array {
 
 		$meta = get_post_meta( $product_id, self::cf_key, true );
+		$meta = is_array( $meta ) ? $meta : [];
+		$meta = $this->fill_empty_history( $product_id, $meta );
 
 		return empty( $meta ) ? [] : $meta;
+	}
+
+	/**
+	 * If the history is empty, fill it with current price and save.
+	 *
+	 * @since 1.5
+	 *
+	 * @param int   $product_id
+	 * @param array<int, float> $history
+	 *
+	 * @return array<int, float>
+	 */
+	private function fill_empty_history( int $product_id, array $history ) : array {
+
+		if ( empty( $history ) ) {
+			$history[ time() ] = get_post_meta( $product_id, '_price', true );
+
+			$this->save_history( $product_id, $history );
+		}
+
+		return $history;
 	}
 
 	/**

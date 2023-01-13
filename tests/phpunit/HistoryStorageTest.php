@@ -14,8 +14,11 @@ class HistoryStorageTest extends TestCase {
 		\WP_Mock::tearDown();
 	}
 
+	private function get_subject() {
+		return new HistoryStorage();
+	}
+
 	/**
-	 *
 	 * @dataProvider data_provider_get_minimal
 	 */
 	public function test_get_minimal( $history, $expected_minimal ) {
@@ -36,8 +39,36 @@ class HistoryStorageTest extends TestCase {
 		$this->assertEquals( $expected_minimal, $minimal );
 	}
 
-	private function get_subject() {
-		return new HistoryStorage();
+	/**
+	 * @dataProvider data_provider_get_minimal_when_not_set
+	 */
+	public function test_get_minimal_when_minimal_not_set( $history, $expected_minimal ) {
+
+		$product_id = 1;
+
+		$subject = $this->get_subject();
+
+		\WP_Mock::userFunction( 'get_post_meta', [
+			'times' => 1,
+			'args' => [ $product_id, '_wc_price_history', true ],
+			'return' => $history
+		] );
+
+		\WP_Mock::userFunction( 'get_post_meta', [
+			'times' => 1,
+			'args' => [ $product_id, '_price', true ],
+			'return' => $expected_minimal
+		] );
+
+		\WP_Mock::userFunction( 'update_post_meta', [
+			'times' => 1,
+			'args'  => [ $product_id, '_wc_price_history', \WP_Mock\Functions::type( 'array' ) ],
+			'return' => 1,
+		] );
+
+		$minimal = $subject->get_minimal( $product_id, 30 );
+
+		$this->assertEquals( $expected_minimal, $minimal );
 	}
 
 	public function test_save_history() {
@@ -73,12 +104,20 @@ class HistoryStorageTest extends TestCase {
 		];
 
 		return [
-			[ null, 0 ],
-			[ [], 0 ],
 			[ [ time() => '0' ], 0 ],
 			[ [ time() => '100' ], 100 ],
 			[ $history, 200 ],
 			[ $history_older_than_month, 0 ],
+		];
+	}
+
+	public function data_provider_get_minimal_when_not_set() {
+
+		return [
+			[ null, 20 ],
+			[ [], 20 ],
+			[ '', 20 ],
+			[ false, 20 ],
 		];
 	}
 }
