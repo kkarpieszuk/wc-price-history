@@ -144,6 +144,7 @@ class HistoryStorage {
 
 		$meta = get_post_meta( $product_id, self::cf_key, true );
 		$meta = is_array( $meta ) ? $meta : [];
+
 		return $this->fill_empty_history( $product_id, $meta );
 	}
 
