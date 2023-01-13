@@ -90,7 +90,27 @@ class SettingsPage {
 									value="1"
 									<?php checked( isset( $settings['display_on']['shop_page'] ) ? $settings['display_on']['shop_page'] : false, 1 ); ?>
 								/>
-								<?php esc_html_e( 'Product listing pages', 'wc-price-history' ); ?>
+								<?php esc_html_e( 'Main shop page', 'wc-price-history' ); ?>
+							</label>
+							<br />
+							<label>
+								<input
+									type="checkbox"
+									name="wc_price_history_settings[display_on][category_page]"
+									value="1"
+									<?php checked( isset( $settings['display_on']['category_page'] ) ? $settings['display_on']['category_page'] : false, 1 ); ?>
+								/>
+								<?php esc_html_e( 'Product category page', 'wc-price-history' ); ?>
+							</label>
+							<br />
+							<label>
+								<input
+									type="checkbox"
+									name="wc_price_history_settings[display_on][tag_page]"
+									value="1"
+									<?php checked( isset( $settings['display_on']['tag_page'] ) ? $settings['display_on']['tag_page'] : false, 1 ); ?>
+								/>
+								<?php esc_html_e( 'Product tag page', 'wc-price-history' ); ?>
 							</label>
 							</p>
 								<p class="description">

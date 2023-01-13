@@ -85,6 +85,7 @@ Please submit the [GitHub issue](https://github.com/kkarpieszuk/wc-price-history
 
 = 1.5 =
 * Fixed problem that product had to be at least once manually saved to start tracking the history
+* Added ability to decide if minimal price should be displayed on product category pages and product tag pages
 
 = 1.4 =
 * Handled variable products

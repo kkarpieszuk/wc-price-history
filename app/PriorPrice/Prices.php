@@ -101,7 +101,9 @@ class Prices {
 
 		return (
 			( ! isset( $display_on['shop_page'] ) && is_shop() ) ||
-			( ! isset( $display_on['product_page'] ) && is_product() )
+			( ! isset( $display_on['product_page'] ) && is_product() ) ||
+			( ! isset( $display_on['category_page'] ) && is_product_category() ) ||
+			( ! isset( $display_on['tag_page'] ) && is_product_tag() )
 		);
 	}
 
