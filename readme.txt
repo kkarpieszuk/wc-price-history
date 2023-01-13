@@ -83,6 +83,9 @@ Please submit the [GitHub issue](https://github.com/kkarpieszuk/wc-price-history
 
 == Changelog ==
 
+= 1.5 =
+* Fixed problem that product had to be at least once manually saved to start tracking the history
+
 = 1.4 =
 * Handled variable products
 * Handled product taxes
