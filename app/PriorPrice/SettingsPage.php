@@ -69,7 +69,7 @@ class SettingsPage {
 				?>
 				<table class="form-table">
 					<tr>
-						<th scope="row"><?php esc_html_e( 'Display minimal price on:', 'wc-price-history' ); ?></th>
+						<th scope="row"><?php esc_html_e( 'Display minimal price on/for:', 'wc-price-history' ); ?></th>
 						<td>
 							<fieldset>
 							<p>
@@ -81,6 +81,16 @@ class SettingsPage {
 									<?php checked( isset( $settings['display_on']['product_page'] ) ? $settings['display_on']['product_page'] : false, 1 ); ?>
 								/>
 								<?php esc_html_e( 'Single product page', 'wc-price-history' ); ?>
+							</label>
+							<br />
+							<label class="wc-price-history-related-product-label">
+								<input
+									type="checkbox"
+									name="wc_price_history_settings[display_on][related_products]"
+									value="1"
+									<?php checked( isset( $settings['display_on']['related_products'] ) ? $settings['display_on']['related_products'] : false, 1 ); ?>
+								/>
+								<?php esc_html_e( 'Related and upsell products on single product page', 'wc-price-history' ); ?>
 							</label>
 							<br />
 							<label>

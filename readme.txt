@@ -83,6 +83,9 @@ Please submit the [GitHub issue](https://github.com/kkarpieszuk/wc-price-history
 
 == Changelog ==
 
+= 1.6 =
+* Added toggle to display minimal price for related/upsell products on the single product page
+
 = 1.5 =
 * Fixed problem that product had to be at least once manually saved to start tracking the history
 * Added ability to decide if minimal price should be displayed on product category pages and product tag pages
