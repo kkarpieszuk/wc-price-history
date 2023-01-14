@@ -1,5 +1,6 @@
-=== WC Price History ===
+=== WC Price History for Omnibus ===
 
+Plugin Name: WC Price History
 Contributors: Konrad Karpieszuk
 Tags: WooCommerce, prices, history, prior, omnibus, european, 30days
 Requires at least: 5.8
