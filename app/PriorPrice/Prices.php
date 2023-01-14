@@ -45,7 +45,7 @@ class Prices {
 	 */
 	public function get_price_html( string $html, \WC_Product $wc_product ) : string {
 
-		if ( $this->is_not_correct_place() ) {
+		if ( ! $this->is_correct_place( $wc_product ) ) {
 			return $html;
 		}
 
@@ -95,15 +95,15 @@ class Prices {
 	 *
 	 * @return bool
 	 */
-	private function is_not_correct_place() : bool {
+	private function is_correct_place( \WC_Product $wc_product ) : bool {
 
 		$display_on = $this->settings_data->get_display_on();
 
 		return (
-			( ! isset( $display_on['shop_page'] ) && is_shop() ) ||
-			( ! isset( $display_on['product_page'] ) && is_product() ) ||
-			( ! isset( $display_on['category_page'] ) && is_product_category() ) ||
-			( ! isset( $display_on['tag_page'] ) && is_product_tag() )
+			( isset( $display_on['shop_page'] ) && is_shop() ) ||
+			( isset( $display_on['product_page'] ) && is_product() && ( isset( $display_on['related_products'] ) || $this->is_main_product( $wc_product ) ) ) ||
+			( isset( $display_on['category_page'] ) && is_product_category() ) ||
+			( isset( $display_on['tag_page'] ) && is_product_tag() )
 		);
 	}
 
@@ -142,5 +142,21 @@ class Prices {
 		return 'incl' === get_option( 'woocommerce_tax_display_shop' ) ?
 			(float) wc_get_price_including_tax( $wc_product, [ 'price' => $price ] ) :
 			(float) wc_get_price_excluding_tax( $wc_product, [ 'price' => $price ] );
+	}
+
+	/**
+	 * Check if the product is the main product on the page.
+	 *
+	 * @since 1.6
+	 *
+	 * @param \WC_Product $wc_product WC Product.
+	 *
+	 * @return bool
+	 */
+	private function is_main_product( \WC_Product $wc_product ) : bool {
+
+		global $wp_query;
+
+		return isset( $wp_query->queried_object_id ) && $wp_query->queried_object_id === $wc_product->get_id();
 	}
 }
