@@ -106,7 +106,7 @@ class HistoryStorage {
 			return 0;
 		}
 
-		$history[ time() ] = $price;
+		$history[ time() + ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) ] = $price;
 
 		return $this->save_history( $product_id, $history );
 	}

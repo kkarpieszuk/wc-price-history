@@ -91,6 +91,9 @@ Please submit the [GitHub issue](https://github.com/kkarpieszuk/wc-price-history
 
 == Changelog ==
 
+= ... =
+* Fixed issue with timezones offsets when saving history
+
 = 1.6 =
 * Added toggle to display minimal price for related/upsell products on the single product page
 
