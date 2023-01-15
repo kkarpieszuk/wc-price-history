@@ -32,11 +32,13 @@ class HistoryStorage {
 
 		$history = $this->get_history( $product_id );
 
+		$this_ = $this;
+
 		// Get only $days last items.
 		$the_last = array_filter(
 			$history,
-			static function( $timestamp ) use ( $days ) {
-				return $timestamp >= ( time() - ( $days * DAY_IN_SECONDS ) );
+			static function( $timestamp ) use ( $days, $this_ ) {
+				return $timestamp >= ( $this_->get_time_with_offset() - ( $days * DAY_IN_SECONDS ) );
 			},
 			ARRAY_FILTER_USE_KEY
 		);
@@ -106,7 +108,7 @@ class HistoryStorage {
 			return 0;
 		}
 
-		$history[ time() + ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) ] = $price;
+		$history[ $this->get_time_with_offset() ] = $price;
 
 		return $this->save_history( $product_id, $history );
 	}
@@ -161,7 +163,7 @@ class HistoryStorage {
 	private function fill_empty_history( int $product_id, array $history ) : array {
 
 		if ( empty( $history ) ) {
-			$history[ time() ] = get_post_meta( $product_id, '_price', true );
+			$history[ $this->get_time_with_offset() ] = get_post_meta( $product_id, '_price', true );
 
 			$this->save_history( $product_id, $history );
 		}
@@ -205,5 +207,17 @@ class HistoryStorage {
 				return (float) $item;
 			}
 		);
+	}
+
+	/**
+	 * Get time with offset.
+	 *
+	 * @since 1.6.1
+	 *
+	 * @return int
+	 */
+	private function get_time_with_offset() : int {
+
+		return time() + ( (int) get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
 	}
 }

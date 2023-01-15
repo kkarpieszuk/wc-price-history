@@ -33,6 +33,11 @@ class HistoryStorageTest extends TestCase {
 			'return' => $history
 		] );
 
+		\WP_Mock::userFunction( 'get_option', [
+			'args' => [ 'gmt_offset' ],
+			'return' => 0
+		] );
+
 
 		$minimal = $subject->get_minimal( $product_id, 30 );
 
