@@ -6,7 +6,7 @@ Tags: WooCommerce, prices, history, prior, omnibus, european, 30days
 Requires at least: 5.8
 Tested up to: 6.1.1
 Requires PHP: 7.2
-Stable tag: 1.6
+Stable tag: 1.6.1
 License: MIT License
 License URI: https://mit-license.org/
 
@@ -91,7 +91,7 @@ Please submit the [GitHub issue](https://github.com/kkarpieszuk/wc-price-history
 
 == Changelog ==
 
-= ... =
+= 1.6.1 =
 * Fixed issue with timezones offsets when saving history
 
 = 1.6 =
