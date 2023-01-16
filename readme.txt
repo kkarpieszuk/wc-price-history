@@ -9,6 +9,7 @@ Requires PHP: 7.2
 Stable tag: 1.6.1
 License: MIT License
 License URI: https://mit-license.org/
+Donate link: https://buycoffee.to/wpzlecenia
 
 == Description ==
 
@@ -21,43 +22,21 @@ Track WooCommerce© Products prior prices history and display the lowest price i
 
 == Usage ==
 
-Plugin tracks prices' changes and stores them in custom field `_wc_price_history`.
-When product is displayed in front-end, the plugin adds - below the product price - information about the lowest price in the last 30 days.
-
-The plugin is compatible with product taxes and variable products (it tracks minimal price for each variation individually).
+The plugin works out of the box: install and activate and your discounted products will be compatible with Omnibus directive!
 
 Plugin is configurable via `WooCommerce` > `Price History` screen. You can configure:
-- Where to display the price history information:
- -- on the single product page
- -- upsell and related products
- -- main shop page
- -- product category pages
- -- product tag pages
-- When to display minimal price (always or only when the product is on sale)
-- How to count minimal price (the minimal from the moment product went on sale to 30 days before that moment or the minimal price from today to 30 days ago)
-- How many days take into account when calculating minimal price (30 days by default)
-- How to display the price history information
+&raquo; Where to display the price history information:
+&#8618; on the single product page
+ &#8618; upsell and related products
+ &#8618; main shop page
+&#8618; product category pages
+&#8618; product tag pages
+&raquo; When to display minimal price (always or only when the product is on sale)
+&raquo; How to count minimal price (the minimal from the moment product went on sale to 30 days before that moment or the minimal price from today to 30 days ago)
+&raquo; How many days take into account when calculating minimal price (30 days by default)
+&raquo; How to display the price history information
 
 At the configuration screen you will find additional information how to configure the plugin to be compliant with Omnibus directive (European Commission Directive 98/6/EC Article 6a) and link to legal acts.
-
-= Shortcode =
-
-If you want to display the lowest products price in other place than default, you can use shortcode `wc_price_history`. A few examples:
-
-Display the lowest price on single product page (without passing product ID as argument), currency symbol attached:
-```
-This product low is [wc_price_history]
-```
-
-Display the lowest price of the other product, currency symbol attached:
-```
-The product with ID 3 had the lowest price [wc_price_history id=3]
-```
-
-Display without currency symbol:
-```
-The product with ID 3 had the lowest price [wc_price_history id=3 show_currency=0]
-```
 
 == Screenshots ==
 
@@ -78,6 +57,29 @@ However, in case you misconfigured the plugin, here are steps to take to make it
 4. Set `Count minimal price from` to `Day when product went on sale`
 5. Set `Number of days to use when counting minimal price:` to `30 days`
 6. For each product being on sale, go to its edit screen and set `Sale price dates from` to the date when the product went on sale.
+
+= Is plugin working well with variable products? =
+
+Yes, the plugin is compatible with product taxes and variable products (it tracks minimal price for each variation individually).
+
+= Is there any shortcode I could use to display minimal price? =
+
+If you want to display the lowest products price in other place than default, you can use shortcode `wc_price_history`. A few examples:
+
+Display the lowest price on single product page (without passing product ID as argument), currency symbol attached:
+```
+This product low is [wc_price_history]
+```
+
+Display the lowest price of the other product, currency symbol attached:
+```
+The product with ID 3 had the lowest price [wc_price_history id=3]
+```
+
+Display without currency symbol:
+```
+The product with ID 3 had the lowest price [wc_price_history id=3 show_currency=0]
+```
 
 = For some products being on sale, plugin shows minimal price from current day, why? =
 
