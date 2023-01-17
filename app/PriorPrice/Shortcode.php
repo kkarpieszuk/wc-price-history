@@ -88,7 +88,7 @@ class Shortcode {
 		}
 
 		$lowest = $this->history_storage->get_minimal( $id );
-		$lowest = $this->taxes->apply_taxes( $lowest, $product );
+		$lowest = wc_price( $this->taxes->apply_taxes( $lowest, $product ) );
 		$lowest = (bool) $atts['show_currency'] ? sprintf( get_woocommerce_price_format(), get_woocommerce_currency_symbol(), $lowest ) : $lowest;
 
 		return sprintf( '<div class="wc-price-history-shortcode">%s</div>', $lowest );

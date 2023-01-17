@@ -93,6 +93,9 @@ Please submit the [GitHub issue](https://github.com/kkarpieszuk/wc-price-history
 
 == Changelog ==
 
+= 1.7.0 =
+* Fix: Wrong number of decimals in price history information when displayed with shortcode (#36)
+
 = 1.6.4 =
 * Optimization: moved class loading to plugins_loaded hook
 
