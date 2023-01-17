@@ -2,14 +2,14 @@
 # This file is distributed under the same license as the WC Price History plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: WC Price History 1.5\n"
+"Project-Id-Version: WC Price History 1.6.2\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wc-price-history\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2023-01-14T14:13:25+01:00\n"
+"POT-Creation-Date: 2023-01-17T14:01:36+01:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.6.0\n"
 "X-Domain: wc-price-history\n"
@@ -31,7 +31,7 @@ msgid "Konrad Karpieszuk"
 msgstr ""
 
 #. translators: %d product id, %s link to product edit screen.
-#: app/PriorPrice/HistoryStorage.php:67
+#: app/PriorPrice/HistoryStorage.php:69
 msgid "Product #%1$d is on sale but has no sale start date. Please edit this product and set starting date for sale: %2$s"
 msgstr ""
 

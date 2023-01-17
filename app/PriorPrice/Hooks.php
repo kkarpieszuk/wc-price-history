@@ -16,6 +16,8 @@ class Hooks {
 	 */
 	public function register_hooks(): void {
 
+		$taxes = new Taxes();
+
 		$history_storage = new HistoryStorage();
 
 		$settings_data = new SettingsData();
@@ -27,7 +29,7 @@ class Hooks {
 		$migrations = new Migrations( $history_storage );
 		$migrations->register_hooks();
 
-		$prices = new Prices( $history_storage, new SettingsData() );
+		$prices = new Prices( $history_storage, new SettingsData(), $taxes );
 		$prices->register_hooks();
 
 		$updates = new ProductUpdates( $history_storage );
@@ -36,7 +38,7 @@ class Hooks {
 		$admin_assets = new AdminAssets();
 		$admin_assets->register_hooks();
 		
-		$shortcode = new Shortcode( $history_storage );
+		$shortcode = new Shortcode( $history_storage, $taxes );
 		$shortcode->register_hooks();
 
 		$marketing = new Marketing();

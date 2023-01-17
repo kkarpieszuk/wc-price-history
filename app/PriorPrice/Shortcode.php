@@ -17,15 +17,22 @@ class Shortcode {
 	private $history_storage;
 
 	/**
+	 * @var \PriorPrice\Taxes
+	 */
+	private $taxes;
+
+	/**
 	 * Constructor.
 	 *
 	 * @since 1.2
+	 * @since 1.6.2 uses Taxes class.
 	 *
 	 * @param \PriorPrice\HistoryStorage $history_storage Prices object.
 	 */
-	public function __construct( HistoryStorage $history_storage ) {
+	public function __construct( HistoryStorage $history_storage, Taxes $taxes ) {
 
 		$this->history_storage = $history_storage;
+		$this->taxes           = $taxes;
 	}
 
 	public function register_hooks() : void {
@@ -74,7 +81,14 @@ class Shortcode {
 			return '';
 		}
 
+		$product = wc_get_product( $id );
+
+		if ( ! $product ) {
+			return '';
+		}
+
 		$lowest = $this->history_storage->get_minimal( $id );
+		$lowest = $this->taxes->apply_taxes( $lowest, $product );
 		$lowest = (bool) $atts['show_currency'] ? sprintf( get_woocommerce_price_format(), get_woocommerce_currency_symbol(), $lowest ) : $lowest;
 
 		return sprintf( '<div class="wc-price-history-shortcode">%s</div>', $lowest );
