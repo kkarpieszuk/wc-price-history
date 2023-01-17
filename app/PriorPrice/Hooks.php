@@ -29,7 +29,7 @@ class Hooks {
 		$migrations = new Migrations( $history_storage );
 		$migrations->register_hooks();
 
-		$prices = new Prices( $history_storage, new SettingsData(), $taxes );
+		$prices = new Prices( $history_storage, $settings_data, $taxes );
 		$prices->register_hooks();
 
 		$updates = new ProductUpdates( $history_storage );
