@@ -16,6 +16,16 @@ class Hooks {
 	 */
 	public function register_hooks(): void {
 
+		add_action( 'plugins_loaded', [ $this, 'plugins_loaded' ] );
+	}
+
+	/**
+	 * Plugins loaded action.
+	 *
+	 * @since 1.6.4
+	 */
+	public function plugins_loaded() : void {
+
 		$history_storage = new HistoryStorage();
 
 		$settings_data = new SettingsData();
@@ -35,7 +45,7 @@ class Hooks {
 
 		$admin_assets = new AdminAssets();
 		$admin_assets->register_hooks();
-		
+
 		$shortcode = new Shortcode( $history_storage, new Taxes() );
 		$shortcode->register_hooks();
 
