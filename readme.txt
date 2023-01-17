@@ -6,7 +6,7 @@ Tags: WooCommerce, prices, history, prior, omnibus, european, 30days
 Requires at least: 5.8
 Tested up to: 6.1.1
 Requires PHP: 7.2
-Stable tag: 1.6.2
+Stable tag: 1.6.3
 License: MIT License
 License URI: https://mit-license.org/
 Donate link: https://buycoffee.to/wpzlecenia
@@ -92,6 +92,9 @@ Tip: All the products which are On sale but does not have `Sale price dates from
 Please submit the [GitHub issue](https://github.com/kkarpieszuk/wc-price-history/issues).
 
 == Changelog ==
+
+= 1.6.3 =
+* Fix: Fixed fatal error.
 
 = 1.6.2 =
 * Fix: Taxes not applied to the price when displayed with shortcode (#34).
