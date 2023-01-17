@@ -25,16 +25,16 @@ Track WooCommerce© Products prior prices history and display the lowest price i
 The plugin works out of the box: install and activate and your discounted products will be compatible with Omnibus directive!
 
 Plugin is configurable via `WooCommerce` > `Price History` screen. You can configure:
-&raquo; Where to display the price history information:
-&#8618; on the single product page
- &#8618; upsell and related products
- &#8618; main shop page
-&#8618; product category pages
-&#8618; product tag pages
-&raquo; When to display minimal price (always or only when the product is on sale)
-&raquo; How to count minimal price (the minimal from the moment product went on sale to 30 days before that moment or the minimal price from today to 30 days ago)
-&raquo; How many days take into account when calculating minimal price (30 days by default)
-&raquo; How to display the price history information
+&#8618; Where to display the price history information:
+&raquo; on the single product page
+&raquo; upsell and related products
+&raquo; main shop page
+&raquo; product category pages
+&raquo; product tag pages
+&#8618; When to display minimal price (always or only when the product is on sale)
+&#8618; How to count minimal price (the minimal from the moment product went on sale to 30 days before that moment or the minimal price from today to 30 days ago)
+&#8618; How many days take into account when calculating minimal price (30 days by default)
+&#8618; How to display the price history information
 
 At the configuration screen you will find additional information how to configure the plugin to be compliant with Omnibus directive (European Commission Directive 98/6/EC Article 6a) and link to legal acts.
 
