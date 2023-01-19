@@ -6,7 +6,7 @@ Tags: WooCommerce, prices, history, prior, omnibus, european, 30days
 Requires at least: 5.8
 Tested up to: 6.1.1
 Requires PHP: 7.2
-Stable tag: 1.6.4
+Stable tag: 1.6.5
 License: MIT License
 License URI: https://mit-license.org/
 Donate link: https://buycoffee.to/wpzlecenia
@@ -93,7 +93,7 @@ Please submit the [GitHub issue](https://github.com/kkarpieszuk/wc-price-history
 
 == Changelog ==
 
-= 1.7.0 =
+= 1.6.5 =
 * Fix: Wrong number of decimals in price history information when displayed with shortcode (#36)
 
 = 1.6.4 =
