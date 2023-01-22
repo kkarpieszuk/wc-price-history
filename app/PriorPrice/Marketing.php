@@ -79,7 +79,7 @@ class Marketing {
 		return wp_kses(
 			sprintf(
 				/* translators: %1$s: opening link HTML tag, %2$s: closing link HTML tag, %3$s 5-star rating symbol, %4$s: smiling face with heart-shaped eyes */
-				__( 'WC Price History has made your life easier? %1$sShow your support by leaving a review and %3$s rating%2$s! %4$s', 'wc-price-history' ),
+				__( 'Congratulations on making your shop fully compliant with the Omnibus EU law - all without spending a dime! %1$sShow your appreciation for WC Price History by leaving a glowing review and a %3$s rating%2$s! %4$s.', 'wc-price-history' ),
 				'<a href="https://wordpress.org/support/plugin/wc-price-history/reviews/?filter=5#new-post" target="_blank">',
 				'</a>',
 				'<span class="wc-history-price-rating-stars"><span>&#11088;</span><span>&#11088;</span><span>&#11088;</span><span>&#11088;</span><span>&#11088;</span></span>',
