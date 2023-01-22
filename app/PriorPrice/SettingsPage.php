@@ -14,6 +14,26 @@ class SettingsPage {
 	public function register_hooks() : void {
 		add_action( 'admin_menu', [ $this, 'add_menu' ] );
 		add_action( 'admin_init', [ $this, 'register_settings' ] );
+		add_filter( 'plugin_action_links_' . WC_PRICE_HISTORY_FILE, [ $this, 'add_settings_link' ] );
+	}
+
+	/**
+	 * Add settings link to plugins page.
+	 *
+	 * @since 1.6.6
+	 *
+	 * @param array<string> $links Plugin links.
+	 *
+	 * @return array<string>
+	 */
+	public function add_settings_link( array $links ) : array {
+		$settings_link = sprintf(
+			'<a href="%s">%s</a>',
+			esc_url( admin_url( 'admin.php?page=wc-price-history' ) ),
+			esc_html__( 'Settings', 'wc-price-history' )
+		);
+		array_unshift( $links, $settings_link );
+		return $links;
 	}
 
 	/**

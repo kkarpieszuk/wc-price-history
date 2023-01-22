@@ -95,6 +95,7 @@ Please submit the [GitHub issue](https://github.com/kkarpieszuk/wc-price-history
 
 = 1.6.6 =
 * Improvement: Rearranged the plugin option's page
+* Improvement: Added settings link to plugins page.
 
 = 1.6.5 =
 * Fix: Wrong number of decimals in price history information when displayed with shortcode (#36)
