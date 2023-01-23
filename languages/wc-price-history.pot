@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2023-01-22T20:36:43+01:00\n"
+"POT-Creation-Date: 2023-01-23T22:35:41+01:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.6.0\n"
 "X-Domain: wc-price-history\n"
@@ -40,150 +40,150 @@ msgstr ""
 msgid "Congratulations on making your shop fully compliant with the Omnibus EU law - all without spending a dime! %1$sShow your appreciation for WC Price History by leaving a glowing review and a %3$s rating%2$s! %4$s."
 msgstr ""
 
-#. translators: %s - the lowest price in the last 30 days.
+#. translators: Do not translate {price}, it is template slug!
 #: app/PriorPrice/SettingsData.php:47
+#: app/PriorPrice/SettingsPage.php:261
+msgid "30-day low: {price}"
+msgstr ""
+
+#. translators: %s - the lowest price in the last 30 days.
 #: app/PriorPrice/SettingsData.php:132
 msgid "30-day low: %s"
 msgstr ""
 
-#: app/PriorPrice/SettingsPage.php:31
+#: app/PriorPrice/SettingsPage.php:33
 msgid "Settings"
 msgstr ""
 
-#: app/PriorPrice/SettingsPage.php:47
-#: app/PriorPrice/SettingsPage.php:48
+#: app/PriorPrice/SettingsPage.php:49
+#: app/PriorPrice/SettingsPage.php:50
 msgid "Price History"
 msgstr ""
 
-#: app/PriorPrice/SettingsPage.php:76
+#: app/PriorPrice/SettingsPage.php:78
 msgid "Settings saved."
 msgstr ""
 
-#: app/PriorPrice/SettingsPage.php:81
+#: app/PriorPrice/SettingsPage.php:83
 msgid "Price History Settings"
 msgstr ""
 
-#: app/PriorPrice/SettingsPage.php:91
+#: app/PriorPrice/SettingsPage.php:93
 msgid "Display minimal price on/for:"
 msgstr ""
 
-#: app/PriorPrice/SettingsPage.php:102
+#: app/PriorPrice/SettingsPage.php:104
 msgid "Single product page"
 msgstr ""
 
-#: app/PriorPrice/SettingsPage.php:112
+#: app/PriorPrice/SettingsPage.php:114
 msgid "Related and upsell products on single product page"
 msgstr ""
 
-#: app/PriorPrice/SettingsPage.php:122
+#: app/PriorPrice/SettingsPage.php:124
 msgid "Main shop page"
 msgstr ""
 
-#: app/PriorPrice/SettingsPage.php:132
+#: app/PriorPrice/SettingsPage.php:134
 msgid "Product category page"
 msgstr ""
 
-#: app/PriorPrice/SettingsPage.php:142
+#: app/PriorPrice/SettingsPage.php:144
 msgid "Product tag page"
 msgstr ""
 
 #. translators: %s: [wc_price_history id="3" show_currency="1"] shortcode tag.
-#: app/PriorPrice/SettingsPage.php:148
+#: app/PriorPrice/SettingsPage.php:150
 msgid "...or you can display it anywhere with shortcode %s. Note that id and show_currency parameters are optional"
 msgstr ""
 
-#: app/PriorPrice/SettingsPage.php:154
+#: app/PriorPrice/SettingsPage.php:156
 msgid "Display minimal price when:"
 msgstr ""
 
-#: app/PriorPrice/SettingsPage.php:166
+#: app/PriorPrice/SettingsPage.php:168
 msgid "Always"
 msgstr ""
 
-#: app/PriorPrice/SettingsPage.php:177
+#: app/PriorPrice/SettingsPage.php:179
 msgid "Only when product is On sale"
 msgstr ""
 
-#: app/PriorPrice/SettingsPage.php:181
+#: app/PriorPrice/SettingsPage.php:183
 msgid "Omnibus: European Union Guidance requires displaying the minimal price if a product is on sale."
 msgstr ""
 
-#: app/PriorPrice/SettingsPage.php:187
+#: app/PriorPrice/SettingsPage.php:189
 msgid "For products being on sale, count minimal price from:"
 msgstr ""
 
-#: app/PriorPrice/SettingsPage.php:198
+#: app/PriorPrice/SettingsPage.php:200
 msgid "Current day"
 msgstr ""
 
-#: app/PriorPrice/SettingsPage.php:208
+#: app/PriorPrice/SettingsPage.php:210
 msgid "Day when product went on sale"
 msgstr ""
 
-#: app/PriorPrice/SettingsPage.php:212
+#: app/PriorPrice/SettingsPage.php:214
 msgid "Omnibus: European Union Guidance requires displaying the lowest price before the sale started."
 msgstr ""
 
-#: app/PriorPrice/SettingsPage.php:216
+#: app/PriorPrice/SettingsPage.php:218
 msgid "Option \"Day when product went on sale\" works only for products with \"Sale price dates\" set on Edit product page (setting sale start date will be enough)."
 msgstr ""
 
-#: app/PriorPrice/SettingsPage.php:218
+#: app/PriorPrice/SettingsPage.php:220
 msgid "If product does not have scheduled such date, minimal price will be counted from current day and this option will be ignored."
 msgstr ""
 
-#: app/PriorPrice/SettingsPage.php:222
+#: app/PriorPrice/SettingsPage.php:224
 msgid "WooCommerce > Status > Logs"
 msgstr ""
 
 #. translators: %s: URL to WooCommerce logs page, do not translate wc-price-history, it is a slug
-#: app/PriorPrice/SettingsPage.php:224
+#: app/PriorPrice/SettingsPage.php:226
 msgid "All products which does not have set sale start date will be logged in %s (look for error log with name starting from wc-price-history)."
 msgstr ""
 
-#: app/PriorPrice/SettingsPage.php:231
+#: app/PriorPrice/SettingsPage.php:233
 msgid "Number of days to use when counting minimal price:"
 msgstr ""
 
-#: app/PriorPrice/SettingsPage.php:241
+#: app/PriorPrice/SettingsPage.php:243
 msgid "days"
 msgstr ""
 
-#: app/PriorPrice/SettingsPage.php:244
+#: app/PriorPrice/SettingsPage.php:246
 msgid "Omnibus: European Union Guidance requires displaying lowest price from the last 30 days."
 msgstr ""
 
-#: app/PriorPrice/SettingsPage.php:250
+#: app/PriorPrice/SettingsPage.php:252
 msgid "Minimal price text:"
 msgstr ""
 
-#. translators: Do not translate {price}, it is template slug!
-#: app/PriorPrice/SettingsPage.php:259
-msgid "30-day low: {price}"
-msgstr ""
-
 #. translators: Do not translate {price} and {days}, those are template slugs!
-#: app/PriorPrice/SettingsPage.php:265
+#: app/PriorPrice/SettingsPage.php:267
 msgid "Use placeholder {price} to display price and {days} to display number of days."
 msgstr ""
 
-#: app/PriorPrice/SettingsPage.php:277
+#: app/PriorPrice/SettingsPage.php:279
 msgid "Read the EU legal acts:"
 msgstr ""
 
-#: app/PriorPrice/SettingsPage.php:279
+#: app/PriorPrice/SettingsPage.php:281
 msgid "Guidance on the Price Indication Directive (2021)"
 msgstr ""
 
-#: app/PriorPrice/SettingsPage.php:282
+#: app/PriorPrice/SettingsPage.php:284
 msgid "Support"
 msgstr ""
 
-#: app/PriorPrice/SettingsPage.php:285
+#: app/PriorPrice/SettingsPage.php:287
 msgid "If you have any questions, please contact me at plugin support forum."
 msgstr ""
 
-#: app/PriorPrice/SettingsPage.php:289
+#: app/PriorPrice/SettingsPage.php:291
 msgid "Please rate the plugin! "
 msgstr ""
 

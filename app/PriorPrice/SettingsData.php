@@ -22,7 +22,7 @@ class SettingsData {
 	 *
 	 * @return void
 	 */
-	public function set_defaults() {
+	public function set_defaults() : void {
 
 		$update   = false;
 		$settings = get_option( 'wc_price_history_settings' );
@@ -42,9 +42,9 @@ class SettingsData {
 		}
 
 		// Handle settings added in 1.3.
-		if ( ! isset( $settings['display_text'] ) ) {
-			/* translators: %s - the lowest price in the last 30 days. */
-			$settings['display_text'] = esc_html__( '30-day low: %s', 'wc-price-history' );
+		if ( ! isset( $settings['display_text'] ) || $settings['display_text'] === '30-day low: %s' ) {
+			/* translators: Do not translate {price}, it is template slug! */
+			$settings['display_text'] = esc_html__( '30-day low: {price}', 'wc-price-history' );
 			$update                   = true;
 		}
 

@@ -94,7 +94,8 @@ Please submit the [GitHub issue](https://github.com/kkarpieszuk/wc-price-history
 == Changelog ==
 
 = 1.6.6 =
-* Improvement: Rearranged the plugin option's page
+* Fixed: Placeholder %s was displayed instead of the lowest price after plugin update. (#39)
+* Improvement: Rearranged the plugin option's page.
 * Improvement: Added settings link to plugins page.
 
 = 1.6.5 =
