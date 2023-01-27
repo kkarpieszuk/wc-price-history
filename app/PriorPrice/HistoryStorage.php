@@ -50,13 +50,15 @@ class HistoryStorage {
 	 * Get minimal price for $product_id in last $days from sale start.
 	 *
 	 * @since 1.2
+	 * @since 1.7 Added $count_from parameter.
 	 *
 	 * @param \WC_Product $wc_product WC Product.
 	 * @param int         $days       Days span.
+	 * @param string      $count_from Count from option.
 	 *
 	 * @return float
 	 */
-	public function get_minimal_from_sale_start( \WC_Product $wc_product, int $days = 30 ) : float {
+	public function get_minimal_from_sale_start( \WC_Product $wc_product, int $days = 30, string $count_from = 'sale_start' ) : float {
 
 		$sale_start = $wc_product->get_date_on_sale_from();
 
@@ -75,8 +77,13 @@ class HistoryStorage {
 			return $this->get_minimal( $wc_product->get_id(), $days );
 		}
 
-		$sale_start_timestamp = $sale_start->getTimestamp();
-		$history              = $this->get_history( $wc_product->get_id() );
+		if ( $count_from === 'sale_start_inclusive' ) {
+			$sale_start_timestamp = $sale_start->getTimestamp()  + DAY_IN_SECONDS;
+		} else {
+			$sale_start_timestamp = $sale_start->getTimestamp();
+		}
+
+		$history = $this->get_history( $wc_product->get_id() );
 
 		// Get only $days last items.
 		$the_last = array_filter(

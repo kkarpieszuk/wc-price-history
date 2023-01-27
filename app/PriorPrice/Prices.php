@@ -86,8 +86,8 @@ class Prices {
 		$days_number = $this->settings_data->get_days_number();
 		$count_from  = $this->settings_data->get_count_from();
 
-		if ( $count_from === 'sale_start' && $wc_product->is_on_sale() ) {
-			$lowest = $this->history_storage->get_minimal_from_sale_start( $wc_product, $days_number );
+		if ( in_array( $count_from, [ 'sale_start', 'sale_start_inclusive' ] ) && $wc_product->is_on_sale() ) {
+			$lowest = $this->history_storage->get_minimal_from_sale_start( $wc_product, $days_number, $count_from );
 		} else {
 			$lowest = $this->history_storage->get_minimal( $wc_product->get_id(), $days_number );
 		}

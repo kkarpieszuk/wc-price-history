@@ -207,7 +207,17 @@ class SettingsPage {
 												value="sale_start"
 												<?php checked( isset( $settings['count_from'] ) ? $settings['count_from'] : false, 'sale_start' ); ?>
 											/>
-											<?php esc_html_e( 'Day when product went on sale', 'wc-price-history' ); ?>
+											<?php esc_html_e( 'Day before product went on sale (excludes promotional price)', 'wc-price-history' ); ?>
+										</label>
+										<br />
+										<label>
+											<input
+												type="radio"
+												name="wc_price_history_settings[count_from]"
+												value="sale_start_inclusive"
+												<?php checked( isset( $settings['count_from'] ) ? $settings['count_from'] : false, 'sale_start_inclusive' ); ?>
+											/>
+											<?php esc_html_e( 'Day when product product went on sale (includes promotional price)', 'wc-price-history' ); ?>
 										</label>
 									</p>
 									<p class="description">
