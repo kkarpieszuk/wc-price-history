@@ -10,6 +10,13 @@ namespace PriorPrice;
 class Shortcode {
 
 	/**
+	 * @since 1.7
+	 *
+	 * @var \PriorPrice\SettingsData
+	 */
+	public $settings_data;
+
+	/**
 	 * @since 1.2
 	 *
 	 * @var \PriorPrice\HistoryStorage
@@ -26,13 +33,17 @@ class Shortcode {
 	 *
 	 * @since 1.2
 	 * @since 1.6.2 uses Taxes class.
+	 * @since 1.7 uses SettingsData class.
 	 *
 	 * @param \PriorPrice\HistoryStorage $history_storage Prices object.
+	 * @param \PriorPrice\Taxes          $taxes           Taxes object.
+	 * @param \PriorPrice\SettingsData   $settings_data   Settings data object.
 	 */
-	public function __construct( HistoryStorage $history_storage, Taxes $taxes ) {
+	public function __construct( HistoryStorage $history_storage, Taxes $taxes, SettingsData $settings_data ) {
 
 		$this->history_storage = $history_storage;
 		$this->taxes           = $taxes;
+		$this->settings_data   = $settings_data;
 	}
 
 	public function register_hooks() : void {
@@ -91,7 +102,8 @@ class Shortcode {
 		$lowest = $this->taxes->apply_taxes( $lowest, $product );
 		$lowest = number_format( $lowest, wc_get_price_decimals(), wc_get_price_decimal_separator(), wc_get_price_thousand_separator() );
 		$lowest = (bool) $atts['show_currency'] ? sprintf( get_woocommerce_price_format(), get_woocommerce_currency_symbol(), $lowest ) : $lowest;
+		$class  = $this->settings_data->get_display_line_through() ? 'line-through' : '';
 
-		return sprintf( '<div class="wc-price-history-shortcode">%s</div>', $lowest );
+		return sprintf( '<div class="wc-price-history-shortcode %2$s">%1$s</div>', $lowest, $class );
 	}
 }

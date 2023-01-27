@@ -135,4 +135,20 @@ class SettingsData {
 		}
 		return esc_html( $settings['display_text'] );
 	}
+
+	/**
+	 * Get display line through setting.
+	 *
+	 * @since 1.7
+	 *
+	 * @return bool
+	 */
+	public function get_display_line_through() : bool {
+
+		$settings = get_option( 'wc_price_history_settings' );
+		if ( ! isset( $settings['display_line_through'] ) ) {
+			return false;
+		}
+		return (bool) $settings['display_line_through'];
+	}
 }
