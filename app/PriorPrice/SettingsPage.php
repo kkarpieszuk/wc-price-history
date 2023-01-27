@@ -279,6 +279,26 @@ class SettingsPage {
 								</fieldset>
 							</td>
 						</tr>
+						<tr>
+							<th scope="row"><?php esc_html_e( 'When displaying minimal price:', 'wc-price-history' ); ?></th>
+							<td>
+								<fieldset>
+									<p>
+										<label>
+											<input
+												type="checkbox"
+												name="wc_price_history_settings[display_line_through]"
+												value="1"
+												<?php checked( isset( $settings['display_line_through'] ) ? $settings['display_line_through'] : 0, 1 ); ?>
+											/>
+											<?php esc_attr_e( 'Apply line-through on the price', 'wc-price-history' ) ?>
+										</label>
+									</p>
+									<p class="description" >
+										<?php esc_html_e( 'If checked, price will be displayed with line-through on it.', 'wc-price-history' ); ?>
+									</p>
+								</fieldset>
+						</tr>
 					</table>
 					<?php submit_button(); ?>
 				</form>

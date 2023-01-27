@@ -99,9 +99,27 @@ class Prices {
 		}
 
 		$lowest_html     = '<div class="wc-price-history prior-price lowest">%s</div>';
-		$lowest_template = str_replace( [ '{price}', '{days}' ], [ wc_price( $lowest ), $days_number ], $this->settings_data->get_display_text() );
+		$lowest_template = str_replace( [ '{price}', '{days}' ], [ $this->display_price_value_html( $lowest ), $days_number ], $this->settings_data->get_display_text() );
 
 		return sprintf( $lowest_html, $lowest_template );
+	}
+
+	/**
+	 * Display price value HTML.
+	 *
+	 * Optionally adds CSS classes to style it.
+	 *
+	 * @since 1.7
+	 *
+	 * @param float $price Price.
+	 *
+	 * @return string
+	 */
+	private function display_price_value_html( float $price ) : string {
+
+		$line_through_class = $this->settings_data->get_display_line_through() ? 'line-through' : '';
+
+		return '<span class="wc-price-history prior-price-value ' . $line_through_class .'">' . wc_price( $price ) . '</span>';
 	}
 
 	/**

@@ -95,6 +95,7 @@ Please submit the [GitHub issue](https://github.com/kkarpieszuk/wc-price-history
 
 = 1.7 =
 * Added option to include sale price when counting minimal price (#41)
+* Added option to display line through over minimal price (#42)
 
 = 1.6.6 =
 * Fixed: Placeholder %s was displayed instead of the lowest price after plugin update. (#39)

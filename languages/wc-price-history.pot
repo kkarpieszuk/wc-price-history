@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2023-01-27T21:37:46+01:00\n"
+"POT-Creation-Date: 2023-01-27T22:13:25+01:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.6.0\n"
 "X-Domain: wc-price-history\n"
@@ -171,23 +171,35 @@ msgstr ""
 msgid "Use placeholder {price} to display price and {days} to display number of days."
 msgstr ""
 
-#: app/PriorPrice/SettingsPage.php:289
-msgid "Read the EU legal acts:"
-msgstr ""
-
-#: app/PriorPrice/SettingsPage.php:291
-msgid "Guidance on the Price Indication Directive (2021)"
+#: app/PriorPrice/SettingsPage.php:283
+msgid "When displaying minimal price:"
 msgstr ""
 
 #: app/PriorPrice/SettingsPage.php:294
+msgid "Apply line-through on the price"
+msgstr ""
+
+#: app/PriorPrice/SettingsPage.php:298
+msgid "If checked, price will be displayed with line-through on it."
+msgstr ""
+
+#: app/PriorPrice/SettingsPage.php:309
+msgid "Read the EU legal acts:"
+msgstr ""
+
+#: app/PriorPrice/SettingsPage.php:311
+msgid "Guidance on the Price Indication Directive (2021)"
+msgstr ""
+
+#: app/PriorPrice/SettingsPage.php:314
 msgid "Support"
 msgstr ""
 
-#: app/PriorPrice/SettingsPage.php:297
+#: app/PriorPrice/SettingsPage.php:317
 msgid "If you have any questions, please contact me at plugin support forum."
 msgstr ""
 
-#: app/PriorPrice/SettingsPage.php:301
+#: app/PriorPrice/SettingsPage.php:321
 msgid "Please rate the plugin! "
 msgstr ""
 

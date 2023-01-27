@@ -1,0 +1,4 @@
+.wc-price-history.prior-price-value.line-through,
+.wc-price-history-shortcode.line-through {
+	text-decoration: line-through;
+}
