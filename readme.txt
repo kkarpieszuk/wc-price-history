@@ -54,7 +54,7 @@ However, in case you misconfigured the plugin, here are steps to take to make it
 1. Go to `WooCommerce` > `Price History` screen
 2. Set `Display on` to `Single product page`
 3. Set `Display minimal price` to `Only when product is on sale`
-4. Set `Count minimal price from` to `Day when product went on sale`
+4. Set `Count minimal price from` to `Day before product went on sale`
 5. Set `Number of days to use when counting minimal price:` to `30 days`
 6. For each product being on sale, go to its edit screen and set `Sale price dates from` to the date when the product went on sale.
 
@@ -92,6 +92,9 @@ Tip: All the products which are On sale but does not have `Sale price dates from
 Please submit the [GitHub issue](https://github.com/kkarpieszuk/wc-price-history/issues).
 
 == Changelog ==
+
+= 1.7 =
+* Added option to include sale price when counting minimal price (#41)
 
 = 1.6.6 =
 * Fixed: Placeholder %s was displayed instead of the lowest price after plugin update. (#39)
