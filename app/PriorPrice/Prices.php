@@ -92,7 +92,7 @@ class Prices {
 			$lowest = $this->history_storage->get_minimal( $wc_product->get_id(), $days_number );
 		}
 
-		$lowest = $this->taxes->apply_taxes( $lowest, $wc_product );
+        $lowest = apply_filters('wc_price_history_lowest_price', $this->taxes->apply_taxes( $lowest, $wc_product ), $wc_product);
 
 		if ( (float) $lowest <= 0 ) {
 			return '';
