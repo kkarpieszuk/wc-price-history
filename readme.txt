@@ -93,6 +93,9 @@ Please submit the [GitHub issue](https://github.com/kkarpieszuk/wc-price-history
 
 == Changelog ==
 
+= 1.8 =
+* Added filter to modify the minimal price before it is displayed
+
 = 1.7 =
 * Added option to include sale price when counting minimal price (#41)
 * Added option to display line through over minimal price (#42)
