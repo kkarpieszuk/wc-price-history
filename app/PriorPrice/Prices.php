@@ -93,6 +93,15 @@ class Prices {
 		}
 
 		$lowest = $this->taxes->apply_taxes( $lowest, $wc_product );
+		/**
+		 * Filter the lowest price raw value before displaying it as HTML (taxes already applied).
+		 *
+		 * @since 1.7.1
+		 *
+		 * @param float       $lowest     Lowest price.
+		 * @param \WC_Product $wc_product WC Product.
+		 */
+		$lowest = apply_filters( 'wc_price_history_lowest_price_html_raw_value_taxed', $lowest, $wc_product );
 
 		if ( (float) $lowest <= 0 ) {
 			return '';

@@ -6,7 +6,7 @@ Tags: WooCommerce, prices, history, prior, omnibus, european, 30days
 Requires at least: 5.8
 Tested up to: 6.1.1
 Requires PHP: 7.2
-Stable tag: 1.7
+Stable tag: 1.7.1
 License: MIT License
 License URI: https://mit-license.org/
 Donate link: https://buycoffee.to/wpzlecenia
@@ -87,11 +87,25 @@ This is because you have not set `Sale price dates from` for these products. Go 
 
 Tip: All the products which are On sale but does not have `Sale price dates from` set will be logged to WooCommerce logs. Go to `WooCommerce` > `Status` > `Logs` to see the list of products (in right top corner preselect log which name starts with wc-price-history).
 
+= Can I adjust minimal price before being it displayed? =
+
+Yes, you can use filter `wc_price_history_lowest_price_html_raw_value_taxed`:
+
+```
+add_filter( 'wc_price_history_lowest_price_html_raw_value_taxed', function( $price, $wc_product ) {
+	// do something with $price
+	return $price;
+}, 10, 2 );
+```
+
 = I have a problem with the plugin, or I want to suggest a feature. Where can do this? =
 
 Please submit the [GitHub issue](https://github.com/kkarpieszuk/wc-price-history/issues).
 
 == Changelog ==
+
+= 1.7.1 =
+* Added filter to modify the minimal price before it is displayed
 
 = 1.7 =
 * Added option to include sale price when counting minimal price (#41)

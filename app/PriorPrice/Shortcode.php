@@ -100,6 +100,10 @@ class Shortcode {
 
 		$lowest = $this->history_storage->get_minimal( $id );
 		$lowest = $this->taxes->apply_taxes( $lowest, $product );
+		/**
+		 * This filter is documented in app/PriorPrice/Prices.php.
+		 */
+		$lowest = apply_filters( 'wc_price_history_lowest_price_html_raw_value_taxed', $lowest, $product);
 		$lowest = number_format( $lowest, wc_get_price_decimals(), wc_get_price_decimal_separator(), wc_get_price_thousand_separator() );
 		$lowest = (bool) $atts['show_currency'] ? sprintf( get_woocommerce_price_format(), get_woocommerce_currency_symbol(), $lowest ) : $lowest;
 		$class  = $this->settings_data->get_display_line_through() ? 'line-through' : '';
