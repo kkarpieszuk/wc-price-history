@@ -96,7 +96,7 @@ class Prices {
 		/**
 		 * Filter the lowest price raw value before displaying it as HTML (taxes already applied).
 		 *
-		 * @since 1.8
+		 * @since 1.7.1
 		 *
 		 * @param float       $lowest     Lowest price.
 		 * @param \WC_Product $wc_product WC Product.
