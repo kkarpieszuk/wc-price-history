@@ -6,7 +6,7 @@ Tags: WooCommerce, prices, history, prior, omnibus, european, 30days
 Requires at least: 5.8
 Tested up to: 6.1.1
 Requires PHP: 7.2
-Stable tag: 1.7.2
+Stable tag: 1.7.3
 License: MIT License
 License URI: https://mit-license.org/
 Donate link: https://buycoffee.to/wpzlecenia
@@ -103,6 +103,9 @@ add_filter( 'wc_price_history_lowest_price_html_raw_value_taxed', function( $pri
 Please submit the [GitHub issue](https://github.com/kkarpieszuk/wc-price-history/issues).
 
 == Changelog ==
+
+= 1.7.3 =
+* Fixed: When price displayed with shortcode, it was not respecting sale settings and it resulted in showing the current price.
 
 = 1.7.2 =
 * Fixed: When price displayed with shortcode, and it was zero, it should not be displayed.

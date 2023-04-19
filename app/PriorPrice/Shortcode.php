@@ -98,7 +98,14 @@ class Shortcode {
 			return '';
 		}
 
-		$lowest = $this->history_storage->get_minimal( $id );
+		$days_number = $this->settings_data->get_days_number();
+		$count_from  = $this->settings_data->get_count_from();
+
+		if ( in_array( $count_from, [ 'sale_start', 'sale_start_inclusive' ] ) && $product->is_on_sale() ) {
+			$lowest = $this->history_storage->get_minimal_from_sale_start( $product, $days_number, $count_from );
+		} else {
+			$lowest = $this->history_storage->get_minimal( $id, $days_number );
+		}
 
 		if ( ! $lowest ) {
 			return '';
