@@ -99,6 +99,11 @@ class Shortcode {
 		}
 
 		$lowest = $this->history_storage->get_minimal( $id );
+
+		if ( ! $lowest ) {
+			return '';
+		}
+
 		$lowest = $this->taxes->apply_taxes( $lowest, $product );
 		/**
 		 * This filter is documented in app/PriorPrice/Prices.php.
