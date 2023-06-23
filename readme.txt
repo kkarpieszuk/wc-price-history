@@ -106,7 +106,8 @@ Please submit the [GitHub issue](https://github.com/kkarpieszuk/wc-price-history
 
 = 1.7.4 =
 * Improvement: Start saving the price before change with timestamps for last midnight and for 1 second ago. (#58)
-* Improvement: Clean history from empty values vefore save.
+* Improvement: Clean history from empty values before save.
+* Fixed: Do not copy product price history when duplicating product. (#50)
 
 = 1.7.3 =
 * Fixed: When price displayed with shortcode, it was not respecting sale settings and it resulted in showing the current price.

@@ -21,7 +21,8 @@ class ProductUpdates {
 	 */
 	public function register_hooks(): void {
 
-		add_action( 'woocommerce_new_product', [ $this, 'update_price_history' ] );
+		add_action( 'woocommerce_new_product', [ $this, 'start_price_history' ] );
+		add_action( 'woocommerce_new_product_variation', [ $this, 'start_price_history' ] );
 		add_action( 'woocommerce_update_product', [ $this, 'update_price_history' ] );
 		add_action( 'woocommerce_save_product_variation', [ $this, 'update_price_history' ] );
 	}
@@ -38,5 +39,19 @@ class ProductUpdates {
 		$product_price = get_post_meta( $product_id, '_price', true );
 
 		$this->history_storage->add_price( $product_id, (float) $product_price, true );
+	}
+
+	/**
+	 * Start price history.
+	 *
+	 * @since 1.7.4
+	 *
+	 * @param int $product_id Product ID.
+	 */
+	public function start_price_history( int $product_id ): void {
+
+		$product_price = get_post_meta( $product_id, '_price', true );
+
+		$this->history_storage->add_first_price( $product_id, (float) $product_price );
 	}
 }

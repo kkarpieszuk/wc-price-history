@@ -141,6 +141,23 @@ class HistoryStorage {
 	}
 
 	/**
+	 * Add first price to the history.
+	 *
+	 * @since 1.7.4
+	 *
+	 * @param int   $product_id Product ID.
+	 * @param float $price      Price.
+	 *
+	 * @return int
+	 */
+	public function add_first_price( int $product_id, float $price ) {
+
+		$history[ $this->get_time_with_offset() ] = $price;
+
+		return $this->save_history( $product_id, $history );
+	}
+
+	/**
 	 * Add price to the history at given timestamp.
 	 *
 	 * @since 1.1
