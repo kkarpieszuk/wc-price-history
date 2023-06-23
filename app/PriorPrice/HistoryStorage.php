@@ -100,22 +100,42 @@ class HistoryStorage {
 	/**
 	 * Add price to the history.
 	 *
+	 * Also saves the price before change with timestamps for last midnight and for 1 second ago.
+	 *
 	 * @since 1.1
+	 * @since 1.7.4 Start saving previous price before change.
 	 *
 	 * @param int   $product_id Product ID.
-	 * @param float $price      Price.
+	 * @param float $new_price  Price.
 	 *
 	 * @return int
 	 */
-	public function add_price( int $product_id, float $price, bool $on_change_only ): int {
+	public function add_price( int $product_id, float $new_price, bool $on_change_only ): int {
 
-		$history = $this->get_history( $product_id );
+		$history    = $this->get_history( $product_id );
+		$last_price = (float) end( $history );
 
-		if ( $on_change_only && end( $history ) === $price ) {
+		if ( $on_change_only && $last_price === $new_price ) {
 			return 0;
 		}
 
-		$history[ $this->get_time_with_offset() ] = $price;
+		$last_timestamp = (int) key( array_slice( $history, -1, 1, true ) );
+		$now            = $this->get_time_with_offset();
+		$second_ago     = $now - 1;
+		$last_midnight  = (int) strtotime( 'midnight' );
+
+		// Check if the last index in $history is lower than $last_midnight.
+		// If so, add $price to the history for last midnight.
+		if ( $last_timestamp < $last_midnight ) {
+			$history[ $last_midnight ] = $last_price;
+		}
+
+		// Save also price for $second_ago timestamp.
+		if ( $last_timestamp < $second_ago ) {
+			$history[ $second_ago ] = $last_price;
+		}
+
+		$history[ $now ] = $new_price;
 
 		return $this->save_history( $product_id, $history );
 	}
@@ -182,6 +202,7 @@ class HistoryStorage {
 	 * Save history.
 	 *
 	 * @since 1.1
+	 * @since 1.7.4 Clean history from empty values vefore save.
 	 *
 	 * @param int               $product_id
 	 * @param array<int, float> $history
@@ -189,6 +210,15 @@ class HistoryStorage {
 	 * @return int
 	 */
 	public function save_history( int $product_id, array $history ): int {
+
+		// clean empty values, but not zero.
+		$history = array_filter(
+			$history,
+			static function( $value ) {
+				return $value !== '';
+			}
+		);
+
 		return (int) update_post_meta( $product_id, self::cf_key, $history );
 	}
 
