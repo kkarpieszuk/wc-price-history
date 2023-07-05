@@ -89,7 +89,7 @@ a:hover .wc-history-price-rating-stars span:nth-child(5) {
 }
 
 /* Add new CSS rule to change section titles color to red */
-.wc-history-price-admin h1 {
+.wc-history-price-admin .form-table th {
     color: red;
 }
 
