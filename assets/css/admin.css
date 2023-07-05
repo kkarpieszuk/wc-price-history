@@ -1,5 +1,3 @@
-
-
 .wc-history-price-admin__left {
 	float: left;
 	width: 66%;
@@ -89,3 +87,9 @@ a:hover .wc-history-price-rating-stars span:nth-child(5) {
 	position: relative;
 	bottom: -3px;
 }
+
+/* Add new CSS rule to change section titles color to red */
+.wc-history-price-admin h1 {
+    color: red;
+}
+
