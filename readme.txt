@@ -4,8 +4,8 @@ Plugin Name: WC Price History
 Contributors: Konrad Karpieszuk
 Tags: WooCommerce, prices, history, prior, omnibus, european, 30days
 Requires at least: 5.8
-Tested up to: 6.1.1
-Requires PHP: 7.2
+Tested up to: 6.3
+Requires PHP: 7.4
 Stable tag: 1.7.4
 License: MIT License
 License URI: https://mit-license.org/
