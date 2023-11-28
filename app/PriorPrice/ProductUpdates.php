@@ -36,9 +36,13 @@ class ProductUpdates {
 	 */
 	public function update_price_history( int $product_id ): void {
 
-		$product_price = get_post_meta( $product_id, '_price', true );
+		$product = wc_get_product( $product_id );
 
-		$this->history_storage->add_price( $product_id, (float) $product_price, true );
+		if ( ! $product ) {
+			return;
+		}
+
+		$this->history_storage->add_price( $product_id, (float) $product->get_price(), true );
 	}
 
 	/**
@@ -50,8 +54,12 @@ class ProductUpdates {
 	 */
 	public function start_price_history( int $product_id ): void {
 
-		$product_price = get_post_meta( $product_id, '_price', true );
+		$product = wc_get_product( $product_id );
 
-		$this->history_storage->add_first_price( $product_id, (float) $product_price );
+		if ( ! $product ) {
+			return;
+		}
+
+		$this->history_storage->add_first_price( $product_id, (float) $product->get_price() );
 	}
 }

@@ -207,7 +207,13 @@ class HistoryStorage {
 	private function fill_empty_history( int $product_id, array $history ) : array {
 
 		if ( empty( $history ) ) {
-			$history[ $this->get_time_with_offset() ] = get_post_meta( $product_id, '_price', true );
+			$product = wc_get_product( $product_id );
+
+			if ( ! $product ) {
+				return [];
+			}
+
+			$history[ $this->get_time_with_offset() ] = (float) $product->get_price();
 
 			$this->save_history( $product_id, $history );
 		}

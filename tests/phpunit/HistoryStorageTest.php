@@ -53,16 +53,23 @@ class HistoryStorageTest extends TestCase {
 
 		$subject = $this->get_subject();
 
+		$product = $this->getMockBuilder( 'WC_Product' )
+			->disableOriginalConstructor()
+			->setMethods( [ 'get_price' ] )
+			->getMock();
+		$product->method( 'get_price' )
+			->willReturn( $expected_minimal );
+
 		\WP_Mock::userFunction( 'get_post_meta', [
 			'times' => 1,
 			'args' => [ $product_id, '_wc_price_history', true ],
 			'return' => $history
 		] );
 
-		\WP_Mock::userFunction( 'get_post_meta', [
+		\WP_Mock::userFunction( 'wc_get_product', [
 			'times' => 1,
-			'args' => [ $product_id, '_price', true ],
-			'return' => $expected_minimal
+			'args' => [ $product_id ],
+			'return' => $product
 		] );
 
 		\WP_Mock::userFunction( 'update_post_meta', [
