@@ -13,9 +13,7 @@ class ProductUpdatesTest extends TestCase
     public function testStartPriceHistory()
     {
         $historyStorageMock = $this->createMock(HistoryStorage::class);
-        $productMock = $this->createMock(DummyProduct::class);
-        $productMock->method('get_id')->willReturn(1);
-        $productMock->method('get_price')->willReturn('100');
+        $productMock = new DummyProduct();
 
         $productUpdates = new ProductUpdates($historyStorageMock);
 
@@ -24,5 +22,13 @@ class ProductUpdatesTest extends TestCase
             ->with($this->equalTo(1), $this->equalTo(100.0));
 
         $productUpdates->start_price_history(1);
+    }
+}
+class DummyProduct {
+    public function get_id() {
+        return 1;
+    }
+    public function get_price() {
+        return '100';
     }
 }
