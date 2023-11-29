@@ -6,7 +6,7 @@ use PHPUnit\Framework\TestCase;
 use PriorPrice\ProductUpdates;
 use PriorPrice\ProductDuplicate;
 use PriorPrice\HistoryStorage;
-use WC_Product;
+// Removed WC_Product import as it's not needed
 
 class ProductUpdatesTest extends TestCase
 {
@@ -24,11 +24,6 @@ class ProductUpdatesTest extends TestCase
         $productUpdates->start_price_history(1);
     }
 }
-class DummyProduct {
-    public function get_id() {
-        return 1;
-    }
-    public function get_price() {
-        return '100';
+// Removed DummyProduct class as it's not needed
     }
 }
