@@ -21,7 +21,7 @@ class ProductDuplicateTest extends TestCase
     public function testDeleteHistoryFromDuplicate()
     {
         $productDuplicate = new ProductDuplicate();
-        $product = $this->createMock(WC_Product::class);
+        $product = $this->createMock(\WC_Product::class);
         $product->method('get_id')->willReturn(1);
 
         delete_post_meta(1, '_wc_price_history');
@@ -33,8 +33,3 @@ class ProductDuplicateTest extends TestCase
     }
 }
 class DummyProduct {}
-class WC_Product {
-    public function get_id() {
-        return 1;
-    }
-}
