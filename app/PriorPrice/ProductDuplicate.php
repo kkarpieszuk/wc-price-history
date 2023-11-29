@@ -4,6 +4,13 @@ namespace PriorPrice;
 
 use WC_Product;
 
+/**
+ * Class ProductDuplicate
+ *
+ * Handles product duplication logic.
+ *
+ * @since 1.7.5
+ */
 class ProductDuplicate {
 
 	/**
