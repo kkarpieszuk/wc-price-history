@@ -1,0 +1,7 @@
+<wpml-config>
+	<admin-texts>
+		<key name="wc_price_history_settings">
+			<key name="display_text" />
+		</key>
+	</admin-texts>
+</wpml-config>
