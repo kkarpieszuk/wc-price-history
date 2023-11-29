@@ -36,6 +36,10 @@ class ProductUpdates {
 	 */
 	public function update_price_history( int $product_id ): void {
 
+		if ( get_post_status( $product_id ) === 'draft' ) {
+			return;
+		}
+
 		$product_price = get_post_meta( $product_id, '_price', true );
 
 		$this->history_storage->add_price( $product_id, (float) $product_price, true );
@@ -49,6 +53,14 @@ class ProductUpdates {
 	 * @param int $product_id Product ID.
 	 */
 	public function start_price_history( int $product_id ): void {
+
+		if ( ProductDuplicate::$is_during_duplication ) {
+			return;
+		}
+
+		if ( get_post_status( $product_id ) === 'draft' ) {
+			return;
+		}
 
 		$product_price = get_post_meta( $product_id, '_price', true );
 
