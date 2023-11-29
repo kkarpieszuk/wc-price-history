@@ -114,6 +114,7 @@ Please submit the [GitHub issue](https://github.com/kkarpieszuk/wc-price-history
 
 = 1.8.0 =
 * New: Basic compatibility with dynamic pricing plugins.
+* New: Displayed HTML is translatable with WPML and Polylang.
 * Hooks: Added filter `wc_price_history_is_correct_place` to make it possible to display price history info in custom location.
 * Hooks: Added filter `wc_price_history_is_not_correct_when` to stop displaying price history for your own conditions.
 * Fixed: Duplicated product had price history starting from original product last price.
