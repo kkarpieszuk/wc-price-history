@@ -80,6 +80,14 @@ Display without currency symbol:
 ```
 The product with ID 3 had the lowest price [wc_price_history id=3 show_currency=0]
 ```
+= What filters and actions I can use to affect WC Price History internal logic? =
+
+Available filters are:
+`wc_price_history_is_correct_place` (defined in `PriorPrice\Prices::is_correct_place`)
+Allows to display price history on custom screens, not listed in plugins settings. Return true to make price history visible.
+
+`wc_price_history_is_not_correct_when` (defined in `PriorPrice\Prices::is_not_correct_when`)
+Allows to stop displaying price history for your own custom conditions. Return true to prevent displaying price history.
 
 = For some products being on sale, plugin shows minimal price from current day, why? =
 
@@ -106,6 +114,8 @@ Please submit the [GitHub issue](https://github.com/kkarpieszuk/wc-price-history
 
 = 1.8.0 =
 * New: Basic compatibility with dynamic pricing plugins.
+* Hooks: Added filter `wc_price_history_is_correct_place` to make it possible to display price history info in custom location.
+* Hooks: Added filter `wc_price_history_is_not_correct_when` to stop displaying price history for your own conditions.
 * Fixed: Duplicated product had price history starting from original product last price.
 * Improvement: Do not store prices saved while product had status draft.
 
