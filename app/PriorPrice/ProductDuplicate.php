@@ -9,7 +9,7 @@ use WC_Product;
  *
  * Handles product duplication logic.
  *
- * @since 1.7.5
+ * @since 1.8.0
  */
 class ProductDuplicate {
 
@@ -21,7 +21,7 @@ class ProductDuplicate {
 	/**
 	 * Register hooks.
 	 *
-	 * @since 1.7.5
+	 * @since 1.8.0
 	 *
 	 * @return void
 	 */
@@ -34,7 +34,7 @@ class ProductDuplicate {
 	/**
 	 * Flag as duplication process.
 	 *
-	 * @since 1.7.5
+	 * @since 1.8.0
 	 *
 	 * @param WC_Product $duplicate
 	 *
@@ -48,7 +48,7 @@ class ProductDuplicate {
 	/**
 	 * Delete history from duplicate.
 	 *
-	 * @since 1.7.5
+	 * @since 1.8.0
 	 *
 	 * @param int $duplicate_id
 	 *

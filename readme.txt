@@ -104,7 +104,7 @@ Please submit the [GitHub issue](https://github.com/kkarpieszuk/wc-price-history
 
 == Changelog ==
 
-= 1.7.5 =
+= 1.8.0 =
 * Fixed: Duplicated product had price history starting from original product last price.
 * Improvement: Do not store prices saved while product had status draft.
 
