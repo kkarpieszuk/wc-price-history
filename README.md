@@ -12,7 +12,7 @@ Alternatively, you can find it in your current WordPress installation (wp-admin 
 ### Development version (from GitHub)
 
 Clone this repository and run composer and npm:
-```
+```sh
 git clone git@github.com:kkarpieszuk/wc-price-history.git
 cd wc-price-history
 composer install
@@ -28,7 +28,6 @@ On the front-end on a single product page and product listings page, just under 
 ![Single Product Page screenshot](https://ps.w.org/wc-price-history/assets/screenshot-1.png?rev=2840303)
 
 The plugin has configurable settings:
-
 ![Settings screenshot](https://ps.w.org/wc-price-history/assets/screenshot-2.png?rev=2844611)
 
 ### Shortcode
@@ -59,7 +58,7 @@ In the `ProductUpdates` class, the `update_price_history()` and `start_price_his
 
 To run the tests, use the following command:
 
-```
+```sh
 phpunit
 ```
 
