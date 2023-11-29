@@ -11,7 +11,7 @@ class ProductDuplicateTest extends TestCase
     public function testFlagAsDuplicationProcess()
     {
         $productDuplicate = new ProductDuplicate();
-        $product = $this->createMock(WC_Product::class);
+        $product = $this->createMock(DummyProduct::class);
 
         $productDuplicate->flag_as_duplication_process($product);
 
@@ -32,3 +32,4 @@ class ProductDuplicateTest extends TestCase
         $this->assertEmpty(get_post_meta(1, '_wc_price_history', true));
     }
 }
+class DummyProduct {}
