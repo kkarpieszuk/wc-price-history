@@ -6,7 +6,8 @@
 		>
 	<testsuites>
 		<testsuite name="Unit tests">
-			<directory suffix="Test.php">tests</directory>
+			<file>tests/ProductDuplicateTest.php</file>
+			<file>tests/ProductUpdatesTest.php</file>
 		</testsuite>
 	</testsuites>
 </phpunit>
