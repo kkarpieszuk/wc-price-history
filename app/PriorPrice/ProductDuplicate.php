@@ -54,7 +54,7 @@ class ProductDuplicate {
 	 *
 	 * @return void
 	 */
-	public function delete_history_from_duplicate( $duplicate_id ) {
+	public function delete_history_from_duplicate( $duplicate_id ): void {
 
 		$duplicate = wc_get_product( $duplicate_id );
 
