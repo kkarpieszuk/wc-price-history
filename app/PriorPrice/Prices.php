@@ -142,12 +142,24 @@ class Prices {
 
 		$display_on = $this->settings_data->get_display_on();
 
-		return (
+		$is_correct = (
 			( isset( $display_on['shop_page'] ) && is_shop() ) ||
 			( isset( $display_on['product_page'] ) && is_product() && ( isset( $display_on['related_products'] ) || $this->is_main_product( $wc_product ) ) ) ||
 			( isset( $display_on['category_page'] ) && is_product_category() ) ||
 			( isset( $display_on['tag_page'] ) && is_product_tag() )
 		);
+
+		/**
+		 * Filter if the price HTML should be displayed on the current screen.
+		 *
+		 * @since 1.8.0
+		 *
+		 * @param bool        $is_correct Is correct place.
+		 * @param \WC_Product $wc_product WC Product.
+		 *
+		 * @return bool
+		 */
+		return apply_filters( 'wc_price_history_is_correct_place', $is_correct, $wc_product );
 	}
 
 	/**
@@ -163,11 +175,19 @@ class Prices {
 
 		$display_when = $this->settings_data->get_display_when();
 
-		if ( $display_when === 'on_sale' && ! $wc_product->is_on_sale() ) {
-			return true;
-		}
+		$is_not_correct_when = $display_when === 'on_sale' && ! $wc_product->is_on_sale();
 
-		return false;
+		/**
+		 * Filter if the price HTML should not be displayed when conditions are not met (eg. it is set to display only on sale and product is not on sale).
+		 *
+		 * @since 1.8.0
+		 *
+		 * @param bool        $is_not_correct_when Is not correct when.
+		 * @param \WC_Product $wc_product          WC Product.
+		 *
+		 * @return bool
+		 */
+		return apply_filters( 'wc_price_history_is_not_correct_when', $is_not_correct_when, $wc_product );
 	}
 
 	/**
