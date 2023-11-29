@@ -33,3 +33,8 @@ class ProductDuplicateTest extends TestCase
     }
 }
 class DummyProduct {}
+class WC_Product {
+    public function get_id() {
+        return 1;
+    }
+}
