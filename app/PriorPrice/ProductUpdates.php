@@ -36,6 +36,10 @@ class ProductUpdates {
 	 */
 	public function update_price_history( int $product_id ): void {
 
+		if ( get_post_status( $product_id ) === 'draft' ) {
+			return;
+		}
+
 		$product = wc_get_product( $product_id );
 
 		if ( ! $product ) {
@@ -53,6 +57,14 @@ class ProductUpdates {
 	 * @param int $product_id Product ID.
 	 */
 	public function start_price_history( int $product_id ): void {
+
+		if ( ProductDuplicate::$is_during_duplication ) {
+			return;
+		}
+
+		if ( get_post_status( $product_id ) === 'draft' ) {
+			return;
+		}
 
 		$product = wc_get_product( $product_id );
 

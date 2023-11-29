@@ -43,6 +43,9 @@ class Hooks {
 		$updates = new ProductUpdates( $history_storage );
 		$updates->register_hooks();
 
+		$duplicate = new ProductDuplicate();
+		$duplicate->register_hooks();
+
 		$admin_assets = new AdminAssets();
 		$admin_assets->register_hooks();
 
