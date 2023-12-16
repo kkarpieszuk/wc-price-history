@@ -48,6 +48,12 @@ class SettingsData {
 			$update                   = true;
 		}
 
+		if ( ! isset( $settings['old_history'] ) ) {
+			$settings['old_history']             = 'custom_text'; // 'hide', 'current_price', 'custom_text'
+			$settings['old_history_custom_text'] = esc_html__( 'Price in the last {days} days is the same as current', 'wc-price-history' );
+			$update                              = true;
+		}
+
 		if ( $update ) {
 			update_option( 'wc_price_history_settings', $settings );
 		}
@@ -150,5 +156,37 @@ class SettingsData {
 			return false;
 		}
 		return (bool) $settings['display_line_through'];
+	}
+
+	/**
+	 * Get old history setting.
+	 *
+	 * @since 1.9.0
+	 *
+	 * @return string
+	 */
+	public function get_old_history() : string {
+
+		$settings = get_option( 'wc_price_history_settings' );
+		if ( ! isset( $settings['old_history'] ) ) {
+			return 'hide';
+		}
+		return $settings['old_history'];
+	}
+
+	/**
+	 * Get old history custom text setting.
+	 *
+	 * @since 1.9.0
+	 *
+	 * @return string
+	 */
+	public function get_old_history_custom_text() : string {
+
+		$settings = get_option( 'wc_price_history_settings' );
+		if ( ! isset( $settings['old_history_custom_text'] ) ) {
+			return esc_html__( 'Price in the last {days} days is the same as current', 'wc-price-history' );
+		}
+		return esc_html( $settings['old_history_custom_text'] );
 	}
 }
