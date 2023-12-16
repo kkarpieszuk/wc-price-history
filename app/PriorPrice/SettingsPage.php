@@ -217,7 +217,7 @@ class SettingsPage {
 												value="sale_start_inclusive"
 												<?php checked( isset( $settings['count_from'] ) ? $settings['count_from'] : false, 'sale_start_inclusive' ); ?>
 											/>
-											<?php esc_html_e( 'Day when product product went on sale (includes promotional price)', 'wc-price-history' ); ?>
+											<?php esc_html_e( 'Day when product went on sale (includes promotional price)', 'wc-price-history' ); ?>
 										</label>
 									</p>
 									<p class="description">
@@ -248,6 +248,7 @@ class SettingsPage {
 											<input
 												type="number"
 												name="wc_price_history_settings[days_number]"
+												id="wc-price-history-days-number"
 												value="<?php echo isset( $settings['days_number'] ) ? $settings['days_number'] : 30; ?>"
 											/>
 											<?php esc_attr_e( 'days', 'wc-price-history' ) ?></label>
@@ -263,18 +264,88 @@ class SettingsPage {
 							<td>
 								<fieldset>
 									<p>
-										<label>
+										<label class="wc-price-history-wide-field">
 											<input
 												type="text"
 												name="wc_price_history_settings[display_text]"
+												class="wc-price-history-wide-field"
 												<?php /* translators: Do not translate {price}, it is template slug! */ ?>
-												value="<?php echo isset( $settings['display_text'] ) ? $settings['display_text'] : __( '30-day low: {price}', 'wc-price-history' ); ?>"
+												value="<?php echo isset( $settings['display_text'] ) ? $settings['display_text'] : esc_html__( '30-day low: {price}', 'wc-price-history' ); ?>"
 											/>
 										</label>
 									</p>
 									<p class="description" >
 										<?php /* translators: Do not translate {price} and {days}, those are template slugs! */ ?>
 										<?php esc_html_e( 'Use placeholder {price} to display price and {days} to display number of days.', 'wc-price-history' ); ?>
+									</p>
+								</fieldset>
+							</td>
+						</tr>
+						<tr>
+							<th scope="row">
+								<?php
+									printf(
+										/* translators: %s: {days-set} template slug */
+										esc_html__( 'What to do when price history is older than %s days:', 'wc-price-history' ),
+										'<span class="wc-price-history-days-set">' . $settings['days_number'] . '</span>'
+										);
+								?>
+							</th>
+							<td>
+								<fieldset id="wc-price-history-old-history-fieldset">
+									<p class="description" >
+										<?php
+											printf(
+												/* translators: Do not translate {days-set}, it is template slug! */
+												esc_html__( 'It could happen that the last change of price was more than %s days ago. In that case you can choose to hide minimal price, display current price or display custom text.', 'wc-price-history' ),
+												'<span class="wc-price-history-days-set">' . $settings['days_number'] . '</span>'
+											);
+										?>
+									</p>
+									<p>
+										<label>
+											<input
+												type="radio"
+												name="wc_price_history_settings[old_history]"
+												value="hide"
+												<?php checked( isset( $settings['old_history'] ) ? $settings['old_history'] : false, 'hide' ); ?>
+											/>
+											<?php esc_html_e( 'Hide minimal price', 'wc-price-history' ); ?>
+										</label>
+										<br />
+										<label>
+											<input
+												type="radio"
+												name="wc_price_history_settings[old_history]"
+												value="current_price"
+												<?php checked( isset( $settings['old_history'] ) ? $settings['old_history'] : false, 'current_price' ); ?>
+											/>
+											<?php esc_html_e( 'Display current price', 'wc-price-history' ); ?>
+										</label>
+										<br />
+										<label>
+											<input
+												type="radio"
+												name="wc_price_history_settings[old_history]"
+												value="custom_text"
+												<?php checked( isset( $settings['old_history'] ) ? $settings['old_history'] : false, 'custom_text' ); ?>
+											/>
+											<?php esc_html_e( 'Display custom text', 'wc-price-history' ); ?>:
+										</label>
+									</p>
+									<p class="wc-price-history-old-history-custom-text-p <?php echo isset( $settings['old_history'] ) && $settings['old_history'] === 'custom_text' ? '' : 'hidden-fade'; ?>">
+										<label class="wc-price-history-wide-field">
+											<input
+												type="text"
+												name="wc_price_history_settings[old_history_custom_text]"
+												class="wc-price-history-wide-field"
+												<?php /* translators: Do not translate {days}, it is template slug! */ ?>
+												value="<?php echo isset( $settings['old_history_custom_text'] ) ? $settings['old_history_custom_text'] : esc_html__( 'Price in the last {days} days is the same as current', 'wc-price-history' ); ?>"
+											/>
+										</label>
+									</p>
+									<p class="description wc-price-history-old-history-custom-text-p <?php echo isset( $settings['old_history'] ) && $settings['old_history'] === 'custom_text' ? '' : 'hidden-fade'; ?>">
+										<?php esc_html_e( 'If you choose to display custom text, use placeholder {days} to display number of days and {price} to display current price.', 'wc-price-history' ); ?>
 									</p>
 								</fieldset>
 							</td>

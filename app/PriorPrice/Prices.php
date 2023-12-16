@@ -104,13 +104,10 @@ class Prices {
 		$lowest = apply_filters( 'wc_price_history_lowest_price_html_raw_value_taxed', $lowest, $wc_product );
 
 		if ( (float) $lowest <= 0 ) {
-			return '';
+			return $this->handle_old_history( $wc_product, $days_number );
 		}
 
-		$lowest_html     = '<div class="wc-price-history prior-price lowest">%s</div>';
-		$lowest_template = str_replace( [ '{price}', '{days}' ], [ $this->display_price_value_html( $lowest ), $days_number ], $this->settings_data->get_display_text() );
-
-		return sprintf( $lowest_html, $lowest_template );
+		return $this->display_from_template( $lowest, $days_number );
 	}
 
 	/**
@@ -204,5 +201,58 @@ class Prices {
 		global $wp_query;
 
 		return isset( $wp_query->queried_object_id ) && $wp_query->queried_object_id === $wc_product->get_id();
+	}
+
+	/**
+	 * Handle history older than x days (returned price is 0).
+	 *
+	 * @since 1.9.0
+	 *
+	 * @param \WC_Product $wc_product WC Product.
+	 * @param int         $days_number Days number.
+	 *
+	 * @return string
+	 */
+	private function handle_old_history( \WC_Product $wc_product, int $days_number ) : string {
+
+		$old_history = $this->settings_data->get_old_history();
+
+		if ( $old_history === 'hide' ) {
+			return '';
+		}
+
+		if ( $old_history === 'current_price' ) {
+			return $this->display_from_template( (float) $wc_product->get_price(), $days_number );
+		}
+
+		$old_history_custom_text = $this->settings_data->get_old_history_custom_text();
+
+		$old_history_custom_text = str_replace(
+			[ '{price}', '{days}' ],
+			[ $this->display_price_value_html( (float) $wc_product->get_price() ), $days_number ],
+			$old_history_custom_text
+		);
+
+		return '<div class="wc-price-history prior-price lowest">' . $old_history_custom_text . '</div>';
+	}
+
+	/**
+	 * Display full price HTML from template.
+	 *
+	 * @since 1.9.0
+	 *
+	 * @param float $lowest     Lowest price.
+	 * @param int   $days_number Days number.
+	 *
+	 * @return string
+	 */
+	private function display_from_template( float $lowest, int $days_number ) : string {
+
+		$display_text = $this->settings_data->get_display_text();
+
+		$display_text = str_replace( '{price}', $this->display_price_value_html( $lowest ), $display_text );
+		$display_text = str_replace( '{days}', (string) $days_number, $display_text );
+
+		return '<div class="wc-price-history prior-price lowest">' . $display_text . '</div>';
 	}
 }

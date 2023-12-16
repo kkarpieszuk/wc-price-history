@@ -1,4 +1,19 @@
 
+.wc-price-history-wide-field {
+	width: 90%;
+}
+
+.wc-price-history-old-history-custom-text-p {
+	opacity: 1;
+	height: 100%;
+	overflow: hidden;
+	transition: opacity 0.5s, height 0.5s;
+}
+
+.wc-price-history-old-history-custom-text-p.hidden-fade {
+	opacity: 0;
+	height: 0;
+}
 
 .wc-history-price-admin__left {
 	float: left;

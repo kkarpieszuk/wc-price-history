@@ -6,7 +6,7 @@ Tags: WooCommerce, prices, history, prior, omnibus, european, 30days
 Requires at least: 5.8
 Tested up to: 6.4.1
 Requires PHP: 7.2
-Stable tag: 1.8.1
+Stable tag: 1.9.0
 License: MIT License
 License URI: https://mit-license.org/
 Donate link: https://buycoffee.to/wpzlecenia
@@ -35,6 +35,7 @@ Plugin is configurable via `WooCommerce` > `Price History` screen. You can confi
 &#8618; How to count minimal price (the minimal from the moment product went on sale to 30 days before that moment or the minimal price from today to 30 days ago)
 &#8618; How many days take into account when calculating minimal price (30 days by default)
 &#8618; How to display the price history information
+&#8618; What to do if the price didn't change in the last N days (hide price information / display current price / display custom text)
 
 At the configuration screen you will find additional information how to configure the plugin to be compliant with Omnibus directive (European Commission Directive 98/6/EC Article 6a) and link to legal acts.
 
@@ -111,6 +112,9 @@ add_filter( 'wc_price_history_lowest_price_html_raw_value_taxed', function( $pri
 Please submit the [GitHub issue](https://github.com/kkarpieszuk/wc-price-history/issues).
 
 == Changelog ==
+
+= 1.9.0 =
+* New: Allow to decide what to display in case there was no price change in the tracked history span. (#77)
 
 = 1.8.0 =
 * New: Basic compatibility with dynamic pricing plugins.
