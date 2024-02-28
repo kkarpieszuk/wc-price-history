@@ -195,7 +195,9 @@ class HistoryStorage {
 	}
 
 	/**
-	 * If the history is empty, fill it with current price and save.
+	 * If the history is empty, fill it with current price and save it.
+	 *
+	 * It saves current price with the current timestamp and timestamp for date 24 hours ago.
 	 *
 	 * @since 1.5
 	 *
@@ -213,7 +215,11 @@ class HistoryStorage {
 				return [];
 			}
 
-			$history[ $this->get_time_with_offset() ] = (float) $product->get_price();
+			$price        = (float) $product->get_price();
+			$current_time = $this->get_time_with_offset();
+
+			$history[ $current_time ]                  = $price;
+			$history[ $current_time - DAY_IN_SECONDS ] = $price;
 
 			$this->save_history( $product_id, $history );
 		}
