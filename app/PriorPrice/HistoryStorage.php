@@ -151,7 +151,10 @@ class HistoryStorage {
 	 * @return int
 	 */
 	public function add_first_price( int $product_id, float $price ) {
-
+		if ( empty( $history ) ) {
+			$day_before = $now - 86400;
+			$history[$day_before] = $last_price;
+		}
 		$history[ $this->get_time_with_offset() ] = $price;
 
 		return $this->save_history( $product_id, $history );
