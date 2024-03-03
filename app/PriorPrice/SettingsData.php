@@ -63,6 +63,10 @@ class SettingsData {
 	 * Get the display on settings.
 	 *
 	 * @since 1.2
+		if ( ! isset( $settings['first_history_save_done'] ) || $settings['first_history_save_done'] < 1 ) {
+			$settings['first_history_save_done'] = 0;
+			$update                              = true;
+		}
 	 *
 	 * @return array<array<bool>>
 	 */
