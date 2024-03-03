@@ -135,9 +135,19 @@ class HistoryStorage {
 			$history[ $second_ago ] = $last_price;
 		}
 
-		$history[ $now ] = $new_price;
+		// If no history exists, save the current price for the day before the plugin was installed and for the day the product was created.
+		if (empty($history)) {
+			$product_creation_date = get_post($product_id)->post_date;
+			$day_before_installed = strtotime('-1 day', $now);
+			$product_creation_timestamp = strtotime($product_creation_date);
 
-		return $this->save_history( $product_id, $history );
+			$history[$day_before_installed] = $new_price;
+			$history[$product_creation_timestamp] = $new_price;
+		}
+
+		$history[$now] = $new_price;
+
+		return $this->save_history($product_id, $history);
 	}
 
 	/**
@@ -151,7 +161,6 @@ class HistoryStorage {
 	 * @return int
 	 */
 	public function add_first_price( int $product_id, float $price ) {
-
 		$history[ $this->get_time_with_offset() ] = $price;
 
 		return $this->save_history( $product_id, $history );
