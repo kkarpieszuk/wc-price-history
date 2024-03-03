@@ -54,6 +54,11 @@ class SettingsData {
 			$update                              = true;
 		}
 
+		if ( ! isset( $settings['first_history_save_done'] ) || $settings['first_history_save_done'] < 1 ) {
+			$settings['first_history_save_done'] = 0;
+			$update                              = true;
+		}
+
 		if ( $update ) {
 			update_option( 'wc_price_history_settings', $settings );
 		}
@@ -63,10 +68,6 @@ class SettingsData {
 	 * Get the display on settings.
 	 *
 	 * @since 1.2
-		if ( ! isset( $settings['first_history_save_done'] ) || $settings['first_history_save_done'] < 1 ) {
-			$settings['first_history_save_done'] = 0;
-			$update                              = true;
-		}
 	 *
 	 * @return array<array<bool>>
 	 */
@@ -192,5 +193,13 @@ class SettingsData {
 			return esc_html__( 'Price in the last {days} days is the same as current', 'wc-price-history' );
 		}
 		return esc_html( $settings['old_history_custom_text'] );
+	}
+
+	public function get_first_history_save_done() : int {
+		$settings = get_option( 'wc_price_history_settings' );
+		if ( ! isset( $settings['first_history_save_done'] ) ) {
+			return 0;
+		}
+		return (int) $settings['first_history_save_done'];
 	}
 }

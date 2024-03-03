@@ -1,13 +1,13 @@
 <?php
 
-namespace PriorPrice;
+namespace PriorPrice\FirstRun;
 
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
 
-class FirstRunSettingsPage {
-    public function __construct() {
+class SettingsPage {
+    public function register_hooks() {
         add_action('admin_menu', [$this, 'add_menu']);
         add_action('admin_enqueue_scripts', [$this, 'enqueue_scripts']);
     }

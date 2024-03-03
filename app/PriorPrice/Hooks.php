@@ -2,16 +2,18 @@
 
 namespace PriorPrice;
 
+use PriorPrice\FirstRun\{AdminNotice, ProductScan, SettingsPage};
+
 /**
  * Hooks class.
- * 
+ *
  * @since 1.0
  */
 class Hooks {
 
 	/**
 	 * Register hooks.
-	 * 
+	 *
 	 * @since 1.0
 	 */
 	public function register_hooks(): void {
@@ -57,13 +59,26 @@ class Hooks {
 
 		$marketing = new Marketing();
 		$marketing->register_hooks();
+
+		$this->register_first_run_hooks( $settings_data );
 	}
-}
-		$firstRunAdminNotice = new FirstRunAdminNotice();
+
+	/**
+	 * Register first run hooks.
+	 *
+	 * @since 2.0
+	 *
+	 * @param SettingsData $settings_data Settings data.
+	 */
+	private function register_first_run_hooks( SettingsData $settings_data ) : void {
+
+		$firstRunAdminNotice = new FirstRun\AdminNotice( $settings_data );
 		$firstRunAdminNotice->register_hooks();
 
-		$firstRunSettingsPage = new FirstRunSettingsPage();
+		$firstRunSettingsPage = new FirstRun\SettingsPage();
 		$firstRunSettingsPage->register_hooks();
 
-		$ajaxProductScan = new AjaxProductScan();
-		$ajaxProductScan->register_hooks();
+		$firstRunProductScan = new FirstRun\ProductScan();
+		$firstRunProductScan->register_hooks();
+	}
+}

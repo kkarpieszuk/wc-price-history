@@ -1,13 +1,13 @@
 <?php
 
-namespace PriorPrice;
+namespace PriorPrice\FirstRun;
 
 if (!defined('ABSPATH')) {
     exit;
 }
 
-class AjaxProductScan {
-    public function __construct() {
+class ProductScan {
+    public function register_hooks() {
         add_action('wp_ajax_start_product_scan', [$this, 'handle_start_scan']);
         add_action('wp_ajax_nopriv_start_product_scan', [$this, 'handle_start_scan']);
         add_action('wp_ajax_process_product_batch', [$this, 'handle_process_batch']);
