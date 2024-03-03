@@ -59,3 +59,11 @@ class Hooks {
 		$marketing->register_hooks();
 	}
 }
+		$firstRunAdminNotice = new FirstRunAdminNotice();
+		$firstRunAdminNotice->register_hooks();
+
+		$firstRunSettingsPage = new FirstRunSettingsPage();
+		$firstRunSettingsPage->register_hooks();
+
+		$ajaxProductScan = new AjaxProductScan();
+		$ajaxProductScan->register_hooks();
