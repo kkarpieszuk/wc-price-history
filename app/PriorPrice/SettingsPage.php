@@ -370,6 +370,47 @@ class SettingsPage {
 									</p>
 								</fieldset>
 						</tr>
+						<tr>
+							<td>
+								<h2><?php esc_html_e( 'Danger zone', 'wc-price-history' ); ?></h2>
+							</td>
+						</tr>
+						<tr>
+							<th scope="row"><?php esc_html_e( 'Fix history', 'wc-price-history' ); ?></th>
+							<td>
+								<fieldset>
+									<p>
+										<button
+												type="button"
+												name="wc_price_history_fix_history"
+												id="wc-price-history-fix-history"
+												value="1"
+												class="button button-secondary"
+											> <?php esc_html_e( 'Fix prices history', 'wc-price-history' ); ?> </button>
+									</p>
+									<p class="description" >
+										<?php esc_html_e( 'Ever happened that you discounted a product and the price history shows the lowest price before discount same as after discount? This action will fix it.', 'wc-price-history' ); ?>
+									</p>
+								</fieldset>
+						</tr>
+						<tr>
+							<th scope="row"><?php esc_html_e( 'Clean history', 'wc-price-history' ); ?></th>
+							<td>
+								<fieldset>
+									<p>
+										<button
+												type="button"
+												name="wc_price_history_clean_history"
+												id="wc-price-history-clean-history"
+												value="1"
+												class="button button-secondary notice-error"
+											> <?php esc_html_e( 'Clean history', 'wc-price-history' ); ?> </button>
+									</p>
+									<p class="description" >
+										<?php esc_html_e( 'This action cannot be undone. All price history data will be removed.', 'wc-price-history' ); ?>
+									</p>
+								</fieldset>
+						</tr>
 					</table>
 					<?php submit_button(); ?>
 				</form>
