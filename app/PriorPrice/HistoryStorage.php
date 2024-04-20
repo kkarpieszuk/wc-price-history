@@ -13,10 +13,11 @@ class HistoryStorage {
 	 * Custom field key.
 	 *
 	 * @since 1.1
+	 * @since 2.0 Changed from private to public.
 	 *
 	 * @var string
 	 */
-	private const cf_key = '_wc_price_history';
+	public const cf_key = '_wc_price_history';
 
 	/**
 	 * Get minimal price for $product_id in last $days.
@@ -206,7 +207,7 @@ class HistoryStorage {
 	 *
 	 * @return array<int, float>
 	 */
-	private function fill_empty_history( int $product_id, array $history ) : array {
+	public function fill_empty_history( int $product_id, array $history ) : array {
 
 		if ( empty( $history ) ) {
 			$product = wc_get_product( $product_id );
