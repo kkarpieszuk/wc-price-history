@@ -54,6 +54,11 @@ class SettingsData {
 			$update                              = true;
 		}
 
+		if ( ! isset( $settings[ FirstScan::OPTION_NAME ] ) ) {
+			$settings[ FirstScan::OPTION_NAME ] = FirstScan::SCAN_NOT_STARTED;
+			$update                             = true;
+		}
+
 		if ( $update ) {
 			update_option( 'wc_price_history_settings', $settings );
 		}
@@ -188,5 +193,40 @@ class SettingsData {
 			return esc_html__( 'Price in the last {days} days is the same as current', 'wc-price-history' );
 		}
 		return esc_html( $settings['old_history_custom_text'] );
+	}
+
+	/**
+	 * Get old history custom text setting.
+	 *
+	 * @since 2.0
+	 *
+	 * @return int
+	 */
+	public function get_first_scan_status(): int {
+
+		$settings = get_option( 'wc_price_history_settings' );
+
+		if ( ! isset( $settings[ FirstScan::OPTION_NAME ] ) ) {
+			return FirstScan::SCAN_NOT_STARTED;
+		}
+
+		return (int) $settings[ FirstScan::OPTION_NAME ];
+	}
+
+	/**
+	 * Set first scan status.
+	 *
+	 * @since 2.0
+	 *
+	 * @param int $status Status.
+	 *
+	 * @return void
+	 */
+	public function set_first_scan_status( int $status ): void {
+
+		$settings                           = get_option( 'wc_price_history_settings' );
+		$settings[ FirstScan::OPTION_NAME ] = $status;
+
+		update_option( 'wc_price_history_settings', $settings );
 	}
 }

@@ -4,14 +4,14 @@ namespace PriorPrice;
 
 /**
  * Hooks class.
- * 
+ *
  * @since 1.0
  */
 class Hooks {
 
 	/**
 	 * Register hooks.
-	 * 
+	 *
 	 * @since 1.0
 	 */
 	public function register_hooks(): void {
@@ -57,5 +57,11 @@ class Hooks {
 
 		$marketing = new Marketing();
 		$marketing->register_hooks();
+
+		$first_scan = new FirstScan( $settings_data, $history_storage );
+		$first_scan->register_hooks();
+
+		$ajax = new Ajax();
+		$ajax->register_hooks();
 	}
 }
