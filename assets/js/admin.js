@@ -26,7 +26,6 @@ jQuery(document).ready(function($) {
 	);
 
 	$( '#wc-price-history-first-scan-finished-notice .notice-dismiss' ).on( 'click', function() {
-		alert('dismissed');
 		$.post(
 			ajaxurl,
 			{

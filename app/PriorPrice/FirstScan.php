@@ -15,6 +15,8 @@ class FirstScan {
 
 	public const SCAN_FINISHED = 2;
 
+	public const SCAN_RESTARTED = 3;
+
 	public const OPTION_NAME = 'first_history_scan';
 
 	public const USER_OPTION_NAME = 'wc_price_history_first_scan_notice_closed';
@@ -96,6 +98,23 @@ class FirstScan {
 			return;
 		}
 
+		if ( self::SCAN_RESTARTED === $this->settings_data->get_first_scan_status() ) {
+			?>
+			<div class="notice notice-warning is-dismissible" id="wc-price-history-first-scan-restarted-notice">
+				<h4>
+					<?php esc_html_e( 'WC Price History', 'wc-price-history' );	?>
+				</h4>
+				<p>
+					<?php
+					esc_html_e( 'The scan has been restarted. Please refrain from editing products until the scan is finished.', 'wc-price-history' );
+					?>
+				</p>
+			</div>
+			<?php
+
+			return;
+		}
+
 		?>
 		<div class="notice notice-info">
 			<h4>
@@ -129,6 +148,12 @@ class FirstScan {
 	 * @return void
 	 */
 	public function maybe_start_scan(): void {
+
+		if ( isset( $_GET['wc-price-history-restart-scan'] ) ) {
+			$this->settings_data->set_first_scan_status( self::SCAN_RESTARTED );
+
+			delete_user_meta( get_current_user_id(), self::USER_OPTION_NAME );
+		}
 
 		if ( self::SCAN_FINISHED === $this->settings_data->get_first_scan_status() ) {
 			return;
