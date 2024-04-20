@@ -195,7 +195,14 @@ class SettingsData {
 		return esc_html( $settings['old_history_custom_text'] );
 	}
 
-	public function get_first_scan_status() : int {
+	/**
+	 * Get old history custom text setting.
+	 *
+	 * @since 2.0
+	 *
+	 * @return int
+	 */
+	public function get_first_scan_status(): int {
 
 		$settings = get_option( 'wc_price_history_settings' );
 
@@ -206,7 +213,16 @@ class SettingsData {
 		return (int) $settings[ FirstScan::OPTION_NAME ];
 	}
 
-	public function set_first_scan_status( int $status ) : void {
+	/**
+	 * Set first scan status.
+	 *
+	 * @since 2.0
+	 *
+	 * @param int $status Status.
+	 *
+	 * @return void
+	 */
+	public function set_first_scan_status( int $status ): void {
 
 		$settings                           = get_option( 'wc_price_history_settings' );
 		$settings[ FirstScan::OPTION_NAME ] = $status;

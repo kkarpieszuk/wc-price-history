@@ -13,7 +13,7 @@ class HistoryStorage {
 	 * Custom field key.
 	 *
 	 * @since 1.1
-	 * @since 1.9 Changed from private to public.
+	 * @since 2.0 Changed from private to public.
 	 *
 	 * @var string
 	 */

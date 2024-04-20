@@ -5,7 +5,7 @@ namespace PriorPrice;
 /**
  * FirstScan class
  *
- * @since 1.9
+ * @since 2.0
  */
 class FirstScan {
 
@@ -35,6 +35,8 @@ class FirstScan {
 
 	/**
 	 * FirstScan constructor.
+	 *
+	 * @since 2.0
 	 *
 	 * @param SettingsData   $settings_data   Settings data.
 	 * @param HistoryStorage $history_storage History storage.
@@ -68,7 +70,7 @@ class FirstScan {
 	public function maybe_display_notice(): void {
 
 		if ( self::SCAN_FINISHED === $this->settings_data->get_first_scan_status() ) {
-			// check if user already closed this notice, stored in user meta.
+			// check if user already closed this notice.
 			if ( get_user_meta( get_current_user_id(), self::USER_OPTION_NAME, true ) ) {
 				return;
 			}
