@@ -219,7 +219,7 @@ class HistoryStorage {
 			$current_time = $this->get_time_with_offset();
 
 			$history[ $current_time ]                  = $price;
-			$history[ $current_time - DAY_IN_SECONDS ] = $price;
+			$history[ $current_time - DAY_IN_SECONDS ] = $price; // Set the same price for 1 day earlier.
 
 			$this->save_history( $product_id, $history );
 		}
