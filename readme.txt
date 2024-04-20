@@ -113,6 +113,8 @@ Please submit the [GitHub issue](https://github.com/kkarpieszuk/wc-price-history
 
 == Changelog ==
 
+= 2.0.0 =
+
 = 1.9.0 =
 * New: Allow to decide what to display in case there was no price change in the tracked history span. (#77)
 

@@ -24,4 +24,15 @@ jQuery(document).ready(function($) {
 			);
 		}
 	);
+
+	$( '#wc-price-history-first-scan-finished-notice .notice-dismiss' ).on( 'click', function() {
+		alert('dismissed');
+		$.post(
+			ajaxurl,
+			{
+				action: 'wc_price_history_first_scan_finished_notice_dismissed',
+				security: wc_price_history_admin.first_scan_finished_notice_nonce
+			}
+		);
+	} );
 });
