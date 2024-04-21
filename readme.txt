@@ -115,6 +115,8 @@ Please submit the [GitHub issue](https://github.com/kkarpieszuk/wc-price-history
 
 = 2.0.0 =
 * New: Plugin scans all product to start logging price history before any interaction with the product. (#84)
+* New: Plugin allows to clean the whole pricing history (#87)
+* New: Plugin allows to extend history by adding prices one day before the oldets one (#87)
 * Fixed: Some users had incorrectly recognized first product price change, showing a new price always as lowest one (#80)
 
 = 1.9.0 =
