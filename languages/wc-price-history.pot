@@ -1,20 +1,23 @@
-# Copyright (C) 2023 Konrad Karpieszuk
+# Copyright (C) 2024 Konrad Karpieszuk
 # This file is distributed under the same license as the WC Price History plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: WC Price History 1.9.0\n"
+"Project-Id-Version: WC Price History 2.0.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wc-price-history\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2023-12-16T13:38:22+01:00\n"
+"POT-Creation-Date: 2024-04-21T19:00:11+02:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.6.0\n"
 "X-Domain: wc-price-history\n"
 
 #. Plugin Name of the plugin
+#: app/PriorPrice/FirstScan.php:83
+#: app/PriorPrice/FirstScan.php:105
+#: app/PriorPrice/FirstScan.php:121
 msgid "WC Price History"
 msgstr ""
 
@@ -34,8 +37,62 @@ msgstr ""
 msgid "https://wpzlecenia.pl"
 msgstr ""
 
+#: app/PriorPrice/AdminAssets.php:34
+msgid "Are you sure you want to delete all price history?"
+msgstr ""
+
+#: app/PriorPrice/AdminAssets.php:36
+msgid "Price history has been deleted."
+msgstr ""
+
+#: app/PriorPrice/AdminAssets.php:37
+msgid "An error occurred while deleting price history."
+msgstr ""
+
+#: app/PriorPrice/AdminAssets.php:38
+msgid "Are you sure you want to fix price history?"
+msgstr ""
+
+#: app/PriorPrice/AdminAssets.php:40
+msgid "Price history has been fixed."
+msgstr ""
+
+#: app/PriorPrice/AdminAssets.php:41
+msgid "An error occurred while fixing price history."
+msgstr ""
+
+#: app/PriorPrice/Ajax.php:34
+#: app/PriorPrice/Ajax.php:45
+#: app/PriorPrice/Ajax.php:57
+msgid "Invalid nonce"
+msgstr ""
+
+#: app/PriorPrice/FirstScan.php:87
+msgid "Success! WC Price History plugin has finished scanning products to set their initial price history."
+msgstr ""
+
+#: app/PriorPrice/FirstScan.php:92
+msgid "You can now close this message and edit products as usual."
+msgstr ""
+
+#: app/PriorPrice/FirstScan.php:109
+msgid "The scan has been restarted. Please refrain from editing products until the scan is finished."
+msgstr ""
+
+#: app/PriorPrice/FirstScan.php:125
+msgid "WC Price History plugin is scanning products to set their initial price history."
+msgstr ""
+
+#: app/PriorPrice/FirstScan.php:130
+msgid "While this process is going on, please refrain from editing products."
+msgstr ""
+
+#: app/PriorPrice/FirstScan.php:135
+msgid "We will notify you when the scan is finished."
+msgstr ""
+
 #. translators: %d product id, %s link to product edit screen.
-#: app/PriorPrice/HistoryStorage.php:71
+#: app/PriorPrice/HistoryStorage.php:72
 msgid "Product #%1$d is on sale but has no sale start date. Please edit this product and set starting date for sale: %2$s"
 msgstr ""
 
@@ -52,13 +109,13 @@ msgstr ""
 
 #. translators: Do not translate {days}, it is template slug!
 #: app/PriorPrice/SettingsData.php:53
-#: app/PriorPrice/SettingsData.php:188
+#: app/PriorPrice/SettingsData.php:193
 #: app/PriorPrice/SettingsPage.php:343
 msgid "Price in the last {days} days is the same as current"
 msgstr ""
 
 #. translators: %s - the lowest price in the last 30 days.
-#: app/PriorPrice/SettingsData.php:138
+#: app/PriorPrice/SettingsData.php:143
 msgid "30-day low: %s"
 msgstr ""
 
@@ -220,23 +277,60 @@ msgstr ""
 msgid "If checked, price will be displayed with line-through on it."
 msgstr ""
 
-#: app/PriorPrice/SettingsPage.php:380
+#: app/PriorPrice/SettingsPage.php:379
+msgid "Danger zone"
+msgstr ""
+
+#: app/PriorPrice/SettingsPage.php:383
+msgid "Use these actions with caution!"
+msgstr ""
+
+#: app/PriorPrice/SettingsPage.php:386
+msgid "It is really recommended to make a backup of your database beforehand!"
+msgstr ""
+
+#: app/PriorPrice/SettingsPage.php:391
+msgid "Fix history"
+msgstr ""
+
+#: app/PriorPrice/SettingsPage.php:401
+msgid "Fix prices history"
+msgstr ""
+
+#: app/PriorPrice/SettingsPage.php:404
+msgid "Ever happened that you discounted a product and the price history shows the lowest price before discount same as after discount? This action will perhaps fix it."
+msgstr ""
+
+#: app/PriorPrice/SettingsPage.php:409
+msgid "Yes: \"perhaps\" does not sound definite, and for good reason: the reasons for the problem described above may vary, so I really recommend taking a backup."
+msgstr ""
+
+#: app/PriorPrice/SettingsPage.php:414
+#: app/PriorPrice/SettingsPage.php:424
+msgid "Clean history"
+msgstr ""
+
+#: app/PriorPrice/SettingsPage.php:427
+msgid "This action cannot be undone (unless you have a backup). All price history data will be removed."
+msgstr ""
+
+#: app/PriorPrice/SettingsPage.php:436
 msgid "Read the EU legal acts:"
 msgstr ""
 
-#: app/PriorPrice/SettingsPage.php:382
+#: app/PriorPrice/SettingsPage.php:438
 msgid "Guidance on the Price Indication Directive (2021)"
 msgstr ""
 
-#: app/PriorPrice/SettingsPage.php:385
+#: app/PriorPrice/SettingsPage.php:441
 msgid "Support"
 msgstr ""
 
-#: app/PriorPrice/SettingsPage.php:388
+#: app/PriorPrice/SettingsPage.php:444
 msgid "If you have any questions, please contact me at plugin support forum."
 msgstr ""
 
-#: app/PriorPrice/SettingsPage.php:392
+#: app/PriorPrice/SettingsPage.php:448
 msgid "Please rate the plugin! "
 msgstr ""
 
