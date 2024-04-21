@@ -6,7 +6,7 @@ Tags: WooCommerce, prices, history, prior, omnibus, european, 30days
 Requires at least: 5.8
 Tested up to: 6.4.1
 Requires PHP: 7.2
-Stable tag: 1.9.0
+Stable tag: 2.0.0
 License: MIT License
 License URI: https://mit-license.org/
 Donate link: https://buycoffee.to/wpzlecenia
@@ -115,6 +115,8 @@ Please submit the [GitHub issue](https://github.com/kkarpieszuk/wc-price-history
 
 = 2.0.0 =
 * New: Plugin scans all product to start logging price history before any interaction with the product. (#84)
+* New: Plugin allows to clean the whole pricing history (#87)
+* New: Plugin allows to extend history by adding prices one day before the oldets one (#87)
 * Fixed: Some users had incorrectly recognized first product price change, showing a new price always as lowest one (#80)
 
 = 1.9.0 =

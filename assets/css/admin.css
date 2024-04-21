@@ -104,3 +104,9 @@ a:hover .wc-history-price-rating-stars span:nth-child(5) {
 	position: relative;
 	bottom: -3px;
 }
+
+#wc-price-history-clean-history {
+	background-color: #d21818;
+	color: #F0F0F4;
+	border-color: #F0F0F4;
+}
