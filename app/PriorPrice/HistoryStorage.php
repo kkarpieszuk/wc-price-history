@@ -253,6 +253,58 @@ class HistoryStorage {
 	}
 
 	/**
+	 * Clean history.
+	 *
+	 * @since 2.0
+	 *
+	 * @return void
+	 */
+	public function clean_history() : void {
+
+		global $wpdb;
+
+		$wpdb->query(
+			$wpdb->prepare(
+				"DELETE
+				FROM {$wpdb->postmeta}
+				WHERE meta_key = %s",
+				self::cf_key
+			)
+		);
+	}
+
+	public function fix_history() : void {
+
+		$this->extend_all_histories_before( 1 );
+	}
+
+	private function extend_all_histories_before( int $days = 1 ) : void {
+
+		global $wpdb;
+
+		$products = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT post_id
+				FROM {$wpdb->postmeta}
+				WHERE meta_key = %s",
+				self::cf_key
+			)
+		);
+
+		// Foreach product, get the earliest history timestamp and price, prepend this history with timestamp for $days ago and the same price.
+		foreach ( $products as $product ) {
+			$history = $this->get_history( $product->post_id );
+
+			$earliest_timestamp = min( array_keys( $history ) );
+			$earliest_price     = $history[ $earliest_timestamp ];
+
+			$history[ $earliest_timestamp - ( $days * DAY_IN_SECONDS ) ] = $earliest_price;
+
+			$this->save_history( $product->post_id, $history );
+		}
+	}
+
+	/**
 	 * Reduce history to minimal price (but bigger than zero).
 	 *
 	 * @since 1.4

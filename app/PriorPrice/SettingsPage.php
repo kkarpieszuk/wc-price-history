@@ -373,6 +373,62 @@ class SettingsPage {
 					</table>
 					<?php submit_button(); ?>
 				</form>
+				<table class="form-table">
+					<tr>
+						<th scope="row">
+							<h2><?php esc_html_e( 'Danger zone', 'wc-price-history' ); ?></h2>
+						</th>
+						<td>
+							<p>
+								<?php esc_html_e( 'Use these actions with caution!', 'wc-price-history' ); ?>
+							</p>
+							<strong>
+								<?php esc_html_e( 'It is really recommended to make a backup of your database beforehand!', 'wc-price-history' ); ?>
+							</strong>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row"><?php esc_html_e( 'Fix history', 'wc-price-history' ); ?></th>
+						<td>
+							<fieldset>
+								<p>
+									<button
+											type="button"
+											name="wc_price_history_fix_history"
+											id="wc-price-history-fix-history"
+											value="1"
+											class="button button-secondary"
+										> <?php esc_html_e( 'Fix prices history', 'wc-price-history' ); ?> </button>
+								</p>
+								<p class="description" >
+									<?php esc_html_e( 'Ever happened that you discounted a product and the price history shows the lowest price before discount same as after discount? This action will perhaps fix it.', 'wc-price-history' ); ?>
+								</p>
+								<p class="description" >
+									<?php
+										/** Translators: PL: Tak: "być może" nie brzmi zdecydowanie i nie bez powodu: powody opisanego wyżej problemu mogą być różne, więc naprawdę zalecam wykonanie kopi zapasowej. */
+										esc_html_e( 'Yes: "perhaps" does not sound definite, and for good reason: the reasons for the problem described above may vary, so I really recommend taking a backup.', 'wc-price-history' );
+									?>
+							</fieldset>
+					</tr>
+					<tr>
+						<th scope="row"><?php esc_html_e( 'Clean history', 'wc-price-history' ); ?></th>
+						<td>
+							<fieldset>
+								<p>
+									<button
+											type="button"
+											name="wc_price_history_clean_history"
+											id="wc-price-history-clean-history"
+											value="1"
+											class="button button-secondary notice-error"
+										> <?php esc_html_e( 'Clean history', 'wc-price-history' ); ?> </button>
+								</p>
+								<p class="description" >
+									<?php esc_html_e( 'This action cannot be undone (unless you have a backup). All price history data will be removed.', 'wc-price-history' ); ?>
+								</p>
+							</fieldset>
+					</tr>
+				</table>
 			</div>
 			<div class="wc-history-price-admin__right">
 				<div class="wc-history-price-admin__right__box">
