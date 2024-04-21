@@ -107,6 +107,10 @@ add_filter( 'wc_price_history_lowest_price_html_raw_value_taxed', function( $pri
 }, 10, 2 );
 ```
 
+= Can I clean the history? =
+
+Yes, on the plugin configuration screen click the button 'Clean history'. This will remove all the history storage for all products. Make sure you know what you are doing (in general, use this option only if you are going to remove plugin completely).
+
 = I have a problem with the plugin, or I want to suggest a feature. Where can do this? =
 
 Please submit the [GitHub issue](https://github.com/kkarpieszuk/wc-price-history/issues).
