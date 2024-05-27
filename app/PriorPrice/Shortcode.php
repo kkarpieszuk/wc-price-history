@@ -76,8 +76,10 @@ class Shortcode {
 	 */
 	public function shortcode_callback( $atts ): string {
 
-		$product = wc_get_product();
-		$atts = shortcode_atts(
+		global $post;
+
+		$product = wc_get_product( $post->ID );
+		$atts    = shortcode_atts(
 			[
 				'id'            => $product ? $product->get_id() : null,
 				'show_currency' => 1,
