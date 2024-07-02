@@ -6,7 +6,7 @@ Tags: omnibus, WooCommerce, prices, history, 30days
 Requires at least: 5.8
 Tested up to: 6.5.2
 Requires PHP: 7.2
-Stable tag: 2.0.0
+Stable tag: 2.0.1
 License: MIT License
 License URI: https://mit-license.org/
 Donate link: https://buycoffee.to/wpzlecenia
@@ -116,6 +116,9 @@ Yes, on the plugin configuration screen click the button 'Clean history'. This w
 Please submit the [GitHub issue](https://github.com/kkarpieszuk/wc-price-history/issues).
 
 == Changelog ==
+
+= 2.0.1 =
+* Fixed: Price from sale start was incorrectly included into history checking if product was on sale for at least one day (#89)
 
 = 2.0.0 =
 * New: Plugin scans all product to start logging price history before any interaction with the product. (#84)
