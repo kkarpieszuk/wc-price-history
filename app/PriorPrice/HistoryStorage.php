@@ -79,9 +79,11 @@ class HistoryStorage {
 		}
 
 		if ( $count_from === 'sale_start_inclusive' ) {
-			$sale_start_timestamp = $sale_start->getTimestamp()  + DAY_IN_SECONDS;
+			// get next midnight after sale start.
+			$sale_start_timestamp = strtotime( 'midnight', $sale_start->getTimestamp() ) + DAY_IN_SECONDS;
 		} else {
-			$sale_start_timestamp = $sale_start->getTimestamp();
+			// get last midnight before sale start.
+			$sale_start_timestamp = strtotime( 'midnight', $sale_start->getTimestamp() );
 		}
 
 		$history = $this->get_history( $wc_product->get_id() );
@@ -90,7 +92,7 @@ class HistoryStorage {
 		$the_last = array_filter(
 			$history,
 			static function( $timestamp ) use ( $days, $sale_start_timestamp ) {
-				return $timestamp >= ( $sale_start_timestamp - ( $days * DAY_IN_SECONDS ) ) && $timestamp <= $sale_start_timestamp;
+				return $timestamp >= ( $sale_start_timestamp - ( $days * DAY_IN_SECONDS ) ) && $timestamp < $sale_start_timestamp;
 			},
 			ARRAY_FILTER_USE_KEY
 		);
