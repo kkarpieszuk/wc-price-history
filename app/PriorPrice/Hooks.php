@@ -31,16 +31,18 @@ class Hooks {
 		$settings_data = new SettingsData();
 		$settings_data->register_hooks();
 
+		$taxes = new Taxes( $settings_data, $history_storage );
+
 		$settings = new SettingsPage();
 		$settings->register_hooks();
 
 		$migrations = new Migrations( $history_storage );
 		$migrations->register_hooks();
 
-		$prices = new Prices( $history_storage, $settings_data, new Taxes() );
+		$prices = new Prices( $history_storage, $settings_data, $taxes );
 		$prices->register_hooks();
 
-		$variations = new Variations( $prices );
+		$variations = new Variations( $prices, $taxes );
 		$variations->register_hooks();
 
 		$updates = new ProductUpdates( $history_storage );
@@ -55,7 +57,7 @@ class Hooks {
 		$frontend_assets = new FrontEndAssets( $settings_data );
 		$frontend_assets->register_hooks();
 
-		$shortcode = new Shortcode( $history_storage, new Taxes(), $settings_data );
+		$shortcode = new Shortcode( $history_storage, $taxes, $settings_data );
 		$shortcode->register_hooks();
 
 		$marketing = new Marketing();

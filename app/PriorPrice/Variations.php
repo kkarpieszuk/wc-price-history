@@ -11,11 +11,10 @@ use WC_Product_Variation;
  * @since 2.1
  */
 class Variations {
-
 	/**
-	 * @var \PriorPrice\Prices
+	 * @var \PriorPrice\Taxes
 	 */
-	private $prices;
+	private $taxes;
 
 	/**
 	 * Constructor.
@@ -23,10 +22,12 @@ class Variations {
 	 * @since 2.1
 	 *
 	 * @param Prices $prices Prices object.
+	 * @param Taxes  $taxes  Taxes object.
 	 */
-	public function __construct( Prices $prices ) {
+	/** @phpstan-ignore constructor.unusedParameter */
+	public function __construct( Prices $_prices, Taxes $taxes ) { // phpcs:ignore Generic.CodeAnalysis.UnusedParameters.UnusedParameter
 
-		$this->prices = $prices;
+		$this->taxes  = $taxes;
 	}
 
 	/**
@@ -53,7 +54,7 @@ class Variations {
 	 */
 	public function add_history( array $variation_attributes, WC_Product_Variable $product_variable, WC_Product_Variation $variation ) : array {
 
-		$variation_attributes['_wc_price_history_lowest_price'] = (float) $this->prices->get_lowest_price_raw_taxed( $variation );
+		$variation_attributes['_wc_price_history_lowest_price'] = (float) $this->taxes->get_lowest_price_raw_taxed( $variation );
 
 		return $variation_attributes;
 	}

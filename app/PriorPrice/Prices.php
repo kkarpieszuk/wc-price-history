@@ -2,12 +2,9 @@
 
 namespace PriorPrice;
 
-class Prices {
+use PriorPrice\PriceDisplayStrategy\PriceContext;
 
-	/**
-	 * @var \PriorPrice\HistoryStorage
-	 */
-	private $history_storage;
+class Prices {
 
 	/**
 	 * @var \PriorPrice\SettingsData
@@ -20,18 +17,23 @@ class Prices {
 	private $taxes;
 
 	/**
+	 * @var PriceContext
+	 */
+	private $price_context;
+
+	/**
 	 * Constructor.
 	 *
 	 * @since 1.0
 	 * @since 1.6.2 uses Taxes class.
 	 *
-	 * @param \PriorPrice\HistoryStorage $history_storage Prices object.
-	 * @param \PriorPrice\SettingsData   $settings_data   Settings data object.
-	 * @param \PriorPrice\Taxes          $taxes           Taxes object.
+	 * @param \PriorPrice\HistoryStorage $_history_storage Prices object. Not used.
+	 * @param \PriorPrice\SettingsData   $settings_data    Settings data object.
+	 * @param \PriorPrice\Taxes          $taxes            Taxes object.
 	 */
-	public function __construct( HistoryStorage $history_storage, SettingsData $settings_data, Taxes $taxes ) {
+	/** @phpstan-ignore constructor.unusedParameter */
+	public function __construct( HistoryStorage $_history_storage, SettingsData $settings_data, Taxes $taxes ) { // phpcs:ignore Generic.CodeAnalysis.UnusedParameters.UnusedParameter
 
-		$this->history_storage = $history_storage;
 		$this->settings_data   = $settings_data;
 		$this->taxes           = $taxes;
 	}
@@ -69,7 +71,9 @@ class Prices {
 			return $html;
 		}
 
-		return $html . $this->lowest_price_html( $wc_product );
+		$this->price_context = new PriceContext( $wc_product, $this->taxes, $this->settings_data );
+
+		return $html . $this->price_context->lowest_price_html( $wc_product );
 	}
 
 	/**
@@ -83,77 +87,9 @@ class Prices {
 	 */
 	public function lowest_price_html(  $wc_product ): string {
 
-		/**
-		 * Filter the lowest price HTML before displaying it.
-		 *
-		 * @since {VERSION}
-		 *
-		 * @param bool|float $lowest_pre Lowest price HTML.
-		 * @param \WC_Product $wc_product WC Product.
-		 */
-		$lowest_pre = apply_filters( 'wc_price_history_lowest_price_html_pre', false, $wc_product );
+		_deprecated_function( __METHOD__, '{VERSION}', 'PriorPrice\PriceContext::lowest_price_html' );
 
-		$days_number = $this->settings_data->get_days_number();
-
-		if ( $lowest_pre !== false && is_numeric( $lowest_pre ) ) {
-			return $this->display_from_template( [ $lowest_pre ], $days_number, $wc_product );
-		}
-
-		if (
-			$wc_product instanceof \WC_Product_Variable &&
-			$this->settings_data->get_variable_product_before_selection() === 'lowest_range'
-		) {
-			return $this->lowest_price_html_as_range( $wc_product, $days_number );
-		}
-
-		$lowest = $this->get_lowest_price_raw_non_taxed( $wc_product );
-		$lowest = $this->taxes->apply_taxes( $lowest, $wc_product );
-		/**
-		 * Filter the lowest price raw value before displaying it as HTML (taxes already applied).
-		 *
-		 * @since 1.7.1
-		 *
-		 * @param float       $lowest     Lowest price.
-		 * @param \WC_Product $wc_product WC Product.
-		 */
-		$lowest = apply_filters( 'wc_price_history_lowest_price_html_raw_value_taxed', $lowest, $wc_product );
-
-		if ( (float) $lowest <= 0 ) {
-			return $this->handle_old_history( $wc_product, $days_number );
-		}
-
-		return $this->display_from_template( [ $lowest ], $days_number, $wc_product );
-	}
-
-	private function lowest_price_html_as_range( \WC_Product_Variable $wc_product, int $days_number ) : string {
-
-		$all_variations = $wc_product->get_available_variations( 'objects' );
-
-		// Among all variations, find pair of prices: the lowest price and the highest using get_lowest_price_raw_non_taxed.
-		$lowest_price = null;
-		$highest_price = null;
-
-		foreach ( $all_variations as $variation ) {
-
-			if ( ! $variation instanceof \WC_Product_Variation ) {
-				continue;
-			}
-
-			$price = $this->get_lowest_price_raw_non_taxed( $variation );
-
-			if ( $lowest_price === null || $price < $lowest_price ) {
-				$lowest_price = $price;
-			}
-
-			if ( $highest_price === null || $price > $highest_price ) {
-				$highest_price = $price;
-			}
-		}
-
-		$lowest_price  = $this->taxes->apply_taxes( (float) $lowest_price, $wc_product );
-		$highest_price = $this->taxes->apply_taxes( (float) $highest_price, $wc_product );
-
-		return $this->display_from_template( [ $lowest_price, $highest_price ], $days_number, $wc_product );
+		return $this->price_context->lowest_price_html( $wc_product );
 	}
 
 	/**
@@ -167,14 +103,9 @@ class Prices {
 	 */
 	public function get_lowest_price_raw_non_taxed( \WC_Product $wc_product ): float {
 
-		$days_number = $this->settings_data->get_days_number();
-		$count_from  = $this->settings_data->get_count_from();
+		_deprecated_function( __METHOD__, '{VERSION}', 'PriorPrice\Taxes::get_lowest_price_raw_non_taxed' );
 
-		if ( in_array( $count_from, [ 'sale_start', 'sale_start_inclusive' ] ) && $wc_product->is_on_sale() ) {
-			return $this->history_storage->get_minimal_from_sale_start( $wc_product, $days_number, $count_from );
-		}
-
-		return (float) $this->history_storage->get_minimal( $wc_product->get_id(), $days_number );
+		return $this->taxes->get_lowest_price_raw_non_taxed( $wc_product );
 	}
 
 	/**
@@ -188,36 +119,9 @@ class Prices {
 	 */
 	public function get_lowest_price_raw_taxed( \WC_Product $wc_product ): float {
 
-		$price = $this->get_lowest_price_raw_non_taxed( $wc_product );
+		_deprecated_function( __METHOD__, '{VERSION}', 'PriorPrice\Taxes::get_lowest_price_raw_taxed' );
 
-		return $this->taxes->apply_taxes( $price, $wc_product );
-	}
-
-	/**
-	 * Display price value HTML.
-	 *
-	 * Optionally adds CSS classes to style it.
-	 *
-	 * @since 1.7
-	 *
-	 * @param float $price Price.
-	 *
-	 * @return string
-	 */
-	private function display_price_value_html( float $price ) : string {
-
-		$line_through_class = $this->settings_data->get_display_line_through() ? 'line-through' : '';
-		$price_format       = get_woocommerce_price_format();
-		$price_format       = str_replace( '%2$s', '<span class="wc-price-history-lowest-raw-value">%2$s</span>', $price_format );
-
-		$wc_price = wc_price(
-			$price,
-			[
-				'price_format' => $price_format,
-			]
-		);
-
-		return '<span class="wc-price-history prior-price-value ' . $line_through_class .'">' . $wc_price . '</span>';
+		return $this->taxes->get_lowest_price_raw_taxed( $wc_product );
 	}
 
 	/**
@@ -293,78 +197,5 @@ class Prices {
 		global $wp_query;
 
 		return isset( $wp_query->queried_object_id ) && $wp_query->queried_object_id === $wc_product->get_id();
-	}
-
-	/**
-	 * Handle history older than x days (returned price is 0).
-	 *
-	 * @since 1.9.0
-	 *
-	 * @param \WC_Product $wc_product WC Product.
-	 * @param int         $days_number Days number.
-	 *
-	 * @return string
-	 */
-	private function handle_old_history( \WC_Product $wc_product, int $days_number ) : string {
-
-		$old_history = $this->settings_data->get_old_history();
-
-		if ( $old_history === 'hide' ) {
-			return '';
-		}
-
-		if ( $old_history === 'current_price' ) {
-			return $this->display_from_template( [ (float) $wc_product->get_price() ], $days_number, $wc_product );
-		}
-
-		$old_history_custom_text = $this->settings_data->get_old_history_custom_text();
-
-		$old_history_custom_text = str_replace(
-			[ '{price}', '{days}' ],
-			[ $this->display_price_value_html( (float) $wc_product->get_price() ), $days_number ],
-			$old_history_custom_text
-		);
-
-		return '<div class="wc-price-history prior-price lowest">' . $old_history_custom_text . '</div>';
-	}
-
-	/**
-	 * Display full price HTML from template.
-	 *
-	 * @since 1.9.0
-	 *
-	 * @param array<float> $lowest     Lowest price.
-	 * @param int          $days_number Days number.
-	 *
-	 * @return string
-	 */
-	private function display_from_template( array $lowest, int $days_number, \WC_Product $wc_product ) : string {
-
-		$display_text = $this->settings_data->get_display_text();
-		$formatted    = [];
-
-		foreach ( $lowest as $price ) {
-			$formatted[] = $this->display_price_value_html( $price );
-		}
-		$formatted = implode( ' - ', $formatted );
-
-		$display_text = str_replace( '{price}', $formatted, $display_text );
-		$display_text = str_replace( '{days}', (string) $days_number, $display_text );
-
-		/**
-		 * Filter the display text from template.
-		 *
-		 * @since {VERSION}
-		 *
-		 * @param string    $display_text Display text.
-		 * @param float|int $lowest       Lowest price.
-		 * @param int       $days_number  Days number.
-		 */
-		$display_text = apply_filters( 'wc_price_history_display_from_template', $display_text, $lowest[0], $days_number );
-
-		return '<div class="wc-price-history prior-price lowest"
-					data-product-id="' . $wc_product->get_id() . '"
-					data-product-type="' . $wc_product->get_type() . '"
-					>' . $display_text . '</div>';
 	}
 }
