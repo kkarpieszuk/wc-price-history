@@ -2,26 +2,7 @@
 
 namespace PriorPrice\PriceDisplayStrategy;
 
-use PriorPrice\SettingsData;
-use PriorPrice\Taxes;
-
-class SinglePrice implements PriceDisplayStrategy {
-
-	/**
-	 * @var \PriorPrice\Taxes
-	 */
-	private $taxes;
-
-	/**
-	 * @var \PriorPrice\SettingsData
-	 */
-	private $settings_data;
-
-	public function __construct( Taxes $taxes, SettingsData $settings_data ) {
-
-		$this->taxes = $taxes;
-		$this->settings_data = $settings_data;
-	}
+class SinglePrice extends PriceDisplayStrategy {
 
 	/**
 	 * Get the lowest price HTML.
@@ -67,33 +48,6 @@ class SinglePrice implements PriceDisplayStrategy {
 		}
 
 		return $this->display_from_template( $lowest, $days_number );
-	}
-
-	/**
-	 * Display price value HTML.
-	 *
-	 * Optionally adds CSS classes to style it.
-	 *
-	 * @since 1.7
-	 *
-	 * @param float $price Price.
-	 *
-	 * @return string
-	 */
-	private function display_price_value_html( float $price ) : string {
-
-		$line_through_class = $this->settings_data->get_display_line_through() ? 'line-through' : '';
-		$price_format       = get_woocommerce_price_format();
-		$price_format       = str_replace( '%2$s', '<span class="wc-price-history-lowest-raw-value">%2$s</span>', $price_format );
-
-		$wc_price = wc_price(
-			$price,
-			[
-				'price_format' => $price_format,
-			]
-		);
-
-		return '<span class="wc-price-history prior-price-value ' . $line_through_class .'">' . $wc_price . '</span>';
 	}
 
 	/**
