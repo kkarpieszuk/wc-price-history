@@ -7,7 +7,7 @@ class RangedPrice extends PriceDisplayStrategy {
 	/**
 	 * Get the lowest price HTML.
 	 *
-	 * @since 1.0
+	 * @since {VERSION}
 	 *
 	 * @param \WC_Product_Variable $wc_product WC Product.
 	 *
@@ -69,7 +69,7 @@ class RangedPrice extends PriceDisplayStrategy {
 	/**
 	 * Handle history older than x days (returned price is 0).
 	 *
-	 * @since 1.9.0
+	 * @since {VERSION}
 	 *
 	 * @param \WC_Product $wc_product WC Product.
 	 * @param int         $days_number Days number.
@@ -92,7 +92,7 @@ class RangedPrice extends PriceDisplayStrategy {
 
 		$old_history_custom_text = str_replace(
 			[ '{price}', '{days}' ],
-			[ $this->display_price_value_html( (float) $wc_product->get_price() ), $days_number ],
+			[ $this->display_price_value_html( [ (float) $wc_product->get_price() ] ), $days_number ],
 			$old_history_custom_text
 		);
 
@@ -102,7 +102,7 @@ class RangedPrice extends PriceDisplayStrategy {
 	/**
 	 * Display full price HTML from template.
 	 *
-	 * @since 1.9.0
+	 * @since {VERSION}
 	 *
 	 * @param array<int, float> $lowest     Lowest price.
 	 * @param int          $days_number Days number.
@@ -114,10 +114,7 @@ class RangedPrice extends PriceDisplayStrategy {
 		$display_text = $this->settings_data->get_display_text();
 		$formatted    = [];
 
-		foreach ( $lowest as $price ) {
-			$formatted[] = $this->display_price_value_html( $price );
-		}
-		$formatted = implode( ' - ', $formatted );
+		$formatted = $this->display_price_value_html( $lowest );
 
 		$display_text = str_replace( '{price}', $formatted, $display_text );
 		$display_text = str_replace( '{days}', (string) $days_number, $display_text );
@@ -137,6 +134,38 @@ class RangedPrice extends PriceDisplayStrategy {
 					data-product-id="' . $wc_product->get_id() . '"
 					data-product-type="' . $wc_product->get_type() . '"
 					>' . $display_text . '</div>';
+	}
+
+	/**
+	 * Display price value HTML.
+	 *
+	 * Optionally adds CSS classes to style it.
+	 *
+	 * @since {VERSION}
+	 *
+	 * @param array<int, float> $price Price.
+	 *
+	 * @return string
+	 */
+	protected function display_price_value_html( array $price ) : string {
+
+		$line_through_class = $this->settings_data->get_display_line_through() ? 'line-through' : '';
+		$price_format       = get_woocommerce_price_format();
+
+		$formatted = [];
+
+		foreach ( $price as $p ) {
+			$formatted[] = wc_price(
+				$p,
+				[
+					'price_format' => $price_format,
+				]
+			);
+		}
+
+		$wc_price = implode( ' - ', $formatted );
+
+		return '<span class="wc-price-history prior-price-value ' . $line_through_class .'"><span class="wc-price-history-lowest-raw-value">' . $wc_price . '</span></span>';
 	}
 
 }

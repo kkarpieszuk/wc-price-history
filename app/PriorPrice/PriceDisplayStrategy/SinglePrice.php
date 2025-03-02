@@ -7,7 +7,7 @@ class SinglePrice extends PriceDisplayStrategy {
 	/**
 	 * Get the lowest price HTML.
 	 *
-	 * @since 1.0
+	 * @since {VERSION}
 	 *
 	 * @param \WC_Product $wc_product WC Product.
 	 *
@@ -36,7 +36,7 @@ class SinglePrice extends PriceDisplayStrategy {
 		/**
 		 * Filter the lowest price raw value before displaying it as HTML (taxes already applied).
 		 *
-		 * @since 1.7.1
+		 * @since {VERSION}
 		 *
 		 * @param float       $lowest     Lowest price.
 		 * @param \WC_Product $wc_product WC Product.
@@ -53,7 +53,7 @@ class SinglePrice extends PriceDisplayStrategy {
 	/**
 	 * Handle history older than x days (returned price is 0).
 	 *
-	 * @since 1.9.0
+	 * @since {VERSION}
 	 *
 	 * @param \WC_Product $wc_product WC Product.
 	 * @param int         $days_number Days number.
@@ -86,7 +86,7 @@ class SinglePrice extends PriceDisplayStrategy {
 	/**
 	 * Display full price HTML from template.
 	 *
-	 * @since 1.9.0
+	 * @since {VERSION}
 	 *
 	 * @param float $lowest     Lowest price.
 	 * @param int   $days_number Days number.
@@ -112,5 +112,32 @@ class SinglePrice extends PriceDisplayStrategy {
 		$display_text = apply_filters( 'wc_price_history_display_from_template', $display_text, $lowest, $days_number );
 
 		return '<div class="wc-price-history prior-price lowest">' . $display_text . '</div>';
+	}
+
+	/**
+	 * Display price value HTML.
+	 *
+	 * Optionally adds CSS classes to style it.
+	 *
+	 * @since {VERSION}
+	 *
+	 * @param float $price Price.
+	 *
+	 * @return string
+	 */
+	protected function display_price_value_html( float $price ) : string {
+
+		$line_through_class = $this->settings_data->get_display_line_through() ? 'line-through' : '';
+		$price_format       = get_woocommerce_price_format();
+		$price_format       = str_replace( '%2$s', '<span class="wc-price-history-lowest-raw-value">%2$s</span>', $price_format );
+
+		$wc_price = wc_price(
+			$price,
+			[
+				'price_format' => $price_format,
+			]
+		);
+
+		return '<span class="wc-price-history prior-price-value ' . $line_through_class .'">' . $wc_price . '</span>';
 	}
 }

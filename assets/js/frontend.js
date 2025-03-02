@@ -11,7 +11,7 @@ jQuery(document).ready(function($) {
 		$wrapper.show();
 
 		 if ( $lowestPricePlaceholder.length ) {
-			 $lowestPricePlaceholder.text( formatPrice( lowestInVariation ) );
+			 $lowestPricePlaceholder.html( lowestInVariation );
 		 }
 	});
 
