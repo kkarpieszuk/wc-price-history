@@ -71,5 +71,8 @@ class Hooks {
 
 		$export = new Export( $history_storage, $settings_data );
 		$export->register_hooks();
+
+		$api = new Api( $taxes );
+		$api->register_hooks();
 	}
 }
