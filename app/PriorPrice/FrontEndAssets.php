@@ -46,7 +46,7 @@ class FrontEndAssets {
 	public function enqueue_scripts() : void {
 		wp_enqueue_style( 'wc-price-history-frontend', WC_PRICE_HISTORY_PLUGIN_URL . 'assets/css/frontend.css', [], '1.7' );
 
-		if ( is_product() ) {
+		if ( is_product() || is_shop() || is_archive() ) {
 			wp_enqueue_script( 'wc-price-history-frontend', WC_PRICE_HISTORY_PLUGIN_URL . 'assets/js/frontend.js', [ 'jquery' ], '2.1', true );
 
 			$price_format = [
