@@ -28,7 +28,7 @@ class SinglePrice extends PriceDisplayStrategy {
 		$days_number = $this->settings_data->get_days_number();
 
 		if ( $lowest_pre !== false && is_numeric( $lowest_pre ) ) {
-			return $this->display_from_template( $lowest_pre, $days_number );
+			return $this->display_from_template( $lowest_pre, $days_number, $wc_product );
 		}
 
 
@@ -47,7 +47,7 @@ class SinglePrice extends PriceDisplayStrategy {
 			return $this->handle_old_history( $wc_product, $days_number );
 		}
 
-		return $this->display_from_template( $lowest, $days_number );
+		return $this->display_from_template( $lowest, $days_number, $wc_product );
 	}
 
 	/**
@@ -69,7 +69,7 @@ class SinglePrice extends PriceDisplayStrategy {
 		}
 
 		if ( $old_history === 'current_price' ) {
-			return $this->display_from_template( (float) $wc_product->get_price(), $days_number );
+			return $this->display_from_template( (float) $wc_product->get_price(), $days_number, $wc_product );
 		}
 
 		$old_history_custom_text = $this->settings_data->get_old_history_custom_text();
@@ -93,7 +93,7 @@ class SinglePrice extends PriceDisplayStrategy {
 	 *
 	 * @return string
 	 */
-	private function display_from_template( float $lowest, int $days_number ) : string {
+	private function display_from_template( float $lowest, int $days_number, \WC_Product $wc_product ) : string {
 
 		$display_text = $this->settings_data->get_display_text();
 
@@ -111,7 +111,10 @@ class SinglePrice extends PriceDisplayStrategy {
 		 */
 		$display_text = apply_filters( 'wc_price_history_display_from_template', $display_text, $lowest, $days_number );
 
-		return '<div class="wc-price-history prior-price lowest">' . $display_text . '</div>';
+		return '<div class="wc-price-history prior-price lowest"
+			data-product-id="' . $wc_product->get_id() . '"
+			data-product-type="' . $wc_product->get_type() . '"
+			>' . $display_text . '</div>';
 	}
 
 	/**

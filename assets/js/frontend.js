@@ -1,11 +1,16 @@
 jQuery(document).ready(function($) {
 
+	let lowestPricePlaceholderHtml = null;
+
 	maybeHideLowestPrice();
 
 	$('form.variations_form').on('found_variation', function(event, variation) {
 
 		const $wrapper = $( '.wc-price-history.prior-price.lowest' ),
-		  $lowestPricePlaceholder = $( '.wc-price-history.prior-price-value .wc-price-history-lowest-raw-value'),
+		  $lowestPricePlaceholder =
+		  wc_price_history_frontend.variant_before_selection === 'lowest_range' ?
+			$( '.wc-price-history.prior-price-value .wc-price-history-lowest-raw-value') :
+			$( '.wc-price-history.prior-price-value .woocommerce-Price-amount.amount'),
 		  lowestInVariation = variation._wc_price_history_lowest_price;
 
 		$wrapper.show();
@@ -36,13 +41,21 @@ jQuery(document).ready(function($) {
 
 			const $lowestPricePlaceholder = $( this );
 
+			if ( ! lowestPricePlaceholderHtml ) {
+				lowestPricePlaceholderHtml = $lowestPricePlaceholder.html();
+			}
+
 			if ( $lowestPricePlaceholder.data( 'product-type' ) !== 'variable' ) {
 				return;
 			}
 
 			if ( wc_price_history_frontend.variant_before_selection === 'lowest_hide' ) {
 				$lowestPricePlaceholder.hide();
+
+				return;
 			}
+
+			$lowestPricePlaceholder.html( lowestPricePlaceholderHtml );
 		} );
 	}
 });
