@@ -50,11 +50,11 @@ class RangedPrice extends PriceDisplayStrategy {
 
 			$price = $this->taxes->get_lowest_price_raw_taxed( $variation );
 
-			if ( $price < $lowest_price ) {
+			if ( $price < $lowest_price || $lowest_price === 0 ) {
 				$lowest_price = $price;
 			}
 
-			if ( $price > $highest_price ) {
+			if ( $price > $highest_price || $highest_price === 0 ) {
 				$highest_price = $price;
 			}
 		}
