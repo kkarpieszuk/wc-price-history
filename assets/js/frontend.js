@@ -5,13 +5,13 @@ jQuery(document).ready(function($) {
 	maybeHideLowestPrice();
 
 	$('form.variations_form').on('found_variation', function(event, variation) {
-
-		const $wrapper = $( '.wc-price-history.prior-price.lowest' ),
-		  $lowestPricePlaceholder =
-		  wc_price_history_frontend.variant_before_selection === 'lowest_range' ?
-			$( '.wc-price-history.prior-price-value .wc-price-history-lowest-raw-value') :
-			$( '.wc-price-history.prior-price-value .woocommerce-Price-amount.amount'),
-		  lowestInVariation = variation._wc_price_history_lowest_price;
+		const $form = $( this ),
+			$wrapper = $form.siblings( '.wc-price-history.prior-price.lowest' ),
+			$lowestPricePlaceholder =
+			wc_price_history_frontend.variant_before_selection === 'lowest_range' ?
+				$wrapper.find( '.wc-price-history.prior-price-value .wc-price-history-lowest-raw-value') :
+				$wrapper.find( '.wc-price-history.prior-price-value .woocommerce-Price-amount.amount'),
+			lowestInVariation = variation._wc_price_history_lowest_price;
 
 		$wrapper.show();
 
