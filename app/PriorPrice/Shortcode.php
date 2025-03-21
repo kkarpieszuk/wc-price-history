@@ -124,6 +124,6 @@ class Shortcode {
 		$lowest = wc_price( $lowest, $wc_price_args );
 		$class  = $this->settings_data->get_display_line_through() ? 'line-through' : '';
 
-		return sprintf( '<div class="wc-price-history-shortcode %2$s">%1$s</div>', $lowest, $class );
+		return sprintf( '<div class="wc-price-history-shortcode %2$s" data-product_id="%3$d">%1$s</div>', $lowest, $class, $id );
 	}
 }

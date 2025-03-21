@@ -6,12 +6,21 @@ jQuery(document).ready(function($) {
 
 	$('form.variations_form').on('found_variation', function(event, variation) {
 		const $form = $( this ),
+			productId = $form.data( 'product_id' ),
 			$wrapper = $form.siblings( '.wc-price-history.prior-price.lowest' ),
 			$lowestPricePlaceholder =
 			wc_price_history_frontend.variant_before_selection === 'lowest_range' ?
 				$wrapper.find( '.wc-price-history.prior-price-value .wc-price-history-lowest-raw-value') :
 				$wrapper.find( '.wc-price-history.prior-price-value .woocommerce-Price-amount.amount'),
 			lowestInVariation = variation._wc_price_history_lowest_price;
+
+		const $shortcodes = $( '.wc-price-history-shortcode[data-product_id="' + productId + '"]' );
+		if ( $shortcodes.length ) {
+			$shortcodes.each(function() {
+				const $shortcode = $( this );
+				$shortcode.html( lowestInVariation );
+			});
+		}
 
 		$wrapper.show();
 
