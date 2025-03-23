@@ -30,11 +30,10 @@ class Shortcode {
 	 * @since 1.6.2 uses Taxes class.
 	 * @since 1.7 uses SettingsData class.
 	 *
-	 * @param \PriorPrice\HistoryStorage $_history_storage Prices object.
-	 * @param \PriorPrice\Taxes          $taxes            Taxes object.
-	 * @param \PriorPrice\SettingsData   $settings_data    Settings data object.
+	 * @param \PriorPrice\Taxes        $taxes         Taxes object.
+	 * @param \PriorPrice\SettingsData $settings_data Settings data object.
 	 */
-	public function __construct( HistoryStorage $_history_storage, Taxes $taxes, SettingsData $settings_data ) {
+	public function __construct( Taxes $taxes, SettingsData $settings_data ) {
 
 		$this->taxes           = $taxes;
 		$this->settings_data   = $settings_data;

@@ -2,6 +2,8 @@
 
 namespace PriorPrice\PriceDisplayStrategy;
 
+use WC_Product;
+
 class SinglePrice extends PriceDisplayStrategy {
 
 	/**
@@ -32,7 +34,7 @@ class SinglePrice extends PriceDisplayStrategy {
 		}
 
 
-		$lowest = $this->taxes->get_lowest_price_raw_taxed( $wc_product );
+		$lowest = $this->get_lowest_price_only( $wc_product )[0];
 		/**
 		 * Filter the lowest price raw value before displaying it as HTML (taxes already applied).
 		 *
@@ -76,7 +78,7 @@ class SinglePrice extends PriceDisplayStrategy {
 
 		$old_history_custom_text = str_replace(
 			[ '{price}', '{days}' ],
-			[ $this->display_price_value_html( (float) $wc_product->get_price() ), $days_number ],
+			[ $this->display_price_value_html( [ (float) $wc_product->get_price() ] ), $days_number ],
 			$old_history_custom_text
 		);
 
@@ -97,7 +99,7 @@ class SinglePrice extends PriceDisplayStrategy {
 
 		$display_text = $this->settings_data->get_display_text();
 
-		$display_text = str_replace( '{price}', $this->display_price_value_html( $lowest ), $display_text );
+		$display_text = str_replace( '{price}', $this->display_price_value_html( [ $lowest ] ), $display_text );
 		$display_text = str_replace( '{days}', (string) $days_number, $display_text );
 
 		/**
@@ -117,6 +119,11 @@ class SinglePrice extends PriceDisplayStrategy {
 			>' . $display_text . '</div>';
 	}
 
+	public function get_lowest_price_only( WC_Product $wc_product ): array {
+
+		return [ $this->taxes->get_lowest_price_raw_taxed( $wc_product ) ];
+	}
+
 	/**
 	 * Display price value HTML.
 	 *
@@ -124,18 +131,18 @@ class SinglePrice extends PriceDisplayStrategy {
 	 *
 	 * @since {VERSION}
 	 *
-	 * @param float $price Price.
+	 * @param array<int, float> $price Price.
 	 *
 	 * @return string
 	 */
-	public function display_price_value_html( float $price ) : string {
+	public function display_price_value_html( array $price ) : string {
 
 		$line_through_class = $this->settings_data->get_display_line_through() ? 'line-through' : '';
 		$price_format       = get_woocommerce_price_format();
 		$price_format       = str_replace( '%2$s', '<span class="wc-price-history-lowest-raw-value">%2$s</span>', $price_format );
 
 		$wc_price = wc_price(
-			$price,
+			$price[0],
 			[
 				'price_format' => $price_format,
 			]
