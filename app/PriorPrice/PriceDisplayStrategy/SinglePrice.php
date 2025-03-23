@@ -128,7 +128,7 @@ class SinglePrice extends PriceDisplayStrategy {
 	 *
 	 * @return string
 	 */
-	protected function display_price_value_html( float $price ) : string {
+	public function display_price_value_html( float $price ) : string {
 
 		$line_through_class = $this->settings_data->get_display_line_through() ? 'line-through' : '';
 		$price_format       = get_woocommerce_price_format();

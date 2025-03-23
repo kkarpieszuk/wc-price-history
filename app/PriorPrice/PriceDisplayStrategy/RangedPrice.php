@@ -36,6 +36,26 @@ class RangedPrice extends PriceDisplayStrategy {
 
 	private function lowest_price_html_as_range( \WC_Product_Variable $wc_product, int $days_number ) : string {
 
+		list( $lowest_price, $highest_price ) = $this->get_lowest_price_only( $wc_product );
+
+		if ( $lowest_price <= 0 && $highest_price <= 0 ) {
+			return $this->handle_old_history( $wc_product, $days_number );
+		}
+
+		return $this->display_from_template( [ $lowest_price, $highest_price ], $days_number, $wc_product );
+	}
+
+	/**
+	 * Get the lowest price only.
+	 *
+	 * @since {VERSION}
+	 *
+	 * @param \WC_Product_Variable $wc_product WC Product.
+	 *
+	 * @return array<int, float>
+	 */
+	public function get_lowest_price_only( $wc_product ): array {
+
 		$all_variations = $wc_product->get_available_variations( 'objects' );
 
 		// Among all variations, find pair of prices: the lowest price and the highest using get_lowest_price_raw_taxed.
@@ -59,11 +79,7 @@ class RangedPrice extends PriceDisplayStrategy {
 			}
 		}
 
-		if ( $lowest_price <= 0 && $highest_price <= 0 ) {
-			return $this->handle_old_history( $wc_product, $days_number );
-		}
-
-		return $this->display_from_template( [ $lowest_price, $highest_price ], $days_number, $wc_product );
+		return [ $lowest_price, $highest_price ];
 	}
 
 	/**
@@ -147,7 +163,7 @@ class RangedPrice extends PriceDisplayStrategy {
 	 *
 	 * @return string
 	 */
-	protected function display_price_value_html( array $price ) : string {
+	public function display_price_value_html( array $price ) : string {
 
 		$line_through_class = $this->settings_data->get_display_line_through() ? 'line-through' : '';
 		$price_format       = get_woocommerce_price_format();

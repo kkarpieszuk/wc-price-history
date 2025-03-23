@@ -54,7 +54,7 @@ class Variations {
 	 */
 	public function add_history( array $variation_attributes, WC_Product_Variable $product_variable, WC_Product_Variation $variation ) : array {
 
-		$price_format       = get_woocommerce_price_format();
+		$price_format = get_woocommerce_price_format();
 
 		$price = (float) $this->taxes->get_lowest_price_raw_taxed( $variation );
 

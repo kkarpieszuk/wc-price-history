@@ -32,6 +32,30 @@ abstract class PriceDisplayStrategy {
 	}
 
 	/**
+	 * Get the lowest price only.
+	 *
+	 * @since {VERSION}
+	 *
+	 * @param \WC_Product $wc_product WC Product.
+	 *
+	 * @return array<int, float>
+	 */
+	abstract public function get_lowest_price_only( \WC_Product $wc_product ) : array;
+
+	/**
+	 * Display price value HTML.
+	 *
+	 * Optionally adds CSS classes to style it.
+	 *
+	 * @since {VERSION}
+	 *
+	 * @param array<int, float> $price Price.
+	 *
+	 * @return string
+	 */
+	abstract public function display_price_value_html( array $price ) : string;
+
+	/**
 	 * Lowest price HTML.
 	 *
 	 * @since {VERSION}

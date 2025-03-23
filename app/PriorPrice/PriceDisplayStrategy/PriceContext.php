@@ -54,4 +54,11 @@ class PriceContext {
 	public function lowest_price_html( \WC_Product $product ) : string {
 		return $this->strategy->lowest_price_html( $product );
 	}
+
+	public function lowest_price_no_text( \WC_Product $product ) : string {
+
+		$lowest = $this->strategy->get_lowest_price_only( $product );
+
+		return $this->strategy->display_price_value_html( $lowest );
+	}
 }

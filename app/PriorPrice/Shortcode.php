@@ -2,6 +2,8 @@
 
 namespace PriorPrice;
 
+use PriorPrice\PriceDisplayStrategy\PriceContext;
+
 /**
  * Shortcode class.
  *
@@ -17,13 +19,6 @@ class Shortcode {
 	public $settings_data;
 
 	/**
-	 * @since 1.2
-	 *
-	 * @var \PriorPrice\HistoryStorage
-	 */
-	private $history_storage;
-
-	/**
 	 * @var \PriorPrice\Taxes
 	 */
 	private $taxes;
@@ -35,13 +30,12 @@ class Shortcode {
 	 * @since 1.6.2 uses Taxes class.
 	 * @since 1.7 uses SettingsData class.
 	 *
-	 * @param \PriorPrice\HistoryStorage $history_storage Prices object.
-	 * @param \PriorPrice\Taxes          $taxes           Taxes object.
-	 * @param \PriorPrice\SettingsData   $settings_data   Settings data object.
+	 * @param \PriorPrice\HistoryStorage $_history_storage Prices object.
+	 * @param \PriorPrice\Taxes          $taxes            Taxes object.
+	 * @param \PriorPrice\SettingsData   $settings_data    Settings data object.
 	 */
-	public function __construct( HistoryStorage $history_storage, Taxes $taxes, SettingsData $settings_data ) {
+	public function __construct( HistoryStorage $_history_storage, Taxes $taxes, SettingsData $settings_data ) {
 
-		$this->history_storage = $history_storage;
 		$this->taxes           = $taxes;
 		$this->settings_data   = $settings_data;
 	}
@@ -98,31 +92,9 @@ class Shortcode {
 			return '';
 		}
 
-		$days_number = $this->settings_data->get_days_number();
-		$count_from  = $this->settings_data->get_count_from();
-
-		if ( in_array( $count_from, [ 'sale_start', 'sale_start_inclusive' ] ) && $product->is_on_sale() ) {
-			$lowest = $this->history_storage->get_minimal_from_sale_start( $product, $days_number, $count_from );
-		} else {
-			$lowest = $this->history_storage->get_minimal( $id, $days_number );
-		}
-
-		if ( ! $lowest ) {
-			return '';
-		}
-
-		$lowest = $this->taxes->apply_taxes( $lowest, $product );
-		/**
-		 * This filter is documented in app/PriorPrice/Prices.php.
-		 */
-		$lowest = apply_filters( 'wc_price_history_lowest_price_html_raw_value_taxed', $lowest, $product);
-
-		$wc_price_args = [
-			'currency' => (bool) $atts['show_currency'] ? get_woocommerce_currency() : 'none',
-		];
-
-		$lowest = wc_price( $lowest, $wc_price_args );
-		$class  = $this->settings_data->get_display_line_through() ? 'line-through' : '';
+		$context = new PriceContext( $product, $this->taxes, $this->settings_data );
+		$lowest  = $context->lowest_price_no_text( $product );
+		$class   = $this->settings_data->get_display_line_through() ? 'line-through' : '';
 
 		return sprintf( '<div class="wc-price-history-shortcode %2$s" data-product_id="%3$d">%1$s</div>', $lowest, $class, $id );
 	}
