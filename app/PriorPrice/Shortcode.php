@@ -95,6 +95,15 @@ class Shortcode {
 		$lowest  = $context->lowest_price_no_text( $product );
 		$class   = $this->settings_data->get_display_line_through() ? 'line-through' : '';
 
-		return sprintf( '<div class="wc-price-history-shortcode %2$s" data-product_id="%3$d">%1$s</div>', $lowest, $class, $id );
+		return sprintf(
+			'<div class="wc-price-history-shortcode %2$s"
+				data-product_id="%3$d"
+				data-product-type="%4$s"
+				>%1$s</div>',
+			$lowest,
+			$class,
+			$id,
+			$product->get_type()
+		);
 	}
 }

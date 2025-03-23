@@ -1,6 +1,7 @@
 jQuery(document).ready(function($) {
 
 	let lowestPricePlaceholderHtml = null;
+	let lowestPricePlaceholderHtmlInShortcode = null;
 
 	maybeHideLowestPrice();
 
@@ -46,7 +47,7 @@ jQuery(document).ready(function($) {
 
 	function maybeHideLowestPrice() {
 
-		$( '.wc-price-history.prior-price.lowest' ).each(function() {
+		$( '.wc-price-history.prior-price.lowest ' ).each(function() {
 
 			const $lowestPricePlaceholder = $( this );
 
@@ -65,6 +66,28 @@ jQuery(document).ready(function($) {
 			}
 
 			$lowestPricePlaceholder.html( lowestPricePlaceholderHtml );
+		} );
+
+		$( '.wc-price-history-shortcode' ).each(function() {
+debugger;
+			const $lowestPricePlaceholder = $( this );
+			const $onlyPrice = $lowestPricePlaceholder.find( '.woocommerce-Price-amount.amount' );
+
+			if ( ! lowestPricePlaceholderHtmlInShortcode ) {
+				lowestPricePlaceholderHtmlInShortcode = $onlyPrice.html();
+			}
+
+			if ( $lowestPricePlaceholder.data( 'product-type' ) !== 'variable' ) {
+				return;
+			}
+
+			if ( wc_price_history_frontend.variant_before_selection === 'lowest_hide' ) {
+				$lowestPricePlaceholder.hide();
+
+				return;
+			}
+
+			$onlyPrice.html( lowestPricePlaceholderHtmlInShortcode );
 		} );
 	}
 });
