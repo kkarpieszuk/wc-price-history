@@ -1,8 +1,6 @@
 jQuery(document).ready(function($) {
 	class PriceHistoryManager {
 		constructor() {
-			this.lowestPricePlaceholder = null;
-			this.lowestPricePlaceholderInShortcode = null;
 			this.variantBeforeSelection = wc_price_history_frontend.variant_before_selection;
 
 			this.init();
@@ -65,8 +63,6 @@ jQuery(document).ready(function($) {
 			$('.wc-price-history.prior-price.lowest').each((_, element) => {
 				const $element = $(element);
 
-				this.lowestPricePlaceholder = this.lowestPricePlaceholder || $element.html();
-
 				if ($element.data('product-type') !== 'variable') {
 					return;
 				}
@@ -76,7 +72,7 @@ jQuery(document).ready(function($) {
 					return;
 				}
 
-				$element.html(this.lowestPricePlaceholder);
+				$element.html( this._getDefaultPricePlaceholder( $element ) );
 			});
 		}
 
@@ -84,9 +80,6 @@ jQuery(document).ready(function($) {
 			$('.wc-price-history-shortcode').each((_, element) => {
 				const $shortcode = $(element);
 				const $priceElement = this.getPriceElement($shortcode);
-
-				this.lowestPricePlaceholderInShortcode =
-					this.lowestPricePlaceholderInShortcode || $priceElement.html();
 
 				if ($shortcode.data('product-type') !== 'variable') {
 					return;
@@ -97,8 +90,19 @@ jQuery(document).ready(function($) {
 					return;
 				}
 
-				$priceElement.html(this.lowestPricePlaceholderInShortcode);
+				$priceElement.html( this._getDefaultPricePlaceholder( $shortcode ) );
 			});
+		}
+
+		_getDefaultPricePlaceholder( $element ) {
+
+			return this._decodeHTMLEntities( $element.data('product-default-lowest-price') );
+		}
+
+		_decodeHTMLEntities(text) {
+			const textarea = document.createElement('textarea');
+			textarea.innerHTML = text;
+			return textarea.value;
 		}
 	}
 

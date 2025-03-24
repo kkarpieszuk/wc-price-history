@@ -101,11 +101,13 @@ class Shortcode {
 			'<div class="wc-price-history-shortcode %2$s"
 				data-product_id="%3$d"
 				data-product-type="%4$s"
+				data-product-default-lowest-price="%5$s"
 				>%1$s</div>',
 			$lowest,
 			$class,
 			$id,
-			$product->get_type()
+			$product->get_type(),
+			esc_html( $lowest )
 		);
 	}
 }

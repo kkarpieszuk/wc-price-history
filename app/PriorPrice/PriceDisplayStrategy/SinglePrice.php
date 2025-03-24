@@ -116,6 +116,7 @@ class SinglePrice extends PriceDisplayStrategy {
 		return '<div class="wc-price-history prior-price lowest"
 			data-product-id="' . $wc_product->get_id() . '"
 			data-product-type="' . $wc_product->get_type() . '"
+			data-product-default-lowest-price="' . esc_html( $display_text ) . '"
 			>' . $display_text . '</div>';
 	}
 
