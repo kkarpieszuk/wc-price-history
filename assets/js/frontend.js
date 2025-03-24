@@ -15,7 +15,7 @@ jQuery(document).ready(function($) {
 				$wrapper.find( '.wc-price-history.prior-price-value .woocommerce-Price-amount.amount'),
 			lowestInVariation = variation._wc_price_history_lowest_price;
 
-		const $shortcodes = $( '.wc-price-history-shortcode[data-product_id="' + productId + '"]' );
+		const $shortcodes = $( '.wc-price-history-shortcode[data-product_id="' + productId + '"] .wc-price-history-lowest-raw-value' );
 		if ( $shortcodes.length ) {
 			$shortcodes.each(function() {
 				const $shortcode = $( this );
@@ -69,9 +69,8 @@ jQuery(document).ready(function($) {
 		} );
 
 		$( '.wc-price-history-shortcode' ).each(function() {
-debugger;
 			const $lowestPricePlaceholder = $( this );
-			const $onlyPrice = $lowestPricePlaceholder.find( '.woocommerce-Price-amount.amount' );
+			const $onlyPrice = $lowestPricePlaceholder.find( '.wc-price-history-lowest-raw-value' );
 
 			if ( ! lowestPricePlaceholderHtmlInShortcode ) {
 				lowestPricePlaceholderHtmlInShortcode = $onlyPrice.html();
