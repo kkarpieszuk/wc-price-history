@@ -1,91 +1,107 @@
 jQuery(document).ready(function($) {
+	class PriceHistoryManager {
+		constructor() {
+			this.lowestPricePlaceholder = null;
+			this.lowestPricePlaceholderInShortcode = null;
+			this.variantBeforeSelection = wc_price_history_frontend.variant_before_selection;
 
-	let lowestPricePlaceholderHtml = null;
-	let lowestPricePlaceholderHtmlInShortcode = null;
+			this.init();
+		}
 
-	maybeHideLowestPrice();
+		init() {
+			this.handleInitialState();
+			this.bindEvents();
+		}
 
-	$('form.variations_form').on('found_variation', function(event, variation) {
-		const $form = $( this ),
-			productId = $form.data( 'product_id' ),
-			$wrapper = $form.siblings( '.wc-price-history.prior-price.lowest' ),
-			$lowestPricePlaceholder =
-				wc_price_history_frontend.variant_before_selection === 'lowest_range' ?
-					$wrapper.find( '.wc-price-history.prior-price-value .wc-price-history-lowest-raw-value') :
-					$wrapper.find( '.wc-price-history.prior-price-value .woocommerce-Price-amount.amount'),
-			lowestInVariation = variation._wc_price_history_lowest_price;
+		bindEvents() {
+			$('form.variations_form')
+				.on('found_variation', (event, variation) => this.handleVariationChange(event, variation))
+				.on('reset_data', () => this.handleInitialState());
+		}
 
-		const $shortcodes = $( '.wc-price-history-shortcode[data-product_id="' + productId + '"]' );
-		if ( $shortcodes.length ) {
-			$shortcodes.each(function() {
-				const $shortcode = $( this );
-				const $onlyPrice =
-					wc_price_history_frontend.variant_before_selection === 'lowest_range' ?
-					$shortcode.find( '.wc-price-history-lowest-raw-value' ) :
-					$shortcode.find( '.woocommerce-Price-amount.amount' );
+		handleVariationChange(event, variation) {
+			const $form = $(event.currentTarget);
+			const productId = $form.data('product_id');
+			const lowestPrice = variation._wc_price_history_lowest_price;
 
-				$onlyPrice.html( lowestInVariation );
+			this.updateMainPrice($form, lowestPrice);
+			this.updateShortcodes(productId, lowestPrice);
+		}
+
+		updateMainPrice($form, lowestPrice) {
+			const $wrapper = $form.siblings('.wc-price-history.prior-price.lowest');
+			const $priceElement = this.getPriceElement($wrapper);
+
+			$wrapper.show();
+			if ($priceElement.length) {
+				$priceElement.html(lowestPrice);
+			}
+		}
+
+		updateShortcodes(productId, lowestPrice) {
+			const $shortcodes = $(`.wc-price-history-shortcode[data-product_id="${productId}"]`);
+
+			$shortcodes.each((_, shortcode) => {
+				const $shortcode = $(shortcode);
+				const $priceElement = this.getPriceElement($shortcode);
+
+				$priceElement.html(lowestPrice);
 				$shortcode.show();
 			});
 		}
 
-		$wrapper.show();
+		getPriceElement($container) {
+			return this.variantBeforeSelection === 'lowest_range'
+				? $container.find('.wc-price-history-lowest-raw-value')
+				: $container.find('.woocommerce-Price-amount.amount');
+		}
 
-		 if ( $lowestPricePlaceholder.length ) {
-			 $lowestPricePlaceholder.html( lowestInVariation );
-		 }
-	});
+		handleInitialState() {
+			this.handleMainPriceDisplay();
+			this.handleShortcodesDisplay();
+		}
 
-	$('form.variations_form').on('reset_data', function(event) {
+		handleMainPriceDisplay() {
+			$('.wc-price-history.prior-price.lowest').each((_, element) => {
+				const $element = $(element);
 
-		maybeHideLowestPrice();
-	});
+				this.lowestPricePlaceholder = this.lowestPricePlaceholder || $element.html();
 
-	function maybeHideLowestPrice() {
+				if ($element.data('product-type') !== 'variable') {
+					return;
+				}
 
-		$( '.wc-price-history.prior-price.lowest ' ).each(function() {
+				if (this.variantBeforeSelection === 'lowest_hide') {
+					$element.hide();
+					return;
+				}
 
-			const $lowestPricePlaceholder = $( this );
+				$element.html(this.lowestPricePlaceholder);
+			});
+		}
 
-			if ( ! lowestPricePlaceholderHtml ) {
-				lowestPricePlaceholderHtml = $lowestPricePlaceholder.html();
-			}
+		handleShortcodesDisplay() {
+			$('.wc-price-history-shortcode').each((_, element) => {
+				const $shortcode = $(element);
+				const $priceElement = this.getPriceElement($shortcode);
 
-			if ( $lowestPricePlaceholder.data( 'product-type' ) !== 'variable' ) {
-				return;
-			}
+				this.lowestPricePlaceholderInShortcode =
+					this.lowestPricePlaceholderInShortcode || $priceElement.html();
 
-			if ( wc_price_history_frontend.variant_before_selection === 'lowest_hide' ) {
-				$lowestPricePlaceholder.hide();
+				if ($shortcode.data('product-type') !== 'variable') {
+					return;
+				}
 
-				return;
-			}
+				if (this.variantBeforeSelection === 'lowest_hide') {
+					$shortcode.hide();
+					return;
+				}
 
-			$lowestPricePlaceholder.html( lowestPricePlaceholderHtml );
-		} );
-
-		$( '.wc-price-history-shortcode' ).each(function() {
-			const $lowestPricePlaceholder = $( this );
-			const $onlyPrice =
-				wc_price_history_frontend.variant_before_selection === 'lowest_range' ?
-					$lowestPricePlaceholder.find( '.wc-price-history-lowest-raw-value' ) :
-					$lowestPricePlaceholder.find( '.woocommerce-Price-amount.amount' );
-
-			if ( ! lowestPricePlaceholderHtmlInShortcode ) {
-				lowestPricePlaceholderHtmlInShortcode = $onlyPrice.html();
-			}
-
-			if ( $lowestPricePlaceholder.data( 'product-type' ) !== 'variable' ) {
-				return;
-			}
-
-			if ( wc_price_history_frontend.variant_before_selection === 'lowest_hide' ) {
-				$lowestPricePlaceholder.hide();
-
-				return;
-			}
-
-			$onlyPrice.html( lowestPricePlaceholderHtmlInShortcode );
-		} );
+				$priceElement.html(this.lowestPricePlaceholderInShortcode);
+			});
+		}
 	}
+
+	// Initialize the price history manager
+	new PriceHistoryManager();
 });
