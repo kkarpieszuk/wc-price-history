@@ -10,16 +10,22 @@ jQuery(document).ready(function($) {
 			productId = $form.data( 'product_id' ),
 			$wrapper = $form.siblings( '.wc-price-history.prior-price.lowest' ),
 			$lowestPricePlaceholder =
-			wc_price_history_frontend.variant_before_selection === 'lowest_range' ?
-				$wrapper.find( '.wc-price-history.prior-price-value .wc-price-history-lowest-raw-value') :
-				$wrapper.find( '.wc-price-history.prior-price-value .woocommerce-Price-amount.amount'),
+				wc_price_history_frontend.variant_before_selection === 'lowest_range' ?
+					$wrapper.find( '.wc-price-history.prior-price-value .wc-price-history-lowest-raw-value') :
+					$wrapper.find( '.wc-price-history.prior-price-value .woocommerce-Price-amount.amount'),
 			lowestInVariation = variation._wc_price_history_lowest_price;
 
-		const $shortcodes = $( '.wc-price-history-shortcode[data-product_id="' + productId + '"] .wc-price-history-lowest-raw-value' );
+		const $shortcodes = $( '.wc-price-history-shortcode[data-product_id="' + productId + '"]' );
 		if ( $shortcodes.length ) {
 			$shortcodes.each(function() {
 				const $shortcode = $( this );
-				$shortcode.html( lowestInVariation );
+				const $onlyPrice =
+					wc_price_history_frontend.variant_before_selection === 'lowest_range' ?
+					$shortcode.find( '.wc-price-history-lowest-raw-value' ) :
+					$shortcode.find( '.woocommerce-Price-amount.amount' );
+
+				$onlyPrice.html( lowestInVariation );
+				$shortcode.show();
 			});
 		}
 
@@ -34,16 +40,6 @@ jQuery(document).ready(function($) {
 
 		maybeHideLowestPrice();
 	});
-
-	function formatPrice(price) {
-
-		let formattedPrice = parseFloat( price ).toFixed( wc_price_history_frontend.decimals );
-
-		formattedPrice = formattedPrice.replace(',', wc_price_history_frontend.thousand_separator);
-		formattedPrice = formattedPrice.replace('.', wc_price_history_frontend.decimal_separator);
-
-		return formattedPrice;
-	}
 
 	function maybeHideLowestPrice() {
 
@@ -70,7 +66,10 @@ jQuery(document).ready(function($) {
 
 		$( '.wc-price-history-shortcode' ).each(function() {
 			const $lowestPricePlaceholder = $( this );
-			const $onlyPrice = $lowestPricePlaceholder.find( '.wc-price-history-lowest-raw-value' );
+			const $onlyPrice =
+				wc_price_history_frontend.variant_before_selection === 'lowest_range' ?
+					$lowestPricePlaceholder.find( '.wc-price-history-lowest-raw-value' ) :
+					$lowestPricePlaceholder.find( '.woocommerce-Price-amount.amount' );
 
 			if ( ! lowestPricePlaceholderHtmlInShortcode ) {
 				lowestPricePlaceholderHtmlInShortcode = $onlyPrice.html();
