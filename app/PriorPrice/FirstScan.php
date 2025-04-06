@@ -130,7 +130,10 @@ class FirstScan {
 	 */
 	public function maybe_start_scan(): void {
 
-		if ( isset( $_POST['wc_price_history_force_first_scan_end'] ) || isset( $_POST['wc_price_history_restart_first_scan'] ) ) {
+		if (
+			isset( $_POST['action'] ) &&
+			in_array( $_POST['action'], [ 'wc_price_history_force_first_scan_end', 'wc_price_history_restart_first_scan' ], true )
+		) {
 			return;
 		}
 
