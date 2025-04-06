@@ -82,4 +82,39 @@ jQuery(document).ready(function($) {
 			$( '#wc-price-history-fix-history' ).prop( 'disabled', false ).find( '.spinner' ).remove();
 		}
 	} );
+
+	$( '#wc-price-history-force-first-scan-end' ).on( 'click', function() {
+		$( this ).prop( 'disabled', true ).append( ' <span class="spinner is-active"></span>' );
+		if ( confirm( wc_price_history_admin.force_first_scan_end_confirm ) ) {
+			$.post(
+				ajaxurl,
+				{
+					action: 'wc_price_history_force_first_scan_end',
+					security: wc_price_history_admin.force_first_scan_nonce
+				},
+				function( response ) {
+					// Reload the page.
+					location.reload();
+				}
+			);
+		} else {
+			$( '#wc-price-history-force-first-scan-end' ).prop( 'disabled', false ).find( '.spinner' ).remove();
+		}
+	} );
+
+	$( '#wc-price-history-restart-first-scan' ).on( 'click', function() {
+		$( this ).prop( 'disabled', true ).append( ' <span class="spinner is-active"></span>' );
+		if ( confirm( wc_price_history_admin.restart_first_scan_confirm ) ) {
+			$.post(
+				ajaxurl,
+				{
+					action: 'wc_price_history_restart_first_scan',
+					security: wc_price_history_admin.force_first_scan_nonce
+				},
+				function( response ) {
+					location.reload();
+				}
+			);
+		}
+	} );
 });

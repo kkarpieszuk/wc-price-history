@@ -38,7 +38,10 @@ class AdminAssets {
 			'clean_history_success'            => esc_html__( 'Price history has been deleted.', 'wc-price-history' ),
 			'clean_history_error'              => esc_html__( 'An error occurred while deleting price history.', 'wc-price-history' ),
 			'fix_history_confirm'              => esc_html__( 'Are you sure you want to fix price history?', 'wc-price-history' ),
+			'force_first_scan_end_confirm'     => esc_html__( 'Are you sure you want to force first scan to finish?', 'wc-price-history' ),
+			'restart_first_scan_confirm'       => esc_html__( 'Are you sure you want to restart first scan?', 'wc-price-history' ),
 			'fix_history_nonce'                => $nonce,
+			'force_first_scan_nonce'           => $nonce,
 			'fix_history_success'              => esc_html__( 'Price history has been fixed.', 'wc-price-history' ),
 			'fix_history_error'                => esc_html__( 'An error occurred while fixing price history.', 'wc-price-history' ),
 		] );

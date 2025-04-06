@@ -130,6 +130,13 @@ class FirstScan {
 	 */
 	public function maybe_start_scan(): void {
 
+		if (
+			isset( $_POST['action'] ) &&
+			in_array( $_POST['action'], [ 'wc_price_history_force_first_scan_end', 'wc_price_history_restart_first_scan' ], true )
+		) {
+			return;
+		}
+
 		if ( self::SCAN_FINISHED === $this->settings_data->get_first_scan_status() ) {
 			return;
 		}
@@ -149,6 +156,16 @@ class FirstScan {
 		}
 	}
 
+	public function force_end(): void {
+
+		$this->settings_data->set_first_scan_status( self::SCAN_FINISHED );
+	}
+
+	public function restart(): void {
+
+		$this->settings_data->set_first_scan_status( self::SCAN_NOT_STARTED );
+	}
+
 	/**
 	 * Get products without history.
 	 *
@@ -166,10 +183,12 @@ class FirstScan {
 				"SELECT p.ID
 				FROM {$wpdb->posts} p
 				LEFT JOIN {$wpdb->postmeta} pm ON p.ID = pm.post_id AND pm.meta_key = %s
+				JOIN {$wpdb->postmeta} price_meta ON p.ID = price_meta.post_id AND price_meta.meta_key = %s AND CAST(price_meta.meta_value AS DECIMAL(10,2)) > 0
 				WHERE p.post_type = %s
 				AND p.post_status = %s
 				AND pm.meta_id IS NULL",
 				HistoryStorage::cf_key,
+				'_price',
 				'product',
 				'publish'
 			)
