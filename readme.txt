@@ -129,6 +129,8 @@ Please submit the [GitHub issue](https://github.com/kkarpieszuk/wc-price-history
 == Changelog ==
 
 = {VERSION} =
+* Improvement: First history scan is targetting products to be scanned more precisely (#148)
+* New: If the first scan stuck in never ending state, it is possible to force the end on the settings screen (#148)
 
 = 2.1.7 =
 * New: Added action to add custom fields to settings page. (#137)
