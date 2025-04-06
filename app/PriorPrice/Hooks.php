@@ -64,7 +64,7 @@ class Hooks {
 		$first_scan = new FirstScan( $settings_data, $history_storage );
 		$first_scan->register_hooks();
 
-		$ajax = new Ajax();
+		$ajax = new Ajax( $first_scan );
 		$ajax->register_hooks();
 
 		$export = new Export( $history_storage, $settings_data );

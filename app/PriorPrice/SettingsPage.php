@@ -433,6 +433,7 @@ class SettingsPage {
 									?>
 							</fieldset>
 					</tr>
+					<?php $this->first_scan_section( $settings ); ?>
 					<tr>
 						<th scope="row"><?php esc_html_e( 'Clean history', 'wc-price-history' ); ?></th>
 						<td>
@@ -479,5 +480,63 @@ class SettingsPage {
 			</div>
 		</div>
 		<?php
+	}
+
+	/**
+	 * First scan section.
+	 *
+	 * @since {VERSION}
+	 *
+	 * @param array<string, mixed> $settings Settings.
+	 */
+	private function first_scan_section( array $settings ): void {
+		$first_scan_status = $settings['first_history_scan'];
+
+		if ( $first_scan_status < 2 ) {
+		// Force first scan to finish button.
+		?>
+		<tr>
+			<th scope="row"><?php esc_html_e( 'Force First Scan to Finish', 'wc-price-history' ); ?></th>
+			<td>
+				<fieldset>
+					<p>
+						<button type="button"
+							name="wc_price_history_force_first_scan_end"
+							id="wc-price-history-force-first-scan-end"
+							value="1" class="button button-secondary">
+								<?php esc_html_e( 'Force finish scan', 'wc-price-history' ); ?>
+						</button>
+					</p>
+					<p class="description" >
+						<?php esc_html_e( 'This action will force the first scan to finish. This is useful if the scan is stuck in the middle for a long time.', 'wc-price-history' ); ?>
+					</p>
+				</fieldset>
+		</tr>
+		<?php
+		} else {
+		// Restart scan button.
+		?>
+		<tr>
+			<th scope="row"><?php esc_html_e( 'Restart First Scan', 'wc-price-history' ); ?></th>
+			<td>
+				<fieldset>
+					<p>
+						<button type="button"
+							class="button button-secondary"
+							name="wc_price_history_restart_first_scan"
+							id="wc-price-history-restart-first-scan"
+							value="1"
+						>
+							<?php esc_html_e( 'Restart scan', 'wc-price-history' ); ?>
+						</button>
+					</p>
+					<p class="description" >
+						<?php esc_html_e( 'This action will restart the first scan. This is useful if you see there are still some products without history.', 'wc-price-history' ); ?>
+					</p>
+				</fieldset>
+			</td>
+		</tr>
+		<?php
+		}
 	}
 }
