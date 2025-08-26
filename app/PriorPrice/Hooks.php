@@ -69,5 +69,8 @@ class Hooks {
 
 		$export = new Export( $history_storage, $settings_data );
 		$export->register_hooks();
+
+		$educational_tab = new EducationalTab();
+		$educational_tab->register_hooks();
 	}
 }

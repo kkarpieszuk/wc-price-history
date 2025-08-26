@@ -50,11 +50,15 @@ class AdminAssets {
 			'nonce' => $nonce,
 		] );
 
-		if ( ! $this->is_settings_page() ) {
+		if ( ! $this->is_settings_page() && ! $this->is_product_edit_page() ) {
 			return;
 		}
 
 		wp_enqueue_style( 'wc-price-history-admin', WC_PRICE_HISTORY_PLUGIN_URL . 'assets/css/admin.css', [], WC_PRICE_HISTORY_VERSION );
+	}
+
+	private function is_product_edit_page() : bool {
+		return function_exists( 'get_current_screen' ) && ( $screen = get_current_screen() ) && $screen && 'product' === $screen->post_type && 'post' === $screen->base;
 	}
 
 	private function is_settings_page() : bool {

@@ -114,3 +114,39 @@ a:hover .wc-history-price-rating-stars span:nth-child(5) {
 .wc-price-history-export-error {
 	color: #d21818;
 }
+
+/* Educational tab */
+
+ul.wc-tabs li.wc_price_history_educational_tab {
+
+	background-color: #43ae122c;
+
+	a::before {
+		content: "\f321" !important;
+	}
+}
+
+.wc-price-history-button-get-pro {
+	width: 100%;
+	padding: 8px;
+	background-color: #2271b1;
+	color: white;
+	border: none;
+	cursor: pointer;
+}
+
+#educational_tab {
+	background-image: url(../images/educational.webp);
+	background-size: cover;
+	background-position: center;
+	background-repeat: no-repeat;
+}
+
+.wc-price-history-educational-tab-content {
+	padding: 15px;
+	background-color: #ffffffd4;
+	width: 50%;
+	margin: 40px auto 20px 40px;
+	border-radius: 10px;
+	box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+}
