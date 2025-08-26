@@ -53,7 +53,13 @@ class Variations {
 	 */
 	public function add_history( array $variation_attributes, WC_Product_Variable $product_variable, WC_Product_Variation $variation ) : array {
 
-		$variation_attributes['_wc_price_history_lowest_price'] = (float) $this->prices->get_lowest_price_raw_taxed( $variation );
+		$lowest = $this->prices->get_lowest_price_raw_taxed( $variation );
+
+		if ( $lowest <= 0 ) {
+			$lowest = $variation->get_price();
+		}
+
+		$variation_attributes['_wc_price_history_lowest_price'] = (float) $lowest;
 
 		return $variation_attributes;
 	}
