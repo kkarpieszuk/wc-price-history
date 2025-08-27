@@ -62,7 +62,7 @@ class SettingsPage {
 	 * @return void
 	 */
 	public function register_settings() : void {
-		register_setting( 'wc_price_history_settings', 'wc_price_history_settings' );
+		register_setting( 'wc_price_history_settings', esc_attr( 'wc_price_history_settings' ) );
 	}
 
 	/**

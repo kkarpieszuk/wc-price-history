@@ -30,7 +30,7 @@ class EducationalTab {
 
 		?>
 		<li class="wc_price_history_educational_tab show_if_simple show_if_variable">
-			<a href="#educational_tab"><span><?php _e( 'WC Price History Editor', 'wc-price-history' ); ?></span></a>
+			<a href="#educational_tab"><span><?php esc_html_e( 'WC Price History Editor', 'wc-price-history' ); ?></span></a>
 		</li>
 		<?php
 	}
