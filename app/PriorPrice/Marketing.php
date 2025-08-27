@@ -39,6 +39,7 @@ class Marketing {
 		if ( ! $this->is_our_plugin( $plugin_data ) ) {
 			return $plugin_meta;
 		}
+		$plugin_meta[] = $this->get_site_link();
 		$plugin_meta[] = $this->get_review_link();
 		return $plugin_meta;
 	}
@@ -87,5 +88,16 @@ class Marketing {
 			),
 			wp_kses_allowed_html( 'post' )
 		);
+	}
+
+	/**
+	 * Get site link.
+	 *
+	 * @since {VERSION}
+	 *
+	 * @return string
+	 */
+	private function get_site_link() : string {
+		return '<a href="https://wcpricehistory.com" target="_blank">' . esc_html__( 'Visit site', 'wc-price-history' ) . '</a>';
 	}
 }

@@ -2,13 +2,30 @@
 
 namespace PriorPrice;
 
+/**
+ * Educational tab.
+ *
+ * @since {VERSION}
+ */
 class EducationalTab {
 
+	/**
+	 * Register hooks.
+	 *
+	 * @since {VERSION}
+	 */
 	public function register_hooks() {
 		add_action( 'woocommerce_product_write_panel_tabs', [ $this, 'add_tab' ] );
 		add_action( 'woocommerce_product_data_panels', [ $this, 'add_panel' ] );
 	}
 
+	/**
+	 * Add tab.
+	 *
+	 * @since {VERSION}
+	 *
+	 * @return void
+	 */
 	public function add_tab() {
 
 		?>
@@ -18,6 +35,13 @@ class EducationalTab {
 		<?php
 	}
 
+	/**
+	 * Add panel.
+	 *
+	 * @since {VERSION}
+	 *
+	 * @return void
+	 */
 	public function add_panel() {
 		?>
 		<div id="educational_tab" class="panel woocommerce_options_panel">
