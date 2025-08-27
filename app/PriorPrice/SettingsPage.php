@@ -2,6 +2,8 @@
 
 namespace PriorPrice;
 
+use PriorPrice\Helpers\Pro;
+
 class SettingsPage {
 
 	/**
@@ -459,6 +461,7 @@ class SettingsPage {
 			<div class="wc-history-price-admin__right">
 				<div class="wc-history-price-admin__right__box">
 
+					<?php if ( ! Pro::is_pro() ) : ?>
 					<h3><?php esc_html_e( 'Get notified about the PRO version!', 'wc-price-history' ); ?></h3>
 
 					<p>
@@ -493,6 +496,7 @@ class SettingsPage {
 						<em><?php esc_html_e( 'Bonus: Early subscribers may receive a lifetime license — normally licenses will be yearly!', 'wc-price-history' ); ?></em>
 					</p>
 
+					<?php endif; ?>
 					<h3><?php esc_html_e( 'Support', 'wc-price-history' ); ?></h3>
 					<p>
 						<a href="https://wordpress.org/support/plugin/wc-price-history/" target="_blank">

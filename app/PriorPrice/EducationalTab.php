@@ -2,6 +2,8 @@
 
 namespace PriorPrice;
 
+use PriorPrice\Helpers\Pro;
+
 /**
  * Educational tab.
  *
@@ -15,6 +17,11 @@ class EducationalTab {
 	 * @since {VERSION}
 	 */
 	public function register_hooks() {
+
+		if ( Pro::is_pro() ) {
+			return;
+		}
+
 		add_action( 'woocommerce_product_write_panel_tabs', [ $this, 'add_tab' ] );
 		add_action( 'woocommerce_product_data_panels', [ $this, 'add_panel' ] );
 	}
