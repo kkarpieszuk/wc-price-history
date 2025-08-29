@@ -5,7 +5,7 @@ Short Description: Show the lowest product price in the last 30 days. Configurab
 Contributors: kkarpieszuk
 Tags: omnibus, WooCommerce, prices, history, lowest
 Requires at least: 5.8
-Tested up to: 6.8.0
+Tested up to: 6.8.2
 Requires PHP: 7.2
 Stable tag: {VERSION}
 License: Expat
