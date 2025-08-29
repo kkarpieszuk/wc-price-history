@@ -2,6 +2,8 @@
 
 namespace PriorPrice;
 
+use PriorPrice\Helpers\Pro;
+
 class SettingsPage {
 
 	/**
@@ -459,15 +461,52 @@ class SettingsPage {
 			<div class="wc-history-price-admin__right">
 				<div class="wc-history-price-admin__right__box">
 
-					<h3><?php esc_html_e( 'Read the EU legal acts:', 'wc-price-history' ); ?></h3>
-					<p class="description">
-						<a href="https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:52021XC1229(06)" target="_blank"><?php esc_html_e( 'Guidance on the Price Indication Directive (2021)', 'wc-price-history' ); ?></a>
+					<?php if ( ! Pro::is_pro() ) : ?>
+					<h3><?php esc_html_e( 'Get notified about the PRO version!', 'wc-price-history' ); ?></h3>
+
+					<p>
+					<?php
+					printf(
+						/* translators: %1$s: WC Price History PRO */
+						esc_html__( 'I am working on %1$s 🎉', 'wc-price-history' ),
+						'<strong>WC Price History PRO</strong>'
+					);
+					?><br>
+					<?php
+					printf(
+						/* translators: %1$s: review the full price history, %2$s: edit past prices */
+						esc_html__( 'In the PRO version you will be able to %1$s and even %2$s directly in your store.', 'wc-price-history' ),
+						'<strong>' . esc_html__( 'review the full price history', 'wc-price-history' ) . '</strong>',
+						'<strong>' . esc_html__( 'edit past prices', 'wc-price-history' ) . '</strong>'
+					);
+					?>
+					</p>
+					<p>
+					<?php esc_html_e( "Click the button below to get notified about the PRO version.", 'wc-price-history' ); ?>
 					</p>
 
+					<button type="button"
+						onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLSdmdCMAp3AtfXQy2Aoej2IhnuZTtAAU5YKC4FWt2l_Ei-EL4A/viewform', '_blank')"
+						class="wc-price-history-button-get-pro"
+						title="<?php esc_html_e( 'Click to get notified about the PRO version and get a lifetime license!', 'wc-price-history' ); ?>">
+						<?php esc_html_e( 'Notify me about PRO!', 'wc-price-history' ); ?>
+					</button>
+
+					<p>
+						<em><?php esc_html_e( 'Bonus: Early subscribers may receive a lifetime license — normally licenses will be yearly!', 'wc-price-history' ); ?></em>
+					</p>
+
+					<?php endif; ?>
 					<h3><?php esc_html_e( 'Support', 'wc-price-history' ); ?></h3>
 					<p>
 						<a href="https://wordpress.org/support/plugin/wc-price-history/" target="_blank">
 							<?php esc_html_e( 'If you have any questions, please contact me at plugin support forum.', 'wc-price-history' ); ?>
+						</a>
+					</p>
+
+					<p>
+						<a href="https://wcpricehistory.com/" target="_blank">
+							<?php esc_html_e( 'Visit the official website of the plugin', 'wc-price-history' ); ?>
 						</a>
 					</p>
 
@@ -476,6 +515,10 @@ class SettingsPage {
 						<?php do_action( 'wc_price_history_settings_page_rate_us_text' ); ?>
 					</p>
 
+					<h3><?php esc_html_e( 'Read the EU legal acts:', 'wc-price-history' ); ?></h3>
+					<p class="description">
+						<a href="https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:52021XC1229(06)" target="_blank"><?php esc_html_e( 'Guidance on the Price Indication Directive (2021)', 'wc-price-history' ); ?></a>
+					</p>
 				</div>
 			</div>
 		</div>
