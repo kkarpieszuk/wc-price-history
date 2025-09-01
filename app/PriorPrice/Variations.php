@@ -56,7 +56,8 @@ class Variations {
 		$lowest = $this->prices->get_lowest_price_raw_taxed( $variation );
 
 		if ( $lowest <= 0 ) {
-			$lowest = $variation->get_price();
+			$current_price = $variation->get_price();
+			$lowest = $current_price > 0 ? $current_price : 0;
 		}
 
 		$variation_attributes['_wc_price_history_lowest_price'] = (float) $lowest;
