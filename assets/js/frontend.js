@@ -7,6 +7,7 @@ jQuery(document).ready(function($) {
 	function getOriginalPrice() {
 		// For variable products, get from variations data
 		const variationsData = $('.variations_form').data('product_variations');
+		const productId = $('.variations_form').data('product_id');
 		if (variationsData && variationsData.length > 0) {
 			// Use the first variation's display_price as original price
 			return variationsData[0].display_price;
@@ -19,7 +20,7 @@ jQuery(document).ready(function($) {
 		}
 
 		// Fallback to HTML method if JavaScript object not available
-		return $('.wc-price-history.prior-price-value .wc-price-history-lowest-raw-value').text();
+		return $('[data-product-id="' + productId + '"] .wc-price-history.prior-price-value .wc-price-history-lowest-raw-value').text();
 	}
 
 	// Initialize original price
@@ -39,7 +40,6 @@ jQuery(document).ready(function($) {
 
 	// On variation clear, reset to original price.
 	$('form.variations_form').on('reset_data', function(event, variation) {
-		debugger;
 		$( '.wc-price-history.prior-price-value .wc-price-history-lowest-raw-value').text( originalPrice );
 	});
 
