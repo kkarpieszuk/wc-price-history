@@ -1,7 +1,29 @@
 jQuery(document).ready(function($) {
 
-	// Store original price.
-	const originalPrice = $( '.wc-price-history.prior-price-value .wc-price-history-lowest-raw-value').text();
+	// Store original price from JavaScript object instead of HTML
+	let originalPrice = null;
+
+	// Get original price from variations data or current product price
+	function getOriginalPrice() {
+		// For variable products, get from variations data
+		const variationsData = $('.variations_form').data('product_variations');
+		if (variationsData && variationsData.length > 0) {
+			// Use the first variation's display_price as original price
+			return variationsData[0].display_price;
+		}
+
+		// For simple products, try to get from current price element
+		const currentPriceElement = $('.price .woocommerce-Price-amount');
+		if (currentPriceElement.length) {
+			return currentPriceElement.first().text().replace(/[^\d.,]/g, '');
+		}
+
+		// Fallback to HTML method if JavaScript object not available
+		return $('.wc-price-history.prior-price-value .wc-price-history-lowest-raw-value').text();
+	}
+
+	// Initialize original price
+	originalPrice = getOriginalPrice();
 
 	$('form.variations_form').on('found_variation', function(event, variation) {
 
@@ -17,6 +39,7 @@ jQuery(document).ready(function($) {
 
 	// On variation clear, reset to original price.
 	$('form.variations_form').on('reset_data', function(event, variation) {
+		debugger;
 		$( '.wc-price-history.prior-price-value .wc-price-history-lowest-raw-value').text( originalPrice );
 	});
 
