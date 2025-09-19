@@ -96,7 +96,7 @@ class Prices {
 		$days_number = $this->settings_data->get_days_number();
 
 		if ( $lowest_pre !== false && is_numeric( $lowest_pre ) ) {
-			return $this->display_from_template( $lowest_pre, $days_number );
+			return $this->display_from_template( $lowest_pre, $days_number, $wc_product );
 		}
 
 
@@ -116,7 +116,7 @@ class Prices {
 			return $this->handle_old_history( $wc_product, $days_number );
 		}
 
-		return $this->display_from_template( $lowest, $days_number );
+		return $this->display_from_template( $lowest, $days_number, $wc_product );
 	}
 
 	/**
@@ -277,7 +277,7 @@ class Prices {
 		}
 
 		if ( $old_history === 'current_price' ) {
-			return $this->display_from_template( (float) $wc_product->get_price(), $days_number );
+			return $this->display_from_template( (float) $wc_product->get_price(), $days_number, $wc_product );
 		}
 
 		$old_history_custom_text = $this->settings_data->get_old_history_custom_text();
@@ -288,7 +288,7 @@ class Prices {
 			$old_history_custom_text
 		);
 
-		return '<div class="wc-price-history prior-price lowest">' . $old_history_custom_text . '</div>';
+		return sprintf( '<div class="wc-price-history prior-price lowest" data-product-id="%s">%s</div>', $wc_product->get_id(), $old_history_custom_text );
 	}
 
 	/**
@@ -296,12 +296,13 @@ class Prices {
 	 *
 	 * @since 1.9.0
 	 *
-	 * @param float $lowest     Lowest price.
-	 * @param int   $days_number Days number.
+	 * @param float       $lowest      Lowest price.
+	 * @param int         $days_number Days number.
+	 * @param \WC_Product $wc_product  WC Product.
 	 *
 	 * @return string
 	 */
-	private function display_from_template( float $lowest, int $days_number ) : string {
+	private function display_from_template( float $lowest, int $days_number, \WC_Product $wc_product ) : string {
 
 		$display_text = $this->settings_data->get_display_text();
 
@@ -319,6 +320,6 @@ class Prices {
 		 */
 		$display_text = apply_filters( 'wc_price_history_display_from_template', $display_text, $lowest, $days_number );
 
-		return '<div class="wc-price-history prior-price lowest">' . $display_text . '</div>';
+		return sprintf( '<div class="wc-price-history prior-price lowest" data-product-id="%s" data-original-price="%s">%s</div>', $wc_product->get_id(), $lowest, $display_text );
 	}
 }

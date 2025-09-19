@@ -129,6 +129,9 @@ Please submit the [GitHub issue](https://github.com/kkarpieszuk/wc-price-history
 == Changelog ==
 
 = {VERSION} =
+- Fix: Variable products: when product had related products their prices where concatenated in the price output. (#161)
+
+= 2.1.9 =
 - Fix: Variable products: when user select variant, the main price was reset sometimes to zero. (#154)
 
 = 2.1.8 =
