@@ -320,6 +320,6 @@ class Prices {
 		 */
 		$display_text = apply_filters( 'wc_price_history_display_from_template', $display_text, $lowest, $days_number );
 
-		return sprintf( '<div class="wc-price-history prior-price lowest" data-product-id="%s">%s</div>', $wc_product->get_id(), $display_text );
+		return sprintf( '<div class="wc-price-history prior-price lowest" data-product-id="%s" data-original-price="%s">%s</div>', $wc_product->get_id(), $lowest, $display_text );
 	}
 }

@@ -1,55 +1,134 @@
-jQuery(document).ready(function($) {
+/* global wc_price_history_frontend */
 
-	// Store original price from JavaScript object instead of HTML
-	let originalPrice = null;
+/**
+ * Frontend script for WC Price History plugin.
+ *
+ * @since {VERSION}
+ *
+ * @package WC_Price_History
+ * @subpackage Frontend
+ * @author Konrad Karpieszuk
+ */
 
-	// Get original price from variations data or current product price
-	function getOriginalPrice() {
-		// For variable products, get from variations data
-		const variationsData = $('.variations_form').data('product_variations');
-		const productId = $('.variations_form').data('product_id');
-		if (variationsData && variationsData.length > 0) {
-			// Use the first variation's display_price as original price
-			return variationsData[0].display_price;
-		}
+let WCPriceHistory = {};
 
-		// For simple products, try to get from current price element
-		const currentPriceElement = $('.price .woocommerce-Price-amount');
-		if (currentPriceElement.length) {
-			return currentPriceElement.first().text().replace(/[^\d.,]/g, '');
-		}
+WCPriceHistory.Frontend = WCPriceHistory.Frontend || ( function( document, window, $ ) {
+	const app = {
+		/**
+		 * Selectors.
+		 */
+		selectors: {
+			rawPrice: '.wc-price-history.prior-price-value .woocommerce-Price-amount.amount .wc-price-history-lowest-raw-value',
+			lowestPriceModule: '.wc-price-history.prior-price.lowest',
+		},
 
-		// Fallback to HTML method if JavaScript object not available
-		return $('[data-product-id="' + productId + '"] .wc-price-history.prior-price-value .wc-price-history-lowest-raw-value').text();
-	}
+		/**
+		 * Initialize the app.
+		 */
+		init() {
+			app.data.originalPrices = app.methods.getOriginalPrices();
 
-	// Initialize original price
-	originalPrice = getOriginalPrice();
+			$( 'form.variations_form' ).on( 'found_variation', app.methods.onFoundVariation );
+			$( 'form.variations_form' ).on( 'reset_data', app.methods.onResetData );
+		},
 
-	$('form.variations_form').on('found_variation', function(event, variation) {
+		/**
+		 * Methods.
+		 */
+		methods: {
+			/**
+			 * Format price.
+			 *
+			 * @since {VERSION}
+			 *
+			 * @param {number} price Price.
+			 *
+			 * @return {string} Formatted price.
+			 */
+			formatPrice: ( price ) => {
+				let formattedPrice = parseFloat( price ).toFixed( wc_price_history_frontend.decimals );
 
-		const $lowestPricePlaceholder = $( '.wc-price-history.prior-price-value .wc-price-history-lowest-raw-value'),
-		  lowestInVariation = variation._wc_price_history_lowest_price;
+				formattedPrice = formattedPrice.replace(',', wc_price_history_frontend.thousand_separator);
+				formattedPrice = formattedPrice.replace('.', wc_price_history_frontend.decimal_separator);
 
-		 if ( $lowestPricePlaceholder.length ) {
-			 $lowestPricePlaceholder.text( formatPrice( lowestInVariation ) );
-		 }
+				return formattedPrice;
+			},
 
-		 console.log( variation );
-	});
+			/**
+			 * Get original prices.
+			 *
+			 * @since {VERSION}
+			 *
+			 * @return {array} Original prices.
+			 */
+			getOriginalPrices: () => {
 
-	// On variation clear, reset to original price.
-	$('form.variations_form').on('reset_data', function(event, variation) {
-		$( '.wc-price-history.prior-price-value .wc-price-history-lowest-raw-value').text( originalPrice );
-	});
+				const $lowestPriceModules = $( app.selectors.lowestPriceModule );
 
-	function formatPrice(price) {
+				if ( $lowestPriceModules.length === 0 ) {
+					return [];
+				}
 
-		let formattedPrice = parseFloat( price ).toFixed( wc_price_history_frontend.decimals );
+				let originalPrices = [];
 
-		formattedPrice = formattedPrice.replace(',', wc_price_history_frontend.thousand_separator);
-		formattedPrice = formattedPrice.replace('.', wc_price_history_frontend.decimal_separator);
+				$lowestPriceModules.each(function() {
+					const productId = $(this).data('product-id');
+					const originalPrice = $(this).data('original-price');
 
-		return formattedPrice;
-	}
-});
+					originalPrices[productId] = originalPrice;
+				});
+
+				return originalPrices;
+			},
+
+			/**
+			 * On found variation woocommerce event.
+			 *
+			 * @since {VERSION}
+			 *
+			 * @param {object} event Event.
+			 * @param {object} variation Variation.
+			 */
+			onFoundVariation: (event, variation) => {
+
+				const $this = $(event.currentTarget),
+					productId = $this.data( 'product_id' ),
+					lowestInVariation = variation._wc_price_history_lowest_price;
+
+				const $lowestPriceModule = $( app.selectors.lowestPriceModule + '[data-product-id="' + productId + '"]');
+
+				$lowestPriceModule.find( app.selectors.rawPrice ).text( app.methods.formatPrice( lowestInVariation ) );
+			},
+
+			/**
+			 * On reset data woocommerce event.
+			 *
+			 * @since {VERSION}
+			 *
+			 * @param {object} event Event.
+			 * @param {object} variation Variation.
+			 */
+			onResetData: (event, variation) => {
+
+				const $this = $(event.currentTarget),
+					productId = $this.data( 'product_id' ),
+					originalPrice = app.data.originalPrices[productId];
+
+				const $lowestPriceModule = $( app.selectors.lowestPriceModule + '[data-product-id="' + productId + '"]');
+
+				$lowestPriceModule.find( app.selectors.rawPrice ).text( app.methods.formatPrice( originalPrice ) );
+			},
+		},
+
+		/**
+		 * Data store.
+		 */
+		data: {
+			originalPrices: [],
+		},
+	};
+
+	return app;
+} )( document, window, jQuery );
+
+WCPriceHistory.Frontend.init();
