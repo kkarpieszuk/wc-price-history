@@ -129,6 +129,7 @@ Please submit the [GitHub issue](https://github.com/kkarpieszuk/wc-price-history
 == Changelog ==
 
 = {VERSION} =
+- Fix: Plugin sometimes displayed "lowest price: 0" after 30 days when price history became empty due to time filtering. ( #159 )
 - Fix: Variable products: when product had related products their prices where concatenated in the price output. (#161)
 
 = 2.1.9 =

@@ -234,7 +234,9 @@ class HistoryStorage {
 		$price = (float) $product->get_price();
 
 		if ( $price <= 0 ) {
-			return [];
+			// Don't create history for products with zero or negative prices
+			// This prevents issues with reduce_to_minimal() returning 0
+			return $history;
 		}
 
 		$current_time = $this->get_time_with_offset();
@@ -353,17 +355,19 @@ class HistoryStorage {
 	 */
 	private function reduce_to_minimal( $prices ) : float {
 
-		return (float) array_reduce(
-			$prices,
-			static function( $carry, $item ) {
+		if (empty($prices)) {
+			return 0.0;
+		}
 
-				if ( (float) $item > 0 && $carry > 0 ) {
-					return min( (float) $carry, (float) $item );
-				}
+		$valid_prices = array_filter($prices, function($price) {
+			return (float) $price > 0;
+		});
 
-				return (float) $item;
-			}
-		);
+		if (empty($valid_prices)) {
+			return 0.0;
+		}
+
+		return (float) min($valid_prices);
 	}
 
 	/**
