@@ -8,7 +8,6 @@ jQuery(document).ready(function ($) {
             product_id: productId,
         }, function (response) {
             if (response.success) {
-                // trigger downloading the file.
                 var blob = new Blob([JSON.stringify(response.data)], { type: 'application/json' });
                 var url = window.URL.createObjectURL(blob);
                 var link = document.createElement('a');
@@ -24,3 +23,4 @@ jQuery(document).ready(function ($) {
         });
     });
 });
+//# sourceMappingURL=export.js.map

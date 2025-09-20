@@ -12,6 +12,19 @@
 
 interface WCPriceHistoryFrontend {
 	init(): void;
+	methods: {
+		formatPrice(price: number): string;
+		getOriginalPrices(): number[];
+		onFoundVariation(event: any, variation: any): void;
+		onResetData(event: any, variation: any): void;
+	};
+	data: {
+		originalPrices: number[];
+	};
+	selectors: {
+		rawPrice: string;
+		lowestPriceModule: string;
+	};
 }
 
 let WCPriceHistoryFrontend: WCPriceHistoryFrontend = ( function( document, window, $ ): WCPriceHistoryFrontend {

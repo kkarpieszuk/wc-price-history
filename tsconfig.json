@@ -3,6 +3,8 @@
 		"outDir": "./assets/js",
 		"allowJs": true,
 		"target": "es5",
+		"sourceMap": true,
+		"removeComments": true,
 	},
 	"include": ["src/**/*"],
 }
