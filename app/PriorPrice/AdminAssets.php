@@ -68,6 +68,7 @@ class AdminAssets {
 		if ( ! $screen ) {
 			return false;
 		}
+
 		return $screen->post_type === 'product' && $screen->base === 'post';
 	}
 
