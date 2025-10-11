@@ -15,6 +15,8 @@ class EducationalTab {
 	 * Register hooks.
 	 *
 	 * @since {VERSION}
+	 *
+	 * @return void
 	 */
 	public function register_hooks() {
 
