@@ -52,7 +52,7 @@ class Hooks {
 		$admin_assets = new AdminAssets();
 		$admin_assets->register_hooks();
 
-		$frontend_assets = new FrontEndAssets();
+		$frontend_assets = new FrontEndAssets( $settings_data );
 		$frontend_assets->register_hooks();
 
 		$shortcode = new Shortcode( $history_storage, new Taxes(), $settings_data );

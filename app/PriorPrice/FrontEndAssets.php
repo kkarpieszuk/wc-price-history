@@ -10,6 +10,22 @@ namespace PriorPrice;
 class FrontEndAssets {
 
 	/**
+	 * @var \PriorPrice\SettingsData
+	 */
+	private $settings_data;
+
+	/**
+	 * Constructor.
+	 *
+	 * @since {VERSION}
+	 *
+	 * @param \PriorPrice\SettingsData $settings_data Settings data.
+	 */
+	public function __construct( SettingsData $settings_data ) {
+		$this->settings_data = $settings_data;
+	}
+
+	/**
 	 * Register hooks.
 	 *
 	 * @since 1.7
@@ -41,8 +57,23 @@ class FrontEndAssets {
 		wp_enqueue_script(
 			'wc-price-history-react-main',
 			WC_PRICE_HISTORY_PLUGIN_URL . 'assets/react/main.js',
-			[],
-			'1.0'
+			[ 'wp-element', 'wp-i18n', 'wp-polyfill', 'wp-components' ],
+			'1.0',
+			[
+				'strategy' => 'defer',
+				'in_footer' => true,
+			]
+		);
+
+		wp_localize_script(
+			'wc-price-history-react-main',
+			'wc_price_history_react_main',
+			[
+				'currency' => get_woocommerce_currency(),
+				'currency_symbol' => get_woocommerce_currency_symbol(),
+				'last_days' => $this->settings_data->get_days_number(),
+				'display_text' => $this->settings_data->get_display_text(),
+			]
 		);
 	}
 }

@@ -11,12 +11,15 @@
     "css-loader": "^6.0.0",
     "style-loader": "^3.0.0",
     "mini-css-extract-plugin": "^2.0.0",
-    "file-loader": "^6.0.0"
+    "file-loader": "^6.0.0",
+    "terser-webpack-plugin": "^5.0.0",
+    "css-minimizer-webpack-plugin": "^4.0.0"
   },
   "scripts": {
     "prepare": "husky install",
     "build": "webpack --mode=production",
-    "dev": "webpack --mode=development --watch"
+    "dev": "webpack --mode=development --watch",
+    "build:dev": "webpack --mode=development"
   },
   "dependencies": {
     "react": "^19.2.0",
