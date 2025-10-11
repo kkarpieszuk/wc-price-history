@@ -37,5 +37,12 @@ class FrontEndAssets {
 
 			wp_localize_script( 'wc-price-history-frontend', 'wc_price_history_frontend', $price_format );
 		}
+
+		wp_enqueue_script(
+			'wc-price-history-react-main',
+			WC_PRICE_HISTORY_PLUGIN_URL . 'assets/react/main.js',
+			[],
+			'1.0'
+		);
 	}
 }
