@@ -58,7 +58,17 @@ class AdminAssets {
 	}
 
 	private function is_product_edit_page() : bool {
-		return function_exists( 'get_current_screen' ) && ( $screen = get_current_screen() ) && $screen && 'product' === $screen->post_type && 'post' === $screen->base;
+
+		if ( ! function_exists( 'get_current_screen' ) ) {
+			return false;
+		}
+
+		$screen = get_current_screen();
+
+		if ( ! $screen ) {
+			return false;
+		}
+		return $screen->post_type === 'product' && $screen->base === 'post';
 	}
 
 	private function is_settings_page() : bool {
