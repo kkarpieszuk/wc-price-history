@@ -57,7 +57,7 @@ class FrontEndAssets {
 		wp_enqueue_script(
 			'wc-price-history-react-main',
 			WC_PRICE_HISTORY_PLUGIN_URL . 'assets/react/main.js',
-			[ 'wp-element', 'wp-i18n', 'wp-polyfill', 'wp-components' ],
+			[ 'wp-element', 'wp-i18n' ],
 			'1.0',
 			[
 				'strategy' => 'defer',
