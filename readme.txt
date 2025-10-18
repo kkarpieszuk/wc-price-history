@@ -11,7 +11,7 @@ Stable tag: {VERSION}
 License: Expat
 License URI: https://mit-license.org/
 Donate link: https://buycoffee.to/wpzlecenia
-What was the lowest price recently? Build customer trust through transparency! Track and display product price history in WooCommerce store.
+What was the lowest price recently? Build customer trust through transparency! Track and display product price history in WooCommerce store. OMNIBUS compliant.
 == Description ==
 
 [WC Price History](https://wcpricehistory.com) plugin allows you to track WooCommerce© Products prior prices history and display the lowest price in the last 30 days. This plugin allows your WC shop to be compliant with European law which specifies price reduction announcement policy.
