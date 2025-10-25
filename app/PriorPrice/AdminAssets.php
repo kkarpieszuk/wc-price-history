@@ -50,11 +50,62 @@ class AdminAssets {
 			'nonce' => $nonce,
 		] );
 
+		// Enqueue migration scripts if migration is pending or in progress.
+		$this->maybe_enqueue_migration_scripts( $nonce );
+
 		if ( ! $this->is_settings_page() && ! $this->is_product_edit_page() ) {
 			return;
 		}
 
 		wp_enqueue_style( 'wc-price-history-admin', WC_PRICE_HISTORY_PLUGIN_URL . 'assets/css/admin.css', [], WC_PRICE_HISTORY_VERSION );
+	}
+
+	/**
+	 * Maybe enqueue migration scripts.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param string $nonce Nonce.
+	 *
+	 * @return void
+	 */
+	private function maybe_enqueue_migration_scripts( string $nonce ): void {
+		$migration_status = get_option( 'wc_price_history_migration_status', 'not_needed' );
+
+		if ( $migration_status === 'not_needed' ) {
+			return;
+		}
+
+		wp_enqueue_script(
+			'wc-price-history-migration',
+			WC_PRICE_HISTORY_PLUGIN_URL . 'assets/js/migration.js',
+			[],
+			WC_PRICE_HISTORY_VERSION,
+			true
+		);
+
+		wp_enqueue_style(
+			'wc-price-history-migration',
+			WC_PRICE_HISTORY_PLUGIN_URL . 'assets/css/migration.css',
+			[],
+			WC_PRICE_HISTORY_VERSION
+		);
+
+		wp_localize_script(
+			'wc-price-history-migration',
+			'wcPriceHistoryMigration',
+			[
+				'nonce' => $nonce,
+				'ajaxurl' => admin_url( 'admin-ajax.php' ),
+				'i18n' => [
+					'processing' => esc_html__( 'Processing...', 'wc-price-history' ),
+					'error' => esc_html__( 'An error occurred during migration.', 'wc-price-history' ),
+					'errorTitle' => esc_html__( 'Migration Error', 'wc-price-history' ),
+					'retry' => esc_html__( 'Retry Migration', 'wc-price-history' ),
+					'inProgress' => esc_html__( 'Database update in progress...', 'wc-price-history' ),
+				],
+			]
+		);
 	}
 
 	private function is_product_edit_page() : bool {

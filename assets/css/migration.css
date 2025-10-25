@@ -1,0 +1,105 @@
+/**
+ * Migration styles for WC Price History.
+ *
+ * @since 2.0.0
+ */
+
+.wc-price-history-migration-notice {
+	padding: 12px;
+	margin: 15px 0;
+	border-left-width: 4px;
+	border-left-style: solid;
+}
+
+.wc-price-history-migration-header {
+	margin-bottom: 10px;
+}
+
+.wc-price-history-migration-header p {
+	margin: 0 0 10px 0;
+}
+
+.wc-price-history-migration-content {
+	margin-bottom: 15px;
+}
+
+.wc-price-history-migration-content p {
+	margin: 0 0 10px 0;
+}
+
+.wc-price-history-migration-progress-bar {
+	margin: 15px 0;
+	display: none;
+}
+
+.progress-bar-container {
+	width: 100%;
+	height: 28px;
+	background-color: #f0f0f1;
+	border-radius: 4px;
+	overflow: hidden;
+	position: relative;
+}
+
+.progress-bar-fill {
+	height: 100%;
+	background: linear-gradient(to right, #2271b1, #135e96);
+	transition: width 0.3s ease;
+	position: relative;
+}
+
+.progress-bar-fill::after {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+	background-image: linear-gradient(
+		-45deg,
+		rgba(255, 255, 255, 0.3) 25%,
+		transparent 25%,
+		transparent 50%,
+		rgba(255, 255, 255, 0.3) 50%,
+		rgba(255, 255, 255, 0.3) 75%,
+		transparent 75%,
+		transparent
+	);
+	background-size: 28px 28px;
+	animation: progress-bar-animation 0.8s linear infinite;
+}
+
+@keyframes progress-bar-animation {
+	0% {
+		background-position: 0 0;
+	}
+	100% {
+		background-position: 28px 0;
+	}
+}
+
+.progress-text {
+	margin-top: 8px;
+	color: #646970;
+	font-size: 14px;
+}
+
+.wc-price-history-migrate-button:disabled {
+	opacity: 0.6;
+	cursor: not-allowed;
+}
+
+/* Success notice */
+.wc-price-history-migration-notice.notice-success {
+	border-left-color: #00a32a;
+}
+
+/* Warning notice */
+.wc-price-history-migration-notice.notice-warning {
+	border-left-color: #dba617;
+}
+
+/* Info notice */
+.wc-price-history-migration-notice.notice-info {
+	border-left-color: #72aee6;
+}

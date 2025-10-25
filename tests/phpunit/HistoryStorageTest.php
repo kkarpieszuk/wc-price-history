@@ -8,6 +8,20 @@ class HistoryStorageTest extends TestCase {
 
 	public function setUp() : void {
 		\WP_Mock::setUp();
+
+		// Mock $wpdb as an anonymous class with actual methods.
+		global $wpdb;
+		$wpdb = new class() {
+			public $prefix = 'wp_';
+
+			public function prepare( $query, ...$args ) {
+				return sprintf( $query, ...$args );
+			}
+
+			public function get_var( $query ) {
+				return null; // Tables don't exist.
+			}
+		};
 	}
 
 	public function tearDown() : void {
@@ -26,6 +40,12 @@ class HistoryStorageTest extends TestCase {
 		$product_id = 1;
 
 		$subject = $this->get_subject();
+
+		// Mock migration status to use post_meta (legacy mode).
+		\WP_Mock::userFunction( 'get_option', [
+			'args' => [ 'wc_price_history_migration_status', \WP_Mock\Functions::type( 'string' ) ],
+			'return' => 'not_needed'
+		] );
 
 		\WP_Mock::userFunction( 'get_post_meta', [
 			'times' => 1,
@@ -52,6 +72,17 @@ class HistoryStorageTest extends TestCase {
 		$product_id = 1;
 
 		$subject = $this->get_subject();
+
+		// Mock migration status to use post_meta (legacy mode).
+		\WP_Mock::userFunction( 'get_option', [
+			'args' => [ 'wc_price_history_migration_status', \WP_Mock\Functions::type( 'string' ) ],
+			'return' => 'not_needed'
+		] );
+
+		\WP_Mock::userFunction( 'get_option', [
+			'args' => [ 'gmt_offset' ],
+			'return' => 0
+		] );
 
 		$product = $this->getMockBuilder( 'WC_Product' )
 			->disableOriginalConstructor()

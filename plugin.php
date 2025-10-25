@@ -15,11 +15,13 @@
  */
 
 use PriorPrice\Hooks;
+use PriorPrice\Database\Install;
 
 require_once __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ . '/constants.php';
 
 define( 'WC_PRICE_HISTORY_VERSION', '{VERSION}' );
+define( 'WC_PRICE_HISTORY_DB_VERSION', '2.0.0' );
 
 /**
  * Get the plugin version.
@@ -32,6 +34,9 @@ function get_wc_price_history_version(): string {
 	return WC_PRICE_HISTORY_VERSION;
 }
 
+// Register activation hook.
+register_activation_hook( __FILE__, [ 'PriorPrice\Database\Install', 'create_tables' ] );
+
 // Handle missing WooCommerce.
 add_action( 'plugins_loaded', function () {
 	if ( ! function_exists( 'WC' ) ) {
@@ -42,6 +47,14 @@ add_action( 'plugins_loaded', function () {
 			</div>
 			<?php
 		} );
+		return;
+	}
+
+	// Check if database tables need to be created or updated.
+	$install = new Install();
+	if ( ! $install->tables_exist() ) {
+		$install->create_tables();
+		$install->update_db_version();
 	}
 } );
 

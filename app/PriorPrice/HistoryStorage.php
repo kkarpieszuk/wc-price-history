@@ -3,7 +3,7 @@
 namespace PriorPrice;
 
 /**
- * HistoryStorage class
+ * HistoryStorage class - adapter between old (post_meta) and new (tables) implementations.
  *
  * @since 1.1
  */
@@ -20,6 +20,49 @@ class HistoryStorage {
 	public const cf_key = '_wc_price_history';
 
 	/**
+	 * Table storage instance.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @var HistoryStorageTable
+	 */
+	private $table_storage;
+
+	/**
+	 * Constructor.
+	 *
+	 * @since 2.0.0
+	 */
+	public function __construct() {
+		$this->table_storage = new HistoryStorageTable();
+	}
+
+	/**
+	 * Check if should use tables.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @return bool
+	 */
+	private function should_use_tables(): bool {
+		// Check if migration is completed or not needed.
+		$migration_status = get_option( 'wc_price_history_migration_status', 'not_needed' );
+		
+		// Check if tables exist.
+		global $wpdb;
+		$table_name = $wpdb->prefix . 'wc_price_history';
+		$table_exists = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table_name ) ) === $table_name; // phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.DirectDatabaseQuery.DirectQuery
+		
+		// If status is completed and tables exist, use tables.
+		if ( $migration_status === 'completed' && $table_exists ) {
+			return true;
+		}
+
+		// Otherwise use post_meta (backward compatibility).
+		return false;
+	}
+
+	/**
 	 * Get minimal price for $product_id in last $days.
 	 *
 	 * @since 1.1
@@ -29,8 +72,12 @@ class HistoryStorage {
 	 *
 	 * @return float
 	 */
-	public function get_minimal( int $product_id, int $days = 30 ) : float {
+	public function get_minimal( int $product_id, int $days = 30 ): float {
+		if ( $this->should_use_tables() ) {
+			return $this->table_storage->get_minimal( $product_id, $days );
+		}
 
+		// Legacy post_meta implementation.
 		$history = $this->get_history( $product_id );
 
 		$this_ = $this;
@@ -59,8 +106,12 @@ class HistoryStorage {
 	 *
 	 * @return float
 	 */
-	public function get_minimal_from_sale_start( \WC_Product $wc_product, int $days = 30, string $count_from = 'sale_start' ) : float {
+	public function get_minimal_from_sale_start( \WC_Product $wc_product, int $days = 30, string $count_from = 'sale_start' ): float {
+		if ( $this->should_use_tables() ) {
+			return $this->table_storage->get_minimal_from_sale_start( $wc_product, $days, $count_from );
+		}
 
+		// Legacy post_meta implementation.
 		$sale_start = $wc_product->get_date_on_sale_from();
 
 		if ( ! $sale_start ) {
@@ -112,7 +163,11 @@ class HistoryStorage {
 	 * @return int
 	 */
 	public function add_price( int $product_id, float $new_price, bool $on_change_only ): int {
+		if ( $this->should_use_tables() ) {
+			return $this->table_storage->add_price( $product_id, $new_price, $on_change_only );
+		}
 
+		// Legacy post_meta implementation.
 		$history    = $this->get_history( $product_id );
 		$last_price = (float) end( $history );
 
@@ -154,7 +209,11 @@ class HistoryStorage {
 	 * @return int
 	 */
 	public function add_first_price( int $product_id, float $price ) {
+		if ( $this->should_use_tables() ) {
+			return $this->table_storage->add_first_price( $product_id, $price );
+		}
 
+		// Legacy post_meta implementation.
 		if ( $price <= 0 ) {
 			return 0;
 		}
@@ -176,7 +235,11 @@ class HistoryStorage {
 	 * @return int
 	 */
 	public function add_historical_price( int $product_id, float $price, int $timestamp ): int {
+		if ( $this->should_use_tables() ) {
+			return $this->table_storage->add_historical_price( $product_id, $price, $timestamp );
+		}
 
+		// Legacy post_meta implementation.
 		$history = $this->get_history( $product_id );
 
 		$history[ $timestamp ] = $price;
@@ -195,8 +258,16 @@ class HistoryStorage {
 	 *
 	 * @return array<int, float>
 	 */
-	public function get_history( int $product_id, bool $fill_empty = true ) : array {
+	public function get_history( int $product_id, bool $fill_empty = true ): array {
+		if ( $this->should_use_tables() ) {
+			$history = $this->table_storage->get_history( $product_id );
+			if ( $fill_empty && empty( $history ) ) {
+				$history = $this->table_storage->fill_empty_history( $product_id, [] );
+			}
+			return $history;
+		}
 
+		// Legacy post_meta implementation.
 		$meta = get_post_meta( $product_id, self::cf_key, true );
 		$meta = is_array( $meta ) ? $meta : [];
 
@@ -284,7 +355,11 @@ class HistoryStorage {
 	 * @return bool
 	 */
 	public function delete_price( int $product_id, int $timestamp ): bool {
+		if ( $this->should_use_tables() ) {
+			return $this->table_storage->delete_price( $product_id, $timestamp );
+		}
 
+		// Legacy post_meta implementation.
 		$history = $this->get_history( $product_id );
 
 		if ( ! isset( $history[ $timestamp ] ) ) {
@@ -303,8 +378,13 @@ class HistoryStorage {
 	 *
 	 * @return void
 	 */
-	public function clean_history() : void {
+	public function clean_history(): void {
+		if ( $this->should_use_tables() ) {
+			$this->table_storage->clean_history();
+			return;
+		}
 
+		// Legacy post_meta implementation.
 		global $wpdb;
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.DirectDatabaseQuery.DirectQuery

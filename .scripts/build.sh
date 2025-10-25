@@ -80,7 +80,7 @@ rm -rf .git .github .husky .scripts node_modules \
  tests .gitignore .phpunit.result.cache composer.* \
  package-lock.json package.json phpunit.xml \
  phpstan.neon phpstan.neon.dist phpstan-custom-rules \
- README.md screenshot-1.png
+ README.md screenshot-1.png docs pr
 
 replace_version_number
 
