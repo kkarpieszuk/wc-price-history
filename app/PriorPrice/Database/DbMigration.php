@@ -128,25 +128,28 @@ class DbMigration {
 		$migrated_products = get_option( self::OPTION_MIGRATED_PRODUCTS, [] );
 		$migrated_products = is_array( $migrated_products ) ? $migrated_products : [];
 
-		$placeholders = implode( ',', array_fill( 0, count( $migrated_products ), '%d' ) );
-		$query        = "SELECT DISTINCT post_id
+		$query = "SELECT DISTINCT post_id
 			FROM {$wpdb->postmeta}
 			WHERE meta_key = %s
 			AND meta_value IS NOT NULL
 			AND meta_value != ''";
 
 		if ( ! empty( $migrated_products ) ) {
-			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
-			$query .= $wpdb->prepare(
-				" AND post_id NOT IN ($placeholders)",
-				$migrated_products
+			$placeholders = implode( ',', array_fill( 0, count( $migrated_products ), '%d' ) );
+			// Build array of arguments for prepare: meta_key + migrated products array.
+			$prepare_args = array_merge( [ HistoryStorage::cf_key ], $migrated_products );
+			$query        = $wpdb->prepare(
+				"{$query} AND post_id NOT IN ($placeholders)",
+				$prepare_args
 			);
+		} else {
+			$query = $wpdb->prepare( $query, HistoryStorage::cf_key );
 		}
 
-		$query .= $wpdb->prepare( ' LIMIT %d', $limit );
+		$query = $wpdb->prepare( "{$query} LIMIT %d", $limit );
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.PreparedSQL.NotPrepared
-		return $wpdb->get_col( $wpdb->prepare( $query, HistoryStorage::cf_key ) );
+		return $wpdb->get_col( $query );
 	}
 
 	/**
@@ -257,13 +260,9 @@ class DbMigration {
 			$date_gmt = gmdate( 'Y-m-d H:i:s', $timestamp );
 			$date     = get_date_from_gmt( $date_gmt );
 
-			// Get product to determine if it was on sale.
-			$product = wc_get_product( $product_id );
-			$is_on_sale = $product && $product->is_on_sale() ? 1 : 0;
-
-			// Determine current prices from product.
-			$current_price      = $product ? $product->get_regular_price() : null;
-			$current_sale_price = $product ? $product->get_sale_price() : null;
+			// Use the historical price from post_meta as the actual price.
+			// The price stored in _wc_price_history represents the price at that timestamp.
+			$historical_price = (float) $price;
 
 			// Insert or ignore if duplicate (UNIQUE constraint).
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.DirectDatabaseQuery.DirectQuery
@@ -271,10 +270,9 @@ class DbMigration {
 				$wpdb->prepare(
 					"INSERT IGNORE INTO {$wpdb->prefix}wc_price_history
 					(product_id, price, sale_price, previous_price, previous_sale_price, date, date_gmt, include_in_history)
-					VALUES (%d, %s, %s, %s, %s, %s, %s, 1)",
+					VALUES (%d, %s, NULL, %s, %s, %s, %s, 1)",
 					$product_id,
-					$current_price ?? $price,
-					$current_sale_price,
+					$historical_price,
 					$previous_price,
 					$previous_sale_price,
 					$date,
@@ -282,25 +280,10 @@ class DbMigration {
 				)
 			);
 
-			// Store previous prices for next iteration.
-			$previous_price      = $current_price ?? $price;
-			$previous_sale_price = $current_sale_price;
-
-			// Insert meta for was_on_sale.
-			if ( ! empty( $is_on_sale ) ) {
-				$history_id = $wpdb->insert_id;
-				if ( $history_id ) {
-					// phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.DirectDatabaseQuery.DirectQuery
-					$wpdb->query(
-						$wpdb->prepare(
-							"INSERT INTO {$wpdb->prefix}wc_price_history_meta (price_history_id, meta_key, meta_value)
-							VALUES (%d, 'was_on_sale', %d)",
-							$history_id,
-							$is_on_sale
-						)
-					);
-				}
-			}
+			// Store historical price as previous for next iteration.
+			$previous_price = $historical_price;
+			// Sale price from post_meta history is not available, so leave it null.
+			$previous_sale_price = null;
 		}
 
 		// Add product ID to migrated list.
