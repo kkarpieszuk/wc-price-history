@@ -21,6 +21,7 @@ class AdminNotice {
 	public function register_hooks(): void {
 		add_action( 'admin_notices', [ $this, 'display_notice' ] );
 		add_action( 'admin_init', [ $this, 'handle_migration_start' ] );
+		add_action( 'admin_init', [ $this, 'handle_dismiss_notice' ] );
 	}
 
 	/**
@@ -89,6 +90,30 @@ class AdminNotice {
 	}
 
 	/**
+	 * Handle dismiss notice.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @return void
+	 */
+	public function handle_dismiss_notice(): void {
+		if ( ! isset( $_GET['wc_price_history_dismiss_migration'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			return;
+		}
+
+		if ( ! current_user_can( 'manage_woocommerce' ) ) {
+			return;
+		}
+
+		check_admin_referer( 'wc_price_history_dismiss_migration' );
+
+		update_user_meta( get_current_user_id(), 'wc_price_history_migration_notice_dismissed', true );
+
+		wp_safe_redirect( remove_query_arg( [ 'wc_price_history_dismiss_migration', '_wpnonce' ] ) );
+		exit;
+	}
+
+	/**
 	 * Render notice HTML.
 	 *
 	 * @since 2.0.0
@@ -100,6 +125,13 @@ class AdminNotice {
 
 		if ( $status === DbMigration::STATUS_NOT_NEEDED ) {
 			return;
+		}
+
+		// Check if user has dismissed the completed notice.
+		if ( $status === DbMigration::STATUS_COMPLETED ) {
+			if ( get_user_meta( get_current_user_id(), 'wc_price_history_migration_notice_dismissed', true ) ) {
+				return;
+			}
 		}
 
 		if ( $status === DbMigration::STATUS_PENDING ) {

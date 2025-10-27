@@ -39,7 +39,7 @@ class DbMigration {
 	 *
 	 * @var int
 	 */
-	private const BATCH_SIZE = 10;
+	private const BATCH_SIZE = 20;
 
 	/**
 	 * Check if migration is needed.
