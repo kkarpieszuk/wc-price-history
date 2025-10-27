@@ -1,7 +1,7 @@
 /**
  * Migration JavaScript for WC Price History.
  *
- * @since 2.0.0
+ * @since {VERSION}
  */
 (function() {
 	'use strict';
@@ -118,7 +118,7 @@
 			const errorDiv = document.createElement('div');
 			errorDiv.className = 'notice notice-error';
 			errorDiv.innerHTML = '<p><strong>' + (wcPriceHistoryMigration.i18n.errorTitle || 'Error') + ':</strong> ' + message + '</p>';
-			
+
 			const notice = document.querySelector('.wc-price-history-migration-notice');
 			if (notice) {
 				notice.insertAdjacentElement('afterend', errorDiv);

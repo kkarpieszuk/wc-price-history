@@ -7,14 +7,14 @@ use PriorPrice\Database\DbMigration;
 /**
  * AdminNotice class for displaying migration notices.
  *
- * @since 2.0.0
+ * @since {VERSION}
  */
 class AdminNotice {
 
 	/**
 	 * Register hooks.
 	 *
-	 * @since 2.0.0
+	 * @since {VERSION}
 	 *
 	 * @return void
 	 */
@@ -27,7 +27,7 @@ class AdminNotice {
 	/**
 	 * Display migration notice.
 	 *
-	 * @since 2.0.0
+	 * @since {VERSION}
 	 *
 	 * @return void
 	 */
@@ -47,7 +47,7 @@ class AdminNotice {
 	/**
 	 * Maybe initialize migration status.
 	 *
-	 * @since 2.0.0
+	 * @since {VERSION}
 	 *
 	 * @return void
 	 */
@@ -68,7 +68,7 @@ class AdminNotice {
 	/**
 	 * Handle migration start.
 	 *
-	 * @since 2.0.0
+	 * @since {VERSION}
 	 *
 	 * @return void
 	 */
@@ -92,7 +92,7 @@ class AdminNotice {
 	/**
 	 * Handle dismiss notice.
 	 *
-	 * @since 2.0.0
+	 * @since {VERSION}
 	 *
 	 * @return void
 	 */
@@ -116,7 +116,7 @@ class AdminNotice {
 	/**
 	 * Render notice HTML.
 	 *
-	 * @since 2.0.0
+	 * @since {VERSION}
 	 *
 	 * @return void
 	 */
@@ -146,7 +146,7 @@ class AdminNotice {
 	/**
 	 * Render pending migration notice.
 	 *
-	 * @since 2.0.0
+	 * @since {VERSION}
 	 *
 	 * @return void
 	 */
@@ -199,7 +199,7 @@ class AdminNotice {
 	/**
 	 * Render in progress migration notice.
 	 *
-	 * @since 2.0.0
+	 * @since {VERSION}
 	 *
 	 * @return void
 	 */
@@ -236,7 +236,7 @@ class AdminNotice {
 	/**
 	 * Render completed migration notice.
 	 *
-	 * @since 2.0.0
+	 * @since {VERSION}
 	 *
 	 * @return void
 	 */

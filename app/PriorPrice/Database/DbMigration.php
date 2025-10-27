@@ -7,14 +7,14 @@ use PriorPrice\HistoryStorage;
 /**
  * DbMigration class for migrating data from post_meta to tables.
  *
- * @since 2.0.0
+ * @since {VERSION}
  */
 class DbMigration {
 
 	/**
 	 * Option names.
 	 *
-	 * @since 2.0.0
+	 * @since {VERSION}
 	 */
 	public const OPTION_DB_VERSION = 'wc_price_history_db_version';
 	public const OPTION_MIGRATION_STATUS = 'wc_price_history_migration_status';
@@ -25,7 +25,7 @@ class DbMigration {
 	/**
 	 * Migration statuses.
 	 *
-	 * @since 2.0.0
+	 * @since {VERSION}
 	 */
 	public const STATUS_NOT_NEEDED = 'not_needed';
 	public const STATUS_PENDING = 'pending';
@@ -35,7 +35,7 @@ class DbMigration {
 	/**
 	 * Batch size.
 	 *
-	 * @since 2.0.0
+	 * @since {VERSION}
 	 *
 	 * @var int
 	 */
@@ -44,7 +44,7 @@ class DbMigration {
 	/**
 	 * Check if migration is needed.
 	 *
-	 * @since 2.0.0
+	 * @since {VERSION}
 	 *
 	 * @return bool
 	 */
@@ -93,7 +93,7 @@ class DbMigration {
 	/**
 	 * Get total number of products that need migration.
 	 *
-	 * @since 2.0.0
+	 * @since {VERSION}
 	 *
 	 * @return int
 	 */
@@ -116,7 +116,7 @@ class DbMigration {
 	/**
 	 * Get products to migrate.
 	 *
-	 * @since 2.0.0
+	 * @since {VERSION}
 	 *
 	 * @param int $limit Limit.
 	 *
@@ -152,7 +152,7 @@ class DbMigration {
 	/**
 	 * Migrate batch of products.
 	 *
-	 * @since 2.0.0
+	 * @since {VERSION}
 	 *
 	 * @return array{
 	 *   processed: int,
@@ -228,7 +228,7 @@ class DbMigration {
 	/**
 	 * Migrate single product.
 	 *
-	 * @since 2.0.0
+	 * @since {VERSION}
 	 *
 	 * @param int $product_id Product ID.
 	 *
@@ -311,7 +311,7 @@ class DbMigration {
 	/**
 	 * Get migration progress.
 	 *
-	 * @since 2.0.0
+	 * @since {VERSION}
 	 *
 	 * @return array{
 	 *   processed: int,
@@ -337,7 +337,7 @@ class DbMigration {
 	/**
 	 * Initialize migration.
 	 *
-	 * @since 2.0.0
+	 * @since {VERSION}
 	 *
 	 * @return void
 	 */
@@ -348,7 +348,7 @@ class DbMigration {
 	/**
 	 * Check if migration should be checked on this request.
 	 *
-	 * @since 2.0.0
+	 * @since {VERSION}
 	 *
 	 * @return bool
 	 */

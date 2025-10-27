@@ -5,14 +5,14 @@ namespace PriorPrice\Database;
 /**
  * Install class for creating database tables.
  *
- * @since 2.0.0
+ * @since {VERSION}
  */
 class Install {
 
 	/**
 	 * Database version.
 	 *
-	 * @since 2.0.0
+	 * @since {VERSION}
 	 *
 	 * @var string
 	 */
@@ -21,7 +21,7 @@ class Install {
 	/**
 	 * Get database schema SQL.
 	 *
-	 * @since 2.0.0
+	 * @since {VERSION}
 	 *
 	 * @return string
 	 */
@@ -65,7 +65,7 @@ CREATE TABLE {$wpdb->prefix}wc_price_history_meta (
 	/**
 	 * Create tables.
 	 *
-	 * @since 2.0.0
+	 * @since {VERSION}
 	 *
 	 * @return void
 	 */
@@ -81,7 +81,7 @@ CREATE TABLE {$wpdb->prefix}wc_price_history_meta (
 	/**
 	 * Get database version from options.
 	 *
-	 * @since 2.0.0
+	 * @since {VERSION}
 	 *
 	 * @return string|null
 	 */
@@ -92,7 +92,7 @@ CREATE TABLE {$wpdb->prefix}wc_price_history_meta (
 	/**
 	 * Update database version in options.
 	 *
-	 * @since 2.0.0
+	 * @since {VERSION}
 	 *
 	 * @return void
 	 */
@@ -103,7 +103,7 @@ CREATE TABLE {$wpdb->prefix}wc_price_history_meta (
 	/**
 	 * Check if tables exist.
 	 *
-	 * @since 2.0.0
+	 * @since {VERSION}
 	 *
 	 * @return bool
 	 */

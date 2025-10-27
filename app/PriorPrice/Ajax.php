@@ -128,7 +128,7 @@ class Ajax {
 	/**
 	 * Migrate batch of products to database tables.
 	 *
-	 * @since 2.0.0
+	 * @since {VERSION}
 	 *
 	 * @return void
 	 */

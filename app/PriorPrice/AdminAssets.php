@@ -63,7 +63,7 @@ class AdminAssets {
 	/**
 	 * Maybe enqueue migration scripts.
 	 *
-	 * @since 2.0.0
+	 * @since {VERSION}
 	 *
 	 * @param string $nonce Nonce.
 	 *
