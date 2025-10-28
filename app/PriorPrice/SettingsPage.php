@@ -591,6 +591,7 @@ class SettingsPage {
 	 * @since {VERSION}
 	 */
 	private function hire_me_section(): void {
+
 		$avatar   = WC_PRICE_HISTORY_PLUGIN_URL . 'assets/images/me.webp';
 		$variants = [
 			[
