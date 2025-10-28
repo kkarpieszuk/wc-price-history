@@ -461,6 +461,8 @@ class SettingsPage {
 			<div class="wc-history-price-admin__right">
 				<div class="wc-history-price-admin__right__box">
 
+					<?php $this->hire_me_section(); ?>
+
 					<?php if ( ! Pro::is_pro() ) : ?>
 					<h3><?php esc_html_e( 'Get notified about the PRO version!', 'wc-price-history' ); ?></h3>
 
@@ -493,7 +495,7 @@ class SettingsPage {
 					</button>
 
 					<p>
-						<em><?php esc_html_e( 'Bonus: Early subscribers may receive a lifetime license — normally licenses will be yearly!', 'wc-price-history' ); ?></em>
+						<em><?php esc_html_e( 'Bonus: Early subscribers may receive a lifetime license - normally licenses will be yearly!', 'wc-price-history' ); ?></em>
 					</p>
 
 					<?php endif; ?>
@@ -581,5 +583,59 @@ class SettingsPage {
 		</tr>
 		<?php
 		}
+	}
+
+	/**
+	 * Hire me section.
+	 *
+	 * @since {VERSION}
+	 */
+	private function hire_me_section(): void {
+
+		$avatar   = WC_PRICE_HISTORY_PLUGIN_URL . 'assets/images/me.webp';
+		$variants = [
+			[
+				'title' => __('Hire Me - Senior WooCommerce Engineer', 'wc-price-history'),
+				'description' => '<p>15+ years building the plugins you already use: <br>ACF, WPForms, WPML, WooCommerce extensions - and even WordPress Core (Gutenberg).</p><p>
+I also integrate <b>AI automation</b> directly into WP & e-commerce workflows.</p><p>
+↘️ <b>Remote-only • Full-time • Ready to join your team</b> ↙️</p><p>
+<b>Let’s talk:</b> <a href="https://linkedin.com/in/konrad-karpieszuk-38528b11/" target="_blank">linkedin.com/in/konrad-karpieszuk-38528b11/</a></p>',
+			],
+			[
+				'title' => __('Need WooCommerce Expertise?', 'wc-price-history'),
+				'description' => '<p>Architect of high-performance stores, complex API integrations & EU-compliant pricing.</p><p>
+<b>AI automation for real business impact</b>.</p><p>
+<b>Remote Senior available:</b> <a href="https://linkedin.com/in/konrad-karpieszuk-38528b11/" target="_blank">linkedin.com/in/konrad-karpieszuk-38528b11/</a></p>',
+			],
+			[
+				'title' => __('Hire a Senior who delivers', 'wc-price-history'),
+				'description' => '<p>I’ve built and maintained major WordPress ecosystem products used by millions.</p><p>
+I blend engineering, performance, UX and <b>AI-enhanced workflows</b>.</p><p>
+If your agency scales - I can help.</p><p>
+<b>Let’s connect:</b> <a href="https://linkedin.com/in/konrad-karpieszuk-38528b11/" target="_blank">linkedin.com/in/konrad-karpieszuk-38528b11/</a></p>',
+			],
+			[
+				'title' => __('I help WooCommerce stores sell more & break less', 'wc-price-history'),
+				'description' => '<p>25+ years of coding, 10+ in large product teams.</p><p>
+Expert in performance, automation & revenue-driven e-commerce improvements.</p><p>
+<b>Available full-time - Remote only.</b></p><p>
+<b>Let’s connect:</b> <a href="https://linkedin.com/in/konrad-karpieszuk-38528b11/" target="_blank">linkedin.com/in/konrad-karpieszuk-38528b11/</a></p>',
+			],
+		];
+
+		$variant = $variants[array_rand($variants)];
+
+		printf(
+			'<h3>%s</h3>',
+			$variant['title']
+		);
+		printf(
+			'<div class="wc-price-history-hire-me-section">
+				<img class="wc-price-history-hire-me-section__img" src="%s" alt="Konrad Karpieszuk" width="100" height="100">
+				<div>%s</div>
+			</div>',
+			wp_kses_post($avatar),
+			wp_kses_post($variant['description'])
+		);
 	}
 }
