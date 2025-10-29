@@ -5,7 +5,7 @@ Short Description: Show the lowest product price in the last 30 days. Configurab
 Contributors: kkarpieszuk
 Tags: omnibus, WooCommerce, prices, history, lowest
 Requires at least: 5.8
-Tested up to: 6.8.3
+Tested up to: 6.9
 Requires PHP: 7.2
 Stable tag: {VERSION}
 License: Expat
@@ -133,6 +133,7 @@ Yes, I am available for hire. Please contact me at [LinkedIn](https://linkedin.c
 == Changelog ==
 
 = {VERSION} =
+- New: Added filter `wc_price_history_variations_add_history_lowest_price` to filter the lowest price for variations. (#167)
 
 = {2.2.1} =
 - Promo: Hire Me Section (#165)
