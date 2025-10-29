@@ -70,9 +70,9 @@ class AdminAssets {
 	 * @return void
 	 */
 	private function maybe_enqueue_migration_scripts( string $nonce ): void {
-		$migration_status = get_option( 'wc_price_history_migration_status', 'not_needed' );
+		$migration_status = \PriorPrice\Database\DbMigration::get_migration_status( true );
 
-		if ( $migration_status === 'not_needed' ) {
+		if ( $migration_status === \PriorPrice\Database\DbMigration::STATUS_NOT_NEEDED ) {
 			return;
 		}
 

@@ -52,7 +52,7 @@ class AdminNotice {
 	 * @return void
 	 */
 	private function maybe_init_migration_status(): void {
-		$status = get_option( DbMigration::OPTION_MIGRATION_STATUS );
+		$status = DbMigration::get_migration_status();
 
 		// Don't check if migration already completed or in progress.
 		if ( in_array( $status, [ DbMigration::STATUS_COMPLETED, DbMigration::STATUS_IN_PROGRESS ], true ) ) {
@@ -121,7 +121,7 @@ class AdminNotice {
 	 * @return void
 	 */
 	private function render_notice(): void {
-		$status = get_option( DbMigration::OPTION_MIGRATION_STATUS, DbMigration::STATUS_NOT_NEEDED );
+		$status = DbMigration::get_migration_status( true );
 
 		if ( $status === DbMigration::STATUS_NOT_NEEDED ) {
 			return;

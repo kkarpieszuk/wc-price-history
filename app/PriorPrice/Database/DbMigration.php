@@ -51,7 +51,7 @@ class DbMigration {
 	public static function needs_migration(): bool {
 		global $wpdb;
 
-		$current_status = get_option( self::OPTION_MIGRATION_STATUS );
+		$current_status = self::get_migration_status();
 
 		// If already completed or in progress, no need to check again.
 		if ( in_array( $current_status, [ self::STATUS_COMPLETED, self::STATUS_IN_PROGRESS ], true ) ) {
@@ -166,7 +166,7 @@ class DbMigration {
 	 * }
 	 */
 	public static function migrate_batch(): array {
-		$status = get_option( self::OPTION_MIGRATION_STATUS, self::STATUS_NOT_NEEDED );
+		$status = self::get_migration_status( true );
 
 		if ( $status !== self::STATUS_IN_PROGRESS && $status !== self::STATUS_PENDING ) {
 			return [
@@ -299,14 +299,14 @@ class DbMigration {
 	 * @return array{
 	 *   processed: int,
 	 *   total: int,
-	 *   percentage: float,
-	 *   status: string
+	 *   percentage: 0|float,
+	 *   status: string|false
 	 * }
 	 */
 	public static function get_progress(): array {
 		$processed = (int) get_option( self::OPTION_MIGRATION_PROCESSED, 0 );
 		$total     = (int) get_option( self::OPTION_MIGRATION_TOTAL, 0 );
-		$status    = get_option( self::OPTION_MIGRATION_STATUS, self::STATUS_NOT_NEEDED );
+		$status    = self::get_migration_status( true );
 		$percentage = $total > 0 ? round( ( $processed / $total ) * 100, 2 ) : 0;
 
 		return [
@@ -326,6 +326,25 @@ class DbMigration {
 	 */
 	public static function init_migration(): void {
 		update_option( self::OPTION_MIGRATION_STATUS, self::STATUS_PENDING );
+	}
+
+	/**
+	 * Get migration status.
+	 *
+	 * @since {VERSION}
+	 *
+	 * @param bool $use_default Use default value if option not set. Default false.
+	 *
+	 * @return string|false Status string, or false if not set and $use_default is false.
+	 */
+	public static function get_migration_status( bool $use_default = false ) {
+		$status = get_option( self::OPTION_MIGRATION_STATUS );
+
+		if ( $status === false && $use_default ) {
+			return self::STATUS_NOT_NEEDED;
+		}
+
+		return $status;
 	}
 
 	/**

@@ -54,7 +54,7 @@ class HistoryStorage {
 		}
 
 		// Check if migration is completed or not needed.
-		$migration_status = get_option( 'wc_price_history_migration_status', 'not_needed' );
+		$migration_status = \PriorPrice\Database\DbMigration::get_migration_status( true );
 
 		// Check if tables exist using Install class method.
 		$table_exists = Install::tables_exist();

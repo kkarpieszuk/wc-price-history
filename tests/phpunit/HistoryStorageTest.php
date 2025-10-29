@@ -58,6 +58,11 @@ class HistoryStorageTest extends TestCase {
 			'return' => 0
 		] );
 
+		\WP_Mock::userFunction( 'get_option', [
+			'args' => [ 'wc_price_history_migration_status' ],
+			'return' => 'not_needed'
+		] );
+
 
 		$minimal = $subject->get_minimal( $product_id, 30 );
 
