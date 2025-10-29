@@ -2,6 +2,8 @@
 
 namespace PriorPrice;
 
+use PriorPrice\Database\Install;
+
 /**
  * HistoryStorage class - adapter between old (post_meta) and new (tables) implementations.
  *
@@ -54,10 +56,8 @@ class HistoryStorage {
 		// Check if migration is completed or not needed.
 		$migration_status = get_option( 'wc_price_history_migration_status', 'not_needed' );
 
-		// Check if tables exist.
-		global $wpdb;
-		$table_name = $wpdb->prefix . 'wc_price_history';
-		$table_exists = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table_name ) ) === $table_name; // phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.DirectDatabaseQuery.DirectQuery
+		// Check if tables exist using Install class method.
+		$table_exists = Install::tables_exist();
 
 		// If status is completed and tables exist, use tables.
 		if ( $migration_status === 'completed' && $table_exists ) {
