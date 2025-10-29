@@ -133,6 +133,8 @@ Yes, I am available for hire. Please contact me at [LinkedIn](https://linkedin.c
 == Changelog ==
 
 = {VERSION} =
+
+= {2.2.1} =
 - Promo: Hire Me Section (#165)
 
 = 2.2.0 =
