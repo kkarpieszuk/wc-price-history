@@ -106,13 +106,13 @@ class HistoryStorageTable {
 	 *
 	 * @since {VERSION}
 	 *
-	 * @param int   $product_id Product ID.
-	 * @param float $price      Price.
+	 * @param int   $product_id     Product ID.
+	 * @param float $regular_price  Price.
 	 * @param bool  $on_change_only Save only if price changed.
 	 *
 	 * @return int Number of rows affected.
 	 */
-	public function add_price( int $product_id, float $price, bool $on_change_only ): int {
+	public function add_price( int $product_id, float $regular_price, bool $on_change_only ): int {
 		global $wpdb;
 
 		$product = wc_get_product( $product_id );
@@ -121,7 +121,7 @@ class HistoryStorageTable {
 			return 0;
 		}
 
-		$regular_price = (float) $product->get_regular_price();
+		// Use the $price parameter as the regular price.
 		$sale_price    = $product->get_sale_price();
 		$sale_price    = $sale_price ? (float) $sale_price : null;
 
@@ -172,13 +172,13 @@ class HistoryStorageTable {
 	 *
 	 * @since {VERSION}
 	 *
-	 * @param int   $product_id Product ID.
-	 * @param float $price      Price.
+	 * @param int   $product_id    Product ID.
+	 * @param float $regular_price Price.
 	 *
 	 * @return int
 	 */
-	public function add_first_price( int $product_id, float $price ): int {
-		if ( $price <= 0 ) {
+	public function add_first_price( int $product_id, float $regular_price ): int {
+		if ( $regular_price <= 0 ) {
 			return 0;
 		}
 
@@ -188,7 +188,6 @@ class HistoryStorageTable {
 			return 0;
 		}
 
-		$regular_price = (float) $product->get_regular_price();
 		$sale_price    = $product->get_sale_price();
 		$sale_price    = $sale_price ? (float) $sale_price : null;
 
