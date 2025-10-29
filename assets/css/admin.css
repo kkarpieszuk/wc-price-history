@@ -32,6 +32,11 @@
 	.wc-history-price-admin__right {
 		width: 20%;
 	}
+
+	.wc-price-history-hire-me-section {
+		flex-direction: column;
+		align-items: center;
+	}
 }
 
 @media screen and (max-width: 782px) {
@@ -149,4 +154,37 @@ ul.wc-tabs li.wc_price_history_educational_tab {
 	margin: 40px auto 20px 40px;
 	border-radius: 10px;
 	box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+}
+
+.wc-price-history-hire-me-section {
+	display: flex;
+	align-items:flex-start;
+	gap: 12px;
+	position: relative;
+
+	img.wc-price-history-hire-me-section__img {
+		border-radius: 50%;
+		margin-top: 10px;
+		box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+		display: block;
+	}
+
+	&::before {
+		content: 'Hire me!';
+		position: absolute;
+		z-index: 1;
+		background-color: #2271b1;
+		color: white;
+		font-size: 10px;
+		font-weight: bold;
+		padding: 2px 5px;
+		border-radius: 5px;
+		top: 80px;
+		left: 52px;
+		box-shadow: 0 0 2px 0 rgba(255, 255, 255, 0.603);
+	}
+
+	div > p:first-child {
+		margin-top: 0;
+	}
 }

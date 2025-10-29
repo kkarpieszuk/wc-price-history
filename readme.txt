@@ -5,7 +5,7 @@ Short Description: Show the lowest product price in the last 30 days. Configurab
 Contributors: kkarpieszuk
 Tags: omnibus, WooCommerce, prices, history, lowest
 Requires at least: 5.8
-Tested up to: 6.8.3
+Tested up to: 6.9
 Requires PHP: 7.2
 Stable tag: {VERSION}
 License: Expat
@@ -126,10 +126,16 @@ Yes, on the plugin configuration screen click the button 'Clean history'. This w
 
 Please submit the [GitHub issue](https://github.com/kkarpieszuk/wc-price-history/issues).
 
+= I like your work, are you available for hire? =
+
+Yes, I am available for hire. Please contact me at [LinkedIn](https://linkedin.com/in/konrad-karpieszuk-38528b11/).
+
 == Changelog ==
 
 = {VERSION} =
 
+= {2.2.1} =
+- Promo: Hire Me Section (#165)
 
 = 2.2.0 =
 - Fix: Plugin sometimes displayed "lowest price: 0" after 30 days when price history became empty due to time filtering. ( #159 )
