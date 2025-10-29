@@ -35,7 +35,7 @@ function get_wc_price_history_version(): string {
 }
 
 // Register activation hook.
-register_activation_hook( __FILE__, [ 'PriorPrice\Database\Install', 'create_tables' ] );
+register_activation_hook( __FILE__, [ Install::class, 'create_tables' ] );
 
 // Handle missing WooCommerce.
 add_action( 'plugins_loaded', function () {
@@ -51,10 +51,9 @@ add_action( 'plugins_loaded', function () {
 	}
 
 	// Check if database tables need to be created or updated.
-	$install = new Install();
-	if ( ! $install->tables_exist() ) {
-		$install->create_tables();
-		$install->update_db_version();
+	if ( ! Install::tables_exist() ) {
+		Install::create_tables();
+		Install::update_db_version();
 	}
 } );
 

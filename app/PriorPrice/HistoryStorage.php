@@ -45,6 +45,12 @@ class HistoryStorage {
 	 * @return bool
 	 */
 	private function should_use_tables(): bool {
+
+		static $use_tables = null;
+		if ( $use_tables !== null ) {
+			return $use_tables;
+		}
+
 		// Check if migration is completed or not needed.
 		$migration_status = get_option( 'wc_price_history_migration_status', 'not_needed' );
 
@@ -55,11 +61,13 @@ class HistoryStorage {
 
 		// If status is completed and tables exist, use tables.
 		if ( $migration_status === 'completed' && $table_exists ) {
-			return true;
+			$use_tables = true;
+			return $use_tables;
 		}
 
 		// Otherwise use post_meta (backward compatibility).
-		return false;
+		$use_tables = false;
+		return $use_tables;
 	}
 
 	/**
@@ -399,6 +407,10 @@ class HistoryStorage {
 	}
 
 	public function fix_history() : void {
+
+		if ( $this->should_use_tables() ) {
+			return;
+		}
 
 		$this->extend_all_histories_before( 1 );
 	}
