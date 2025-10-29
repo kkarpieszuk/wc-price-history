@@ -2,6 +2,7 @@
 
 namespace PriorPrice;
 
+use PriorPrice\Database\DbMigration;
 use PriorPrice\Database\Install;
 
 /**
@@ -53,20 +54,13 @@ class HistoryStorage {
 			return $use_tables;
 		}
 
-		// Check if migration is completed or not needed.
-		$migration_status = \PriorPrice\Database\DbMigration::get_migration_status( true );
+		// Check if migration is completed and tables exist.
+		$migration_status = DbMigration::get_migration_status( true );
+		$table_exists     = Install::tables_exist();
 
-		// Check if tables exist using Install class method.
-		$table_exists = Install::tables_exist();
+		// Use tables only if migration is completed and tables exist.
+		$use_tables = ( $migration_status === DbMigration::STATUS_COMPLETED && $table_exists );
 
-		// If status is completed and tables exist, use tables.
-		if ( $migration_status === 'completed' && $table_exists ) {
-			$use_tables = true;
-			return $use_tables;
-		}
-
-		// Otherwise use post_meta (backward compatibility).
-		$use_tables = false;
 		return $use_tables;
 	}
 
