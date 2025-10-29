@@ -226,6 +226,8 @@ class HistoryStorage {
 			return 0;
 		}
 
+		$history = [];
+
 		$history[ $this->get_time_with_offset() ] = $price;
 
 		return $this->save_history( $product_id, $history );
