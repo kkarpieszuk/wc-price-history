@@ -60,6 +60,20 @@ class Variations {
 			$lowest = $current_price > 0 ? $current_price : 0;
 		}
 
+		/**
+		 * Filter the lowest price for variations.
+		 *
+		 * @since {VERSION}
+		 *
+		 * @param float|string         $lowest               Lowest price.
+		 * @param array                $variation_attributes Variation attributes.
+		 * @param WC_Product_Variable  $product_variable     Parent variable product.
+		 * @param WC_Product_Variation $variation            Processed variation.
+		 *
+		 * @return float
+		 */
+		$lowest = apply_filters( 'wc_price_history_variations_add_history_lowest_price', $lowest, $variation_attributes, $product_variable, $variation );
+
 		$variation_attributes['_wc_price_history_lowest_price'] = (float) $lowest;
 
 		return $variation_attributes;
