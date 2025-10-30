@@ -2,37 +2,35 @@
 
 set -e
 
-# using `sudo date -s ...` set the date which was 31 days ago. Always relate to the current time when the script is run.
+# using `sudo date -s ...` set historical dates and create/update a WooCommerce product
 
-# get the current time in seconds since epoch.
-current_time=$(date +%s)
-
-# calculate the time 31 days ago in seconds since epoch.
+# Calculate timestamps relative to now
 thirty_one_days_ago=$(date -d "31 days ago" +%s)
 twenty_nine_days_ago=$(date -d "29 days ago" +%s)
 yesterday_time=$(date -d "yesterday" +%s)
 two_hours_ago_time=$(date -d "2 hours ago" +%s)
 
+# Arrays: timestamps aligned with prices; index 0 is creation, the rest are updates
+timestamps=("$thirty_one_days_ago" "$twenty_nine_days_ago" "$yesterday_time" "$two_hours_ago_time")
+prices=("19.99" "8.99" "9.99" "12.99")
+
 sudo timedatectl set-ntp false
 
-# set the date to 31 days ago.
-sudo date -s "@$thirty_one_days_ago"
+product_id=""
+for i in "${!timestamps[@]}"; do
+  ts="${timestamps[$i]}"
+  price="${prices[$i]}"
 
-date
+  sudo date -s "@$ts"
+  date
+  sleep 1
 
-product_id=$(wp wc product create --name="prod 4" --type="simple" --regular_price="19.99" --user="konrad" --porcelain)
-
-sudo date -s "@$twenty_nine_days_ago"
-sleep 1
-wp wc product update $product_id --regular_price="8.99" --user="konrad"
-
-sudo date -s "@$yesterday_time"
-sleep 1
-wp wc product update $product_id --regular_price="9.99" --user="konrad"
-
-sudo date -s "@$two_hours_ago_time"
-sleep 1
-wp wc product update $product_id --regular_price="12.99" --user="konrad"
+  if [[ "$i" -eq 0 ]]; then
+    product_id=$(wp wc product create --name="prod 4" --type="simple" --regular_price="$price" --user="konrad" --porcelain)
+  else
+    wp wc product update "$product_id" --regular_price="$price" --user="konrad"
+  fi
+done
 
 # restore the time.
 sudo timedatectl set-ntp true
