@@ -67,7 +67,7 @@ sudo timedatectl set-ntp false
 # Ustaw czas na pierwszą datę i utwórz produkt wraz z wariantami z cenami początkowymi
 sudo date -s "@${timestamps[0]}"
 date
-sleep 1
+# sleep 1
 
 echo "Tworzę produkt variable..."
 PRODUCT_ID=$(wp wc product create \
@@ -120,7 +120,7 @@ for i in "${!timestamps[@]}"; do
 
   sudo date -s "@$ts"
   date
-  sleep 1
+  # sleep 1
 
   wp wc product_variation update $PRODUCT_ID $VARIANT1_ID --user="$WPUSER" --regular_price="$v1_price"
   wp wc product_variation update $PRODUCT_ID $VARIANT2_ID --user="$WPUSER" --regular_price="$v2_price"

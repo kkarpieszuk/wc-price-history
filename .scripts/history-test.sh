@@ -23,7 +23,7 @@ for i in "${!timestamps[@]}"; do
 
   sudo date -s "@$ts"
   date
-  sleep 1
+  # sleep 1
 
   if [[ "$i" -eq 0 ]]; then
     product_id=$(wp wc product create --name="prod 4" --type="simple" --regular_price="$price" --user="konrad" --porcelain)
