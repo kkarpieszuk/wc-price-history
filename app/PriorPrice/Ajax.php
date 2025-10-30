@@ -2,7 +2,7 @@
 
 namespace PriorPrice;
 
-use PriorPrice\Database\AdminNotice;
+use PriorPrice\Database\DbMigration;
 
 /**
  * Ajax class.
@@ -144,8 +144,7 @@ class Ajax {
 			wp_send_json_error( [ 'message' => esc_html__( 'You do not have permission to run migration', 'wc-price-history' ) ] );
 		}
 
-		$migration = new \PriorPrice\Database\DbMigration();
-		$result = $migration->migrate_batch();
+		$result = DbMigration::migrate_batch();
 
 		wp_send_json_success( $result );
 	}

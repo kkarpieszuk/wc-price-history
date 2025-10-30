@@ -160,7 +160,10 @@ class AdminNotice {
 					<br />
 					<b>
 					<?php
-					esc_html_e( 'The update will run with AJAX and can take substantial time to complete. Please do not close the browser window or navigate away from the page until the update is complete.' );
+					esc_html_e(
+						'The update will run with AJAX and can take substantial time to complete. Please do not close the browser window or navigate away from the page until the update is complete.',
+						'wc-price-history'
+					);
 					?>
 					</b>
 				</p>
