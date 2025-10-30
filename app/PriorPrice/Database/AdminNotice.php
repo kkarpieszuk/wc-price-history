@@ -127,7 +127,7 @@ class AdminNotice {
 			$this->render_pending_notice();
 		} elseif ( $status === DbMigration::STATUS_IN_PROGRESS ) {
 			$this->render_in_progress_notice();
-		} elseif ( $status === DbMigration::STATUS_COMPLETED & ! get_user_meta( get_current_user_id(), self::USER_OPTION_NAME, true ) ) {
+		} elseif ( $status === DbMigration::STATUS_COMPLETED && ! get_user_meta( get_current_user_id(), self::USER_OPTION_NAME, true ) ) {
 			$this->render_completed_notice();
 		}
 	}
