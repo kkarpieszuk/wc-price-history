@@ -1,7 +1,7 @@
 === WC Price History ===
 
 Plugin Name: WC Price History
-Short Description: Show the lowest product price in the last 30 days. Configurable, works with Omnibus European Union directive by default.
+Short Description: Show the lowest product price in the last 30 days, Omnibus compliant.
 Contributors: kkarpieszuk
 Tags: omnibus, WooCommerce, prices, history, lowest
 Requires at least: 5.8
@@ -133,10 +133,12 @@ Yes, I am available for hire. Please contact me at [LinkedIn](https://linkedin.c
 == Changelog ==
 
 = {VERSION} =
+
+= 2.2.2 =
 - New: Added filter `wc_price_history_variations_add_history_lowest_price` to filter the lowest price for variations. (#167)
 - Database Migration: Price History moved from Post Meta to Custom Tables for better performance. (#98)
 
-= {2.2.1} =
+= 2.2.1 =
 - Promo: Hire Me Section (#165)
 
 = 2.2.0 =
