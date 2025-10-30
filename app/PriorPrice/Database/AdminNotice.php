@@ -168,14 +168,12 @@ class AdminNotice {
 						'wc-price-history'
 					);
 					?>
+					<br />
+					<b>
 					<?php
-					printf(
-						/* translators: %1$s: WP CLI link, %2$s: closing </a> tag */
-						esc_html__( 'The database update process runs in the background and may take a little while, so please be patient. Advanced users can alternatively update via %1$sWP CLI%2$s.', 'wc-price-history' ),
-						'<a href="https://developer.wordpress.org/cli/commands/">',
-						'</a>'
-					);
+					esc_html_e( 'The update will run with AJAX and can take substantial time to complete. Please do not close the browser window or navigate away from the page until the update is complete.' );
 					?>
+					</b>
 				</p>
 			</div>
 			<div class="wc-price-history-migration-progress-bar" style="display: none;">
