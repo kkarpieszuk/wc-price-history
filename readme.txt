@@ -133,6 +133,7 @@ Yes, I am available for hire. Please contact me at [LinkedIn](https://linkedin.c
 == Changelog ==
 
 = {VERSION} =
+- New: Added filter `wc_price_history_variations_add_history_lowest_price` to filter the lowest price for variations. (#167)
 
 = {2.2.1} =
 - Promo: Hire Me Section (#165)
