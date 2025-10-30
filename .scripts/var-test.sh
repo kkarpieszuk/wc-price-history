@@ -51,6 +51,24 @@ VARIANT2_TERM_ID=$(wp wc product_attribute_term list "$ATTRIBUTE_ID" --user="$WP
 VARIANT1_TERM_SLUG=$(wp wc product_attribute_term list "$ATTRIBUTE_ID" --user="$WPUSER" --format=json | jq -r ".[] | select(.id == $VARIANT1_TERM_ID) | .slug" | head -n1)
 VARIANT2_TERM_SLUG=$(wp wc product_attribute_term list "$ATTRIBUTE_ID" --user="$WPUSER" --format=json | jq -r ".[] | select(.id == $VARIANT2_TERM_ID) | .slug" | head -n1)
 
+# Daty historyczne jak w history-test.sh
+thirty_one_days_ago=$(date -d "31 days ago" +%s)
+twenty_nine_days_ago=$(date -d "29 days ago" +%s)
+yesterday_time=$(date -d "yesterday" +%s)
+two_hours_ago_time=$(date -d "2 hours ago" +%s)
+
+# Tablice dat i cen dla obu wariantów: indeks 0 = tworzenie, pozostałe = aktualizacje
+timestamps=("$thirty_one_days_ago" "$twenty_nine_days_ago" "$yesterday_time" "$two_hours_ago_time")
+variant1_prices=("15.00" "7.00" "8.00" "12.00")
+variant2_prices=("30.00" "14.00" "16.00" "22.00")
+
+sudo timedatectl set-ntp false
+
+# Ustaw czas na pierwszą datę i utwórz produkt wraz z wariantami z cenami początkowymi
+sudo date -s "@${timestamps[0]}"
+date
+sleep 1
+
 echo "Tworzę produkt variable..."
 PRODUCT_ID=$(wp wc product create \
   --user="$WPUSER" \
@@ -80,16 +98,33 @@ wp wc product update $PRODUCT_ID \
 echo "Tworzę wariant: $VARIANT1_COLOR..."
 VARIANT1_ID=$(wp wc product_variation create $PRODUCT_ID \
   --user="$WPUSER" \
-  --regular_price="$VARIANT1_PRICE" \
+  --regular_price="${variant1_prices[0]}" \
   --attributes='[{"id": '"$ATTRIBUTE_ID"', "option": "'"$VARIANT1_TERM_SLUG"'"}]' \
   --porcelain)
 
 echo "Tworzę wariant: $VARIANT2_COLOR..."
 VARIANT2_ID=$(wp wc product_variation create $PRODUCT_ID \
   --user="$WPUSER" \
-  --regular_price="$VARIANT2_PRICE" \
+  --regular_price="${variant2_prices[0]}" \
   --attributes='[{"id": '"$ATTRIBUTE_ID"', "option": "'"$VARIANT2_TERM_SLUG"'"}]' \
   --porcelain)
+
+# Aktualizacje cen wariantów w kolejnych datach
+for i in "${!timestamps[@]}"; do
+  if [[ "$i" -eq 0 ]]; then
+    continue
+  fi
+  ts="${timestamps[$i]}"
+  v1_price="${variant1_prices[$i]}"
+  v2_price="${variant2_prices[$i]}"
+
+  sudo date -s "@$ts"
+  date
+  sleep 1
+
+  wp wc product_variation update $PRODUCT_ID $VARIANT1_ID --user="$WPUSER" --regular_price="$v1_price"
+  wp wc product_variation update $PRODUCT_ID $VARIANT2_ID --user="$WPUSER" --regular_price="$v2_price"
+done
 
 echo "
 ✅ GOTOWE!
@@ -97,3 +132,7 @@ Produkt ID: $PRODUCT_ID
 Warianty: $VARIANT1_ID ($VARIANT1_COLOR, $VARIANT1_PRICE)
           $VARIANT2_ID ($VARIANT2_COLOR, $VARIANT2_PRICE)
 "
+
+# Przywróć czas
+sudo timedatectl set-ntp true
+date
