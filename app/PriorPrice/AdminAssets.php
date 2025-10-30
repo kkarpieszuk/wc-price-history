@@ -33,6 +33,7 @@ class AdminAssets {
 		wp_localize_script( 'wc-price-history-admin', 'wc_price_history_admin', [
 			'ajax_url'                         => admin_url( 'admin-ajax.php' ),
 			'first_scan_finished_notice_nonce' => $nonce,
+			'migration_notice_nonce'           => $nonce,
 			'clean_history_confirm'            => esc_html__( 'Are you sure you want to delete all price history?', 'wc-price-history' ),
 			'clean_history_nonce'              => $nonce,
 			'clean_history_success'            => esc_html__( 'Price history has been deleted.', 'wc-price-history' ),

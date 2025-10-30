@@ -35,6 +35,16 @@ jQuery(document).ready(function($) {
 		);
 	} );
 
+	$( '.wc-price-history-migration-notice .notice-dismiss' ).on( 'click', function() {
+		$.post(
+			ajaxurl,
+			{
+				action: 'wc_price_history_migration_notice_dismissed',
+				security: wc_price_history_admin.migration_notice_nonce
+			}
+		);
+	} );
+
 	$( '#wc-price-history-clean-history' ).on( 'click', function() {
 		$( this ).prop( 'disabled', true ).append( ' <span class="spinner is-active"></span>' );
 		if ( confirm( wc_price_history_admin.clean_history_confirm ) ) {

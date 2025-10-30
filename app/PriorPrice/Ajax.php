@@ -2,6 +2,8 @@
 
 namespace PriorPrice;
 
+use PriorPrice\Database\AdminNotice;
+
 /**
  * Ajax class.
  *

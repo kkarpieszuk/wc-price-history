@@ -11,6 +11,8 @@ use PriorPrice\Database\DbMigration;
  */
 class AdminNotice {
 
+	const USER_OPTION_NAME = 'wc_price_history_migration_notice_dismissed';
+
 	/**
 	 * Register hooks.
 	 *
@@ -21,7 +23,7 @@ class AdminNotice {
 	public function register_hooks(): void {
 		add_action( 'admin_notices', [ $this, 'display_notice' ] );
 		add_action( 'admin_init', [ $this, 'handle_migration_start' ] );
-		add_action( 'admin_init', [ $this, 'handle_dismiss_notice' ] );
+		add_action( 'wp_ajax_wc_price_history_migration_notice_dismissed', [ $this, 'migration_notice_dismissed' ] );
 	}
 
 	/**
@@ -84,32 +86,20 @@ class AdminNotice {
 		check_admin_referer( 'wc_price_history_start_migration' );
 
 		DbMigration::init_migration();
+
 		wp_safe_redirect( remove_query_arg( [ 'wc_price_history_start_migration', '_wpnonce' ] ) );
 		exit;
 	}
 
-	/**
-	 * Handle dismiss notice.
-	 *
-	 * @since {VERSION}
-	 *
-	 * @return void
-	 */
-	public function handle_dismiss_notice(): void {
-		if ( ! isset( $_GET['wc_price_history_dismiss_migration'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			return;
+	public function migration_notice_dismissed(): void {
+
+		if ( ! check_ajax_referer( 'wc_price_history', 'security', false ) ) {
+			wp_send_json_error( [ 'message' => esc_html__( 'Invalid nonce', 'wc-price-history' ) ] );
 		}
 
-		if ( ! current_user_can( 'manage_woocommerce' ) ) {
-			return;
-		}
+		update_user_meta( get_current_user_id(), self::USER_OPTION_NAME, true );
 
-		check_admin_referer( 'wc_price_history_dismiss_migration' );
-
-		update_user_meta( get_current_user_id(), 'wc_price_history_migration_notice_dismissed', true );
-
-		wp_safe_redirect( remove_query_arg( [ 'wc_price_history_dismiss_migration', '_wpnonce' ] ) );
-		exit;
+		wp_send_json_success();
 	}
 
 	/**
@@ -137,7 +127,7 @@ class AdminNotice {
 			$this->render_pending_notice();
 		} elseif ( $status === DbMigration::STATUS_IN_PROGRESS ) {
 			$this->render_in_progress_notice();
-		} elseif ( $status === DbMigration::STATUS_COMPLETED ) {
+		} elseif ( $status === DbMigration::STATUS_COMPLETED & ! get_user_meta( get_current_user_id(), self::USER_OPTION_NAME, true ) ) {
 			$this->render_completed_notice();
 		}
 	}
@@ -259,11 +249,6 @@ class AdminNotice {
 					?>
 				</p>
 			</div>
-			<p class="submit">
-				<a href="<?php echo esc_url( $dismiss_url ); ?>" class="button-secondary">
-					<?php esc_html_e( 'Dismiss', 'wc-price-history' ); ?>
-				</a>
-			</p>
 		</div>
 		<?php
 	}
