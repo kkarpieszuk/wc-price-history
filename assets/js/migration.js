@@ -60,7 +60,7 @@
 				const result = data.data;
 
 				// Update progress bar.
-				updateProgress(result.processed, result.total, result.percentage, result.message);
+				updateProgress(result.percentage, result.message);
 
 				if (result.completed) {
 					// Migration completed.
@@ -81,12 +81,12 @@
 		/**
 		 * Update progress bar.
 		 *
-		 * @param {number} processed Processed count.
-		 * @param {number} total Total count.
+		 * @since {VERSION}
+		 *
 		 * @param {number} percentage Percentage.
 		 * @param {string} message Message.
 		 */
-		function updateProgress(processed, total, percentage, message) {
+		function updateProgress(percentage, message) {
 			progressFill.style.width = percentage + '%';
 			progressText.textContent = message;
 

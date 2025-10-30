@@ -84,8 +84,7 @@ class AdminNotice {
 		check_admin_referer( 'wc_price_history_start_migration' );
 
 		DbMigration::init_migration();
-
-		wp_safe_redirect( remove_query_arg( 'wc_price_history_start_migration' ) );
+		wp_safe_redirect( remove_query_arg( [ 'wc_price_history_start_migration', '_wpnonce' ] ) );
 		exit;
 	}
 
