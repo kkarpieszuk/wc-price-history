@@ -121,9 +121,20 @@ class Shortcode {
 			'currency' => (bool) $atts['show_currency'] ? get_woocommerce_currency() : 'none',
 		];
 
-		$lowest = wc_price( $lowest, $wc_price_args );
-		$class  = $this->settings_data->get_display_line_through() ? 'line-through' : '';
+		// Add wrapper class for raw price value to enable JavaScript updates.
+		$price_format = get_woocommerce_price_format();
+		$price_format = str_replace( '%2$s', '<span class="wc-price-history-lowest-raw-value">%2$s</span>', $price_format );
+		$wc_price_args['price_format'] = $price_format;
 
-		return sprintf( '<div class="wc-price-history-shortcode %2$s">%1$s</div>', $lowest, $class );
+		$lowest_html = wc_price( $lowest, $wc_price_args );
+		$class       = $this->settings_data->get_display_line_through() ? 'line-through' : '';
+
+		return sprintf(
+			'<div class="wc-price-history-shortcode %3$s" data-product-id="%1$s" data-original-price="%2$s">%4$s</div>',
+			$product->get_id(),
+			$lowest,
+			$class,
+			$lowest_html
+		);
 	}
 }

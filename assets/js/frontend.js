@@ -18,8 +18,9 @@ WCPriceHistory.Frontend = WCPriceHistory.Frontend || ( function( document, windo
 		 * Selectors.
 		 */
 		selectors: {
-			rawPrice: '.wc-price-history.prior-price-value .woocommerce-Price-amount.amount .wc-price-history-lowest-raw-value',
+			rawPrice: '.wc-price-history-lowest-raw-value',
 			lowestPriceModule: '.wc-price-history.prior-price.lowest',
+			shortcodeModule: '.wc-price-history-shortcode',
 		},
 
 		/**
@@ -64,14 +65,22 @@ WCPriceHistory.Frontend = WCPriceHistory.Frontend || ( function( document, windo
 			getOriginalPrices: () => {
 
 				const $lowestPriceModules = $( app.selectors.lowestPriceModule );
+				const $shortcodeModules = $( app.selectors.shortcodeModule );
 
-				if ( $lowestPriceModules.length === 0 ) {
+				if ( $lowestPriceModules.length === 0 && $shortcodeModules.length === 0 ) {
 					return [];
 				}
 
 				let originalPrices = [];
 
 				$lowestPriceModules.each(function() {
+					const productId = $(this).data('product-id');
+					const originalPrice = $(this).data('original-price');
+
+					originalPrices[productId] = originalPrice;
+				});
+
+				$shortcodeModules.each(function() {
 					const productId = $(this).data('product-id');
 					const originalPrice = $(this).data('original-price');
 
@@ -96,8 +105,10 @@ WCPriceHistory.Frontend = WCPriceHistory.Frontend || ( function( document, windo
 					lowestInVariation = variation._wc_price_history_lowest_price;
 
 				const $lowestPriceModule = $( app.selectors.lowestPriceModule + '[data-product-id="' + productId + '"]');
+				const $shortcodeModule = $( app.selectors.shortcodeModule + '[data-product-id="' + productId + '"]');
 
 				$lowestPriceModule.find( app.selectors.rawPrice ).text( app.methods.formatPrice( lowestInVariation ) );
+				$shortcodeModule.find( app.selectors.rawPrice ).text( app.methods.formatPrice( lowestInVariation ) );
 			},
 
 			/**
@@ -115,8 +126,10 @@ WCPriceHistory.Frontend = WCPriceHistory.Frontend || ( function( document, windo
 					originalPrice = app.data.originalPrices[productId];
 
 				const $lowestPriceModule = $( app.selectors.lowestPriceModule + '[data-product-id="' + productId + '"]');
+				const $shortcodeModule = $( app.selectors.shortcodeModule + '[data-product-id="' + productId + '"]');
 
 				$lowestPriceModule.find( app.selectors.rawPrice ).text( app.methods.formatPrice( originalPrice ) );
+				$shortcodeModule.find( app.selectors.rawPrice ).text( app.methods.formatPrice( originalPrice ) );
 			},
 		},
 
