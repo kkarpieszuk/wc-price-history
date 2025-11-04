@@ -134,6 +134,7 @@ Yes, I am available for hire. Please contact me at [LinkedIn](https://linkedin.c
 
 = {VERSION} =
 - Database Migration: Price History moved from Post Meta to Custom Tables for better performance. (#98)
+- New: Minimal price displayed with shortcode is now updated when product variant is changed. (#169)
 
 = 2.2.2 =
 - New: Added filter `wc_price_history_variations_add_history_lowest_price` to filter the lowest price for variations. (#167)
