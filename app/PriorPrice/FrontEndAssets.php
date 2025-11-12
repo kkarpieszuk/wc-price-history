@@ -24,10 +24,10 @@ class FrontEndAssets {
 	 * @since 1.7
 	 */
 	public function enqueue_scripts() : void {
-		wp_enqueue_style( 'wc-price-history-frontend', WC_PRICE_HISTORY_PLUGIN_URL . 'assets/css/frontend.css', [], '1.7' );
+		wp_enqueue_style( 'wc-price-history-frontend', WC_PRICE_HISTORY_PLUGIN_URL . 'assets/css/frontend.css', [], '{VERSION}' );
 
 		if ( is_product() ) {
-			wp_enqueue_script( 'wc-price-history-frontend', WC_PRICE_HISTORY_PLUGIN_URL . 'assets/js/frontend.js', [ 'jquery' ], '2.1', true );
+			wp_enqueue_script( 'wc-price-history-frontend', WC_PRICE_HISTORY_PLUGIN_URL . 'assets/js/frontend.js', [ 'jquery' ], '{VERSION}', true );
 
 			$price_format = [
 				'thousand_separator' => wc_get_price_thousand_separator(),
