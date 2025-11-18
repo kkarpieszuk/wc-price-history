@@ -269,9 +269,14 @@ class HistoryStorageTable {
 		);
 
 		$history = [];
+		$gmt_offset = (int) get_option( 'gmt_offset' ) * HOUR_IN_SECONDS;
 
 		foreach ( $results as $row ) {
-			$timestamp = strtotime( $row->date_gmt );
+			// Convert GMT datetime string to Unix timestamp in UTC, then add offset to match legacy format.
+			// strtotime() with ' UTC' suffix forces UTC interpretation instead of server timezone.
+			$timestamp_utc = strtotime( $row->date_gmt . ' UTC' );
+			// Add offset to match legacy post_meta format (offset-adjusted timestamps).
+			$timestamp = $timestamp_utc + $gmt_offset;
 			$history[ $timestamp ] = (float) $row->price;
 		}
 
