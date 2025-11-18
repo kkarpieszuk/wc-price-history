@@ -296,7 +296,12 @@ class HistoryStorageTable {
 	public function delete_price( int $product_id, int $timestamp ): bool {
 		global $wpdb;
 
-		$date_gmt = gmdate( 'Y-m-d H:i:s', $timestamp );
+		// Convert offset-adjusted timestamp back to UTC timestamp before formatting.
+		// The $timestamp parameter matches legacy post_meta format (offset-adjusted),
+		// but date_gmt in database is stored as UTC, so we need to subtract the offset.
+		$gmt_offset = (int) get_option( 'gmt_offset' ) * HOUR_IN_SECONDS;
+		$timestamp_utc = $timestamp - $gmt_offset;
+		$date_gmt = gmdate( 'Y-m-d H:i:s', $timestamp_utc );
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.DirectDatabaseQuery.DirectQuery
 		$result = $wpdb->query(
