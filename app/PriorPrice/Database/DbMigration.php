@@ -21,6 +21,7 @@ class DbMigration {
 	public const OPTION_MIGRATION_TOTAL = 'wc_price_history_migration_total';
 	public const OPTION_MIGRATION_PROCESSED = 'wc_price_history_migration_processed';
 	public const OPTION_MIGRATED_PRODUCTS = 'wc_price_history_migrated_products';
+	public const OPTION_MIGRATION_LOCK = 'wc_price_history_migration_lock';
 
 	/**
 	 * Migration statuses.
@@ -40,6 +41,18 @@ class DbMigration {
 	 * @var int
 	 */
 	private const BATCH_SIZE = 20;
+
+	/**
+	 * Lock timeout in seconds.
+	 *
+	 * Maximum time a migration batch should take. If lock is older than this,
+	 * it's considered stale and can be acquired by another request.
+	 *
+	 * @since {VERSION}
+	 *
+	 * @var int
+	 */
+	private const LOCK_TIMEOUT = 60;
 
 	/**
 	 * Check if migration is needed.
@@ -178,64 +191,92 @@ class DbMigration {
 			];
 		}
 
-		// Initialize migration if this is the first batch.
-		if ( $status === self::STATUS_PENDING ) {
-			$total_products = self::get_total_products_to_migrate();
-			update_option( self::OPTION_MIGRATION_TOTAL, $total_products );
-			update_option( self::OPTION_MIGRATION_PROCESSED, 0 );
-			update_option( self::OPTION_MIGRATED_PRODUCTS, [] );
-			update_option( self::OPTION_MIGRATION_STATUS, self::STATUS_IN_PROGRESS );
-		}
-
-		$products = self::get_products_to_migrate( self::BATCH_SIZE );
-		$total    = (int) get_option( self::OPTION_MIGRATION_TOTAL, 0 );
-		$processed = (int) get_option( self::OPTION_MIGRATION_PROCESSED, 0 );
-
-		if ( empty( $products ) ) {
-			update_option( self::OPTION_MIGRATION_STATUS, self::STATUS_COMPLETED );
-			Install::update_db_version();
+		// Acquire lock to prevent concurrent batch processing.
+		if ( ! self::acquire_lock() ) {
+			// Another request is already processing a batch.
+			// Return current progress without processing.
+			$total    = (int) get_option( self::OPTION_MIGRATION_TOTAL, 0 );
+			$processed = (int) get_option( self::OPTION_MIGRATION_PROCESSED, 0 );
+			$percentage = $total > 0 ? round( ( $processed / $total ) * 100, 2 ) : 0;
 
 			return [
-				'processed'  => $total,
+				'processed'  => $processed,
 				'total'     => $total,
-				'percentage' => 100,
-				'completed' => true,
-				'message'   => esc_html__( 'Migration completed successfully.', 'wc-price-history' ),
+				'percentage' => $percentage,
+				'completed' => false,
+				'message'   => sprintf(
+					/* translators: %1$d: processed products, %2$d: total products, %3$.2f: percentage */
+					esc_html__( 'Migrated %1$d of %2$d products (%3$.2f%%)', 'wc-price-history' ),
+					$processed,
+					$total,
+					$percentage
+				),
 			];
 		}
 
-		// Load migrated products list once per batch.
-		$migrated_products = get_option( self::OPTION_MIGRATED_PRODUCTS, [] );
-		$migrated_products = is_array( $migrated_products ) ? $migrated_products : [];
-
-		foreach ( $products as $product_id ) {
-			if ( ! self::migrate_product( $product_id ) ) {
-				continue;
+		try {
+			// Initialize migration if this is the first batch.
+			if ( $status === self::STATUS_PENDING ) {
+				$total_products = self::get_total_products_to_migrate();
+				update_option( self::OPTION_MIGRATION_TOTAL, $total_products );
+				update_option( self::OPTION_MIGRATION_PROCESSED, 0 );
+				update_option( self::OPTION_MIGRATED_PRODUCTS, [] );
+				update_option( self::OPTION_MIGRATION_STATUS, self::STATUS_IN_PROGRESS );
 			}
 
-			$migrated_products[] = $product_id;
-			$processed++;
+			$products = self::get_products_to_migrate( self::BATCH_SIZE );
+			$total    = (int) get_option( self::OPTION_MIGRATION_TOTAL, 0 );
+			$processed = (int) get_option( self::OPTION_MIGRATION_PROCESSED, 0 );
+
+			if ( empty( $products ) ) {
+				update_option( self::OPTION_MIGRATION_STATUS, self::STATUS_COMPLETED );
+				Install::update_db_version();
+
+				return [
+					'processed'  => $total,
+					'total'     => $total,
+					'percentage' => 100,
+					'completed' => true,
+					'message'   => esc_html__( 'Migration completed successfully.', 'wc-price-history' ),
+				];
+			}
+
+			// Load migrated products list once per batch.
+			$migrated_products = get_option( self::OPTION_MIGRATED_PRODUCTS, [] );
+			$migrated_products = is_array( $migrated_products ) ? $migrated_products : [];
+
+			foreach ( $products as $product_id ) {
+				if ( ! self::migrate_product( $product_id ) ) {
+					continue;
+				}
+
+				$migrated_products[] = $product_id;
+				$processed++;
+			}
+
+			// Save migrated products list once per batch.
+			update_option( self::OPTION_MIGRATED_PRODUCTS, array_unique( $migrated_products ) );
+			update_option( self::OPTION_MIGRATION_PROCESSED, $processed );
+
+			$percentage = $total > 0 ? round( ( $processed / $total ) * 100, 2 ) : 0;
+
+			return [
+				'processed'  => $processed,
+				'total'     => $total,
+				'percentage' => $percentage,
+				'completed' => false,
+				'message'   => sprintf(
+					/* translators: %1$d: processed products, %2$d: total products, %3$.2f: percentage */
+					esc_html__( 'Migrated %1$d of %2$d products (%3$.2f%%)', 'wc-price-history' ),
+					$processed,
+					$total,
+					$percentage
+				),
+			];
+		} finally {
+			// Always release lock, even if an error occurs.
+			self::release_lock();
 		}
-
-		// Save migrated products list once per batch.
-		update_option( self::OPTION_MIGRATED_PRODUCTS, array_unique( $migrated_products ) );
-		update_option( self::OPTION_MIGRATION_PROCESSED, $processed );
-
-		$percentage = $total > 0 ? round( ( $processed / $total ) * 100, 2 ) : 0;
-
-		return [
-			'processed'  => $processed,
-			'total'     => $total,
-			'percentage' => $percentage,
-			'completed' => false,
-			'message'   => sprintf(
-				/* translators: %1$d: processed products, %2$d: total products, %3$.2f: percentage */
-				esc_html__( 'Migrated %1$d of %2$d products (%3$.2f%%)', 'wc-price-history' ),
-				$processed,
-				$total,
-				$percentage
-			),
-		];
 	}
 
 	/**
@@ -392,5 +433,36 @@ class DbMigration {
 	private static function convert_to_utc_timestamp( int $offset_timestamp ): int {
 		$gmt_offset = (int) get_option( 'gmt_offset' ) * HOUR_IN_SECONDS;
 		return $offset_timestamp - $gmt_offset;
+	}
+
+	/**
+	 * Acquire lock for batch migration to prevent concurrent execution.
+	 *
+	 * @since {VERSION}
+	 *
+	 * @return bool True if lock was acquired, false if another request is already processing.
+	 */
+	private static function acquire_lock(): bool {
+		$lock_timestamp = get_option( self::OPTION_MIGRATION_LOCK, 0 );
+
+		// If lock exists and is not stale, another request is processing.
+		if ( $lock_timestamp > 0 && ( time() - $lock_timestamp ) < self::LOCK_TIMEOUT ) {
+			return false;
+		}
+
+		// Acquire lock by setting current timestamp.
+		update_option( self::OPTION_MIGRATION_LOCK, time() );
+		return true;
+	}
+
+	/**
+	 * Release lock for batch migration.
+	 *
+	 * @since {VERSION}
+	 *
+	 * @return void
+	 */
+	private static function release_lock(): void {
+		delete_option( self::OPTION_MIGRATION_LOCK );
 	}
 }
