@@ -77,8 +77,14 @@ class HistoryStorageTable {
 			$sale_start_timestamp = $sale_start->getOffsetTimestamp();
 		}
 
-		$sale_start_date = gmdate( 'Y-m-d H:i:s', $sale_start_timestamp );
-		$cutoff_date     = gmdate( 'Y-m-d H:i:s', $sale_start_timestamp - ( $days * DAY_IN_SECONDS ) );
+		// Convert offset-adjusted timestamp back to UTC timestamp before formatting.
+		// getOffsetTimestamp() returns offset-adjusted timestamp, but date_gmt in database is stored as UTC.
+		$gmt_offset = (int) get_option( 'gmt_offset' ) * HOUR_IN_SECONDS;
+		$sale_start_timestamp_utc = $sale_start_timestamp - $gmt_offset;
+		$cutoff_timestamp_utc = ( $sale_start_timestamp - ( $days * DAY_IN_SECONDS ) ) - $gmt_offset;
+
+		$sale_start_date = gmdate( 'Y-m-d H:i:s', $sale_start_timestamp_utc );
+		$cutoff_date     = gmdate( 'Y-m-d H:i:s', $cutoff_timestamp_utc );
 
 		global $wpdb;
 
@@ -220,12 +226,17 @@ class HistoryStorageTable {
 	 *
 	 * @param int   $product_id Product ID.
 	 * @param float $price      Price.
-	 * @param int   $timestamp Unix timestamp.
+	 * @param int   $timestamp Unix timestamp (offset-adjusted, matching legacy post_meta format).
 	 *
 	 * @return int
 	 */
 	public function add_historical_price( int $product_id, float $price, int $timestamp ): int {
-		$date_gmt = gmdate( 'Y-m-d H:i:s', $timestamp );
+		// Convert offset-adjusted timestamp back to UTC timestamp before formatting.
+		// The $timestamp parameter matches legacy post_meta format (offset-adjusted),
+		// but date_gmt in database is stored as UTC, so we need to subtract the offset.
+		$gmt_offset = (int) get_option( 'gmt_offset' ) * HOUR_IN_SECONDS;
+		$timestamp_utc = $timestamp - $gmt_offset;
+		$date_gmt = gmdate( 'Y-m-d H:i:s', $timestamp_utc );
 		$date     = get_date_from_gmt( $date_gmt );
 
 		global $wpdb;
