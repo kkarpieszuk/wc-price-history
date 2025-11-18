@@ -77,11 +77,10 @@ class HistoryStorageTable {
 			$sale_start_timestamp = $sale_start->getOffsetTimestamp();
 		}
 
-		// Convert offset-adjusted timestamp back to UTC timestamp before formatting.
+		// Convert offset-adjusted timestamps to UTC before formatting.
 		// getOffsetTimestamp() returns offset-adjusted timestamp, but date_gmt in database is stored as UTC.
-		$gmt_offset = (int) get_option( 'gmt_offset' ) * HOUR_IN_SECONDS;
-		$sale_start_timestamp_utc = $sale_start_timestamp - $gmt_offset;
-		$cutoff_timestamp_utc = ( $sale_start_timestamp - ( $days * DAY_IN_SECONDS ) ) - $gmt_offset;
+		$sale_start_timestamp_utc = $this->convert_to_utc_timestamp( $sale_start_timestamp );
+		$cutoff_timestamp_utc = $this->convert_to_utc_timestamp( $sale_start_timestamp - ( $days * DAY_IN_SECONDS ) );
 
 		$sale_start_date = gmdate( 'Y-m-d H:i:s', $sale_start_timestamp_utc );
 		$cutoff_date     = gmdate( 'Y-m-d H:i:s', $cutoff_timestamp_utc );
@@ -231,11 +230,7 @@ class HistoryStorageTable {
 	 * @return int
 	 */
 	public function add_historical_price( int $product_id, float $price, int $timestamp ): int {
-		// Convert offset-adjusted timestamp back to UTC timestamp before formatting.
-		// The $timestamp parameter matches legacy post_meta format (offset-adjusted),
-		// but date_gmt in database is stored as UTC, so we need to subtract the offset.
-		$gmt_offset = (int) get_option( 'gmt_offset' ) * HOUR_IN_SECONDS;
-		$timestamp_utc = $timestamp - $gmt_offset;
+		$timestamp_utc = $this->convert_to_utc_timestamp( $timestamp );
 		$date_gmt = gmdate( 'Y-m-d H:i:s', $timestamp_utc );
 		$date     = get_date_from_gmt( $date_gmt );
 
@@ -280,14 +275,9 @@ class HistoryStorageTable {
 		);
 
 		$history = [];
-		$gmt_offset = (int) get_option( 'gmt_offset' ) * HOUR_IN_SECONDS;
 
 		foreach ( $results as $row ) {
-			// Convert GMT datetime string to Unix timestamp in UTC, then add offset to match legacy format.
-			// strtotime() with ' UTC' suffix forces UTC interpretation instead of server timezone.
-			$timestamp_utc = strtotime( $row->date_gmt . ' UTC' );
-			// Add offset to match legacy post_meta format (offset-adjusted timestamps).
-			$timestamp = $timestamp_utc + $gmt_offset;
+			$timestamp = $this->convert_from_utc_datetime( $row->date_gmt );
 			$history[ $timestamp ] = (float) $row->price;
 		}
 
@@ -307,11 +297,7 @@ class HistoryStorageTable {
 	public function delete_price( int $product_id, int $timestamp ): bool {
 		global $wpdb;
 
-		// Convert offset-adjusted timestamp back to UTC timestamp before formatting.
-		// The $timestamp parameter matches legacy post_meta format (offset-adjusted),
-		// but date_gmt in database is stored as UTC, so we need to subtract the offset.
-		$gmt_offset = (int) get_option( 'gmt_offset' ) * HOUR_IN_SECONDS;
-		$timestamp_utc = $timestamp - $gmt_offset;
+		$timestamp_utc = $this->convert_to_utc_timestamp( $timestamp );
 		$date_gmt = gmdate( 'Y-m-d H:i:s', $timestamp_utc );
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.DirectDatabaseQuery.DirectQuery
@@ -418,7 +404,53 @@ class HistoryStorageTable {
 	 * @return int
 	 */
 	private function get_time_with_offset(): int {
-		return time() + ( (int) get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
+		return time() + $this->get_gmt_offset_seconds();
+	}
+
+	/**
+	 * Get GMT offset in seconds.
+	 *
+	 * @since {VERSION}
+	 *
+	 * @return int GMT offset in seconds.
+	 */
+	private function get_gmt_offset_seconds(): int {
+		return (int) get_option( 'gmt_offset' ) * HOUR_IN_SECONDS;
+	}
+
+	/**
+	 * Convert offset-adjusted timestamp to UTC timestamp.
+	 *
+	 * Legacy post_meta format uses offset-adjusted timestamps (time() + offset),
+	 * but date_gmt in database is stored as UTC, so we need to subtract the offset.
+	 *
+	 * @since {VERSION}
+	 *
+	 * @param int $offset_timestamp Offset-adjusted timestamp (matching legacy format).
+	 *
+	 * @return int UTC timestamp.
+	 */
+	private function convert_to_utc_timestamp( int $offset_timestamp ): int {
+		return $offset_timestamp - $this->get_gmt_offset_seconds();
+	}
+
+	/**
+	 * Convert UTC datetime string to offset-adjusted timestamp.
+	 *
+	 * Converts UTC datetime from database to offset-adjusted timestamp
+	 * matching legacy post_meta format (for get_history() return value).
+	 *
+	 * @since {VERSION}
+	 *
+	 * @param string $date_gmt UTC datetime string (Y-m-d H:i:s format).
+	 *
+	 * @return int Offset-adjusted timestamp (matching legacy format).
+	 */
+	private function convert_from_utc_datetime( string $date_gmt ): int {
+		// strtotime() with ' UTC' suffix forces UTC interpretation instead of server timezone.
+		$timestamp_utc = strtotime( $date_gmt . ' UTC' );
+		// Add offset to match legacy post_meta format (offset-adjusted timestamps).
+		return $timestamp_utc + $this->get_gmt_offset_seconds();
 	}
 
 	/**
