@@ -181,6 +181,32 @@ class DbMigration {
 	public static function migrate_batch(): array {
 		$status = self::get_migration_status( true );
 
+		// Handle completed migration separately.
+		if ( $status === self::STATUS_COMPLETED ) {
+			$total    = (int) get_option( self::OPTION_MIGRATION_TOTAL, 0 );
+			$processed = (int) get_option( self::OPTION_MIGRATION_PROCESSED, 0 );
+
+			return [
+				'processed'  => $processed,
+				'total'     => $total,
+				'percentage' => 100,
+				'completed' => true,
+				'message'   => esc_html__( 'Migration completed successfully.', 'wc-price-history' ),
+			];
+		}
+
+		// Handle not needed status.
+		if ( $status === self::STATUS_NOT_NEEDED ) {
+			return [
+				'processed'  => 0,
+				'total'     => 0,
+				'percentage' => 0,
+				'completed' => true,
+				'message'   => esc_html__( 'Migration not needed.', 'wc-price-history' ),
+			];
+		}
+
+		// Only proceed if status is IN_PROGRESS or PENDING.
 		if ( $status !== self::STATUS_IN_PROGRESS && $status !== self::STATUS_PENDING ) {
 			return [
 				'processed'  => 0,
@@ -356,13 +382,7 @@ class DbMigration {
 
 		// Return false if there were database errors.
 		// Return true if at least one record was inserted, or if all were duplicates (already migrated).
-		if ( $has_error ) {
-			return false;
-		}
-
-		// Product is considered migrated if we inserted at least one record,
-		// or if all records were duplicates (meaning it was already migrated).
-		return true;
+		return ! $has_error;
 	}
 
 	/**
