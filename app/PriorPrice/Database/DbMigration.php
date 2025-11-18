@@ -265,7 +265,10 @@ class DbMigration {
 		$previous_sale_price  = null;
 
 		foreach ( $history as $timestamp => $price ) {
-			$date_gmt = gmdate( 'Y-m-d H:i:s', $timestamp );
+			// Convert offset-adjusted timestamp (from post_meta legacy format) to UTC timestamp.
+			// Timestamps in post_meta are offset-adjusted (time() + offset), but date_gmt in database must be UTC.
+			$timestamp_utc = self::convert_to_utc_timestamp( $timestamp );
+			$date_gmt = gmdate( 'Y-m-d H:i:s', $timestamp_utc );
 			$date     = get_date_from_gmt( $date_gmt );
 
 			// Use the historical price from post_meta as the actual price.
@@ -372,5 +375,22 @@ class DbMigration {
 		}
 
 		return true;
+	}
+
+	/**
+	 * Convert offset-adjusted timestamp to UTC timestamp.
+	 *
+	 * Legacy post_meta format uses offset-adjusted timestamps (time() + offset),
+	 * but date_gmt in database is stored as UTC, so we need to subtract the offset.
+	 *
+	 * @since {VERSION}
+	 *
+	 * @param int $offset_timestamp Offset-adjusted timestamp (matching legacy format).
+	 *
+	 * @return int UTC timestamp.
+	 */
+	private static function convert_to_utc_timestamp( int $offset_timestamp ): int {
+		$gmt_offset = (int) get_option( 'gmt_offset' ) * HOUR_IN_SECONDS;
+		return $offset_timestamp - $gmt_offset;
 	}
 }
