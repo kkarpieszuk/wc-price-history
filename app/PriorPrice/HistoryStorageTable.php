@@ -22,7 +22,11 @@ class HistoryStorageTable {
 	public function get_minimal( int $product_id, int $days = 30 ): float {
 		global $wpdb;
 
-		$cutoff_date = gmdate( 'Y-m-d H:i:s', $this->get_time_with_offset() - ( $days * DAY_IN_SECONDS ) );
+		// Use time() (UTC timestamp) instead of get_time_with_offset() because:
+		// - date_gmt in database is stored as UTC datetime
+		// - gmdate() interprets timestamp as UTC
+		// - get_time_with_offset() returns offset-adjusted timestamp, which would cause incorrect cutoff date
+		$cutoff_date = gmdate( 'Y-m-d H:i:s', time() - ( $days * DAY_IN_SECONDS ) );
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.DirectDatabaseQuery.DirectQuery
 		$result = $wpdb->get_var(
