@@ -35,7 +35,7 @@ function get_wc_price_history_version(): string {
 }
 
 // Register activation hook.
-register_activation_hook( __FILE__, [ Install::class, 'create_tables' ] );
+register_activation_hook( __FILE__, [ Install::class, 'install' ] );
 
 // Handle missing WooCommerce.
 add_action( 'plugins_loaded', function () {

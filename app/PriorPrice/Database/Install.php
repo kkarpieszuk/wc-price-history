@@ -79,6 +79,21 @@ CREATE TABLE {$wpdb->prefix}wc_price_history_meta (
 	}
 
 	/**
+	 * Install database tables and set version.
+	 *
+	 * This method creates tables and updates the database version option.
+	 * Used during plugin activation to ensure complete initialization.
+	 *
+	 * @since {VERSION}
+	 *
+	 * @return void
+	 */
+	public static function install(): void {
+		self::create_tables();
+		self::update_db_version();
+	}
+
+	/**
 	 * Get database version from options.
 	 *
 	 * @since {VERSION}
