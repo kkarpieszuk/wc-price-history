@@ -304,6 +304,7 @@ class DbMigration {
 
 		$previous_price       = null;
 		$previous_sale_price  = null;
+		$has_error            = false;
 
 		foreach ( $history as $timestamp => $price ) {
 			// Convert offset-adjusted timestamp (from post_meta legacy format) to UTC timestamp.
@@ -318,7 +319,7 @@ class DbMigration {
 
 			// Insert or ignore if duplicate (UNIQUE constraint).
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.DirectDatabaseQuery.DirectQuery
-			$wpdb->query(
+			$result = $wpdb->query(
 				$wpdb->prepare(
 					"INSERT IGNORE INTO {$wpdb->prefix}wc_price_history
 					(product_id, price, sale_price, previous_price, previous_sale_price, date, date_gmt, include_in_history)
@@ -332,12 +333,35 @@ class DbMigration {
 				)
 			);
 
+			// Check for database errors.
+			if ( $result === false || ! empty( $wpdb->last_error ) ) {
+				$has_error = true;
+				// Log error but continue processing other records.
+				error_log(
+					sprintf(
+						'WC Price History: Migration failed for product %d, timestamp %d. Error: %s',
+						$product_id,
+						$timestamp,
+						$wpdb->last_error
+					)
+				);
+			}
+			// If $result === 0, it means INSERT IGNORE skipped a duplicate, which is OK.
+
 			// Store historical price as previous for next iteration.
 			$previous_price = $historical_price;
 			// Sale price from post_meta history is not available, so leave it null.
 			$previous_sale_price = null;
 		}
 
+		// Return false if there were database errors.
+		// Return true if at least one record was inserted, or if all were duplicates (already migrated).
+		if ( $has_error ) {
+			return false;
+		}
+
+		// Product is considered migrated if we inserted at least one record,
+		// or if all records were duplicates (meaning it was already migrated).
 		return true;
 	}
 
