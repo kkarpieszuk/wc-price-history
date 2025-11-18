@@ -74,7 +74,7 @@ class DbMigration {
 		);
 
 		// If DB version is already up to date AND there are no products with history in post_meta, no migration needed.
-		if ( version_compare( $db_version, Install::DB_VERSION, '>=' ) && $count === 0 ) {
+		if ( version_compare( $db_version, Install::DB_VERSION, '>=' ) && (int) $count === 0 ) {
 			update_option( self::OPTION_MIGRATION_STATUS, self::STATUS_NOT_NEEDED );
 			return false;
 		}
@@ -204,11 +204,21 @@ class DbMigration {
 			];
 		}
 
+		// Load migrated products list once per batch.
+		$migrated_products = get_option( self::OPTION_MIGRATED_PRODUCTS, [] );
+		$migrated_products = is_array( $migrated_products ) ? $migrated_products : [];
+
 		foreach ( $products as $product_id ) {
-			self::migrate_product( $product_id );
+			if ( ! self::migrate_product( $product_id ) ) {
+				continue;
+			}
+
+			$migrated_products[] = $product_id;
 			$processed++;
 		}
 
+		// Save migrated products list once per batch.
+		update_option( self::OPTION_MIGRATED_PRODUCTS, array_unique( $migrated_products ) );
 		update_option( self::OPTION_MIGRATION_PROCESSED, $processed );
 
 		$percentage = $total > 0 ? round( ( $processed / $total ) * 100, 2 ) : 0;
@@ -235,9 +245,9 @@ class DbMigration {
 	 *
 	 * @param int $product_id Product ID.
 	 *
-	 * @return void
+	 * @return bool True if product was migrated, false otherwise.
 	 */
-	private static function migrate_product( int $product_id ): void {
+	private static function migrate_product( int $product_id ): bool {
 		global $wpdb;
 
 		// Get old history from post_meta.
@@ -245,7 +255,7 @@ class DbMigration {
 		$history = is_array( $history ) ? $history : [];
 
 		if ( empty( $history ) ) {
-			return;
+			return false;
 		}
 
 		// Sort by timestamp.
@@ -253,8 +263,6 @@ class DbMigration {
 
 		$previous_price       = null;
 		$previous_sale_price  = null;
-		$migrated_products = get_option( self::OPTION_MIGRATED_PRODUCTS, [] );
-		$migrated_products = is_array( $migrated_products ) ? $migrated_products : [];
 
 		foreach ( $history as $timestamp => $price ) {
 			$date_gmt = gmdate( 'Y-m-d H:i:s', $timestamp );
@@ -286,9 +294,7 @@ class DbMigration {
 			$previous_sale_price = null;
 		}
 
-		// Add product ID to migrated list.
-		$migrated_products[] = $product_id;
-		update_option( self::OPTION_MIGRATED_PRODUCTS, array_unique( $migrated_products ) );
+		return true;
 	}
 
 	/**

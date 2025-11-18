@@ -418,6 +418,9 @@ class HistoryStorageTable {
 	/**
 	 * Fill empty history with current price.
 	 *
+	 * It saves current price with the current timestamp and timestamp for date 24 hours ago.
+	 * This matches the legacy post_meta implementation behavior.
+	 *
 	 * @since {VERSION}
 	 *
 	 * @param int          $product_id Product ID.
@@ -439,10 +442,18 @@ class HistoryStorageTable {
 		$price = (float) $product->get_price();
 
 		if ( $price <= 0 ) {
+			// Don't create history for products with zero or negative prices
+			// This prevents issues with reduce_to_minimal() returning 0
 			return $history;
 		}
 
+		// Add current price with current timestamp.
 		$this->add_first_price( $product_id, $price );
+
+		// Add same price for 24 hours earlier (matching legacy behavior).
+		$current_time = $this->get_time_with_offset();
+		$previous_timestamp = $current_time - DAY_IN_SECONDS;
+		$this->add_historical_price( $product_id, $price, $previous_timestamp );
 
 		return $this->get_history( $product_id );
 	}
