@@ -113,14 +113,16 @@ class DbMigration {
 	public static function get_total_products_to_migrate(): int {
 		global $wpdb;
 
+		// Count all products with _wc_price_history meta (including empty ones)
+		// that don't already have entries in the new table.
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.DirectDatabaseQuery.DirectQuery
 		return (int) $wpdb->get_var(
 			$wpdb->prepare(
-				"SELECT COUNT(DISTINCT post_id)
-				FROM {$wpdb->postmeta}
-				WHERE meta_key = %s
-				AND meta_value IS NOT NULL
-				AND meta_value != ''",
+				"SELECT COUNT(DISTINCT pm.post_id)
+				FROM {$wpdb->postmeta} pm
+				LEFT JOIN {$wpdb->prefix}wc_price_history ph ON pm.post_id = ph.product_id
+				WHERE pm.meta_key = %s
+				AND ph.product_id IS NULL",
 				HistoryStorage::cf_key
 			)
 		);
@@ -138,31 +140,17 @@ class DbMigration {
 	public static function get_products_to_migrate( int $limit = self::BATCH_SIZE ): array {
 		global $wpdb;
 
-		$migrated_products = get_option( self::OPTION_MIGRATED_PRODUCTS, [] );
-		$migrated_products = is_array( $migrated_products ) ? $migrated_products : [];
-
-		$query = "SELECT DISTINCT post_id
-			FROM {$wpdb->postmeta}
-			WHERE meta_key = %s
-			AND meta_value IS NOT NULL
-			AND meta_value != ''";
-
-		if ( ! empty( $migrated_products ) ) {
-			$placeholders = implode( ',', array_fill( 0, count( $migrated_products ), '%d' ) );
-			// Build array of arguments for prepare: meta_key + migrated products array.
-			$prepare_args = array_merge( [ HistoryStorage::cf_key ], $migrated_products );
-			$query        = $wpdb->prepare(
-				"{$query} AND post_id NOT IN ($placeholders)",
-				$prepare_args
-			);
-		} else {
-			$query = $wpdb->prepare( $query, HistoryStorage::cf_key );
-		}
-
-		$query = $wpdb->prepare( "{$query} LIMIT %d", $limit );
+		// Get all products with _wc_price_history meta (including empty ones).
+		// Exclude products that already have entries in the new table.
+		$query = "SELECT DISTINCT pm.post_id
+			FROM {$wpdb->postmeta} pm
+			LEFT JOIN {$wpdb->prefix}wc_price_history ph ON pm.post_id = ph.product_id
+			WHERE pm.meta_key = %s
+			AND ph.product_id IS NULL
+			LIMIT %d";
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.PreparedSQL.NotPrepared
-		return $wpdb->get_col( $query );
+		return $wpdb->get_col( $wpdb->prepare( $query, HistoryStorage::cf_key, $limit ) );
 	}
 
 	/**
@@ -310,6 +298,7 @@ class DbMigration {
 
 			$batch_success_count = 0;
 			$batch_error_count   = 0;
+			$batch_migrated_ids  = [];
 
 			foreach ( $products as $product_id ) {
 				if ( ! self::migrate_product( $product_id ) ) {
@@ -318,6 +307,7 @@ class DbMigration {
 				}
 
 				$migrated_products[] = $product_id;
+				$batch_migrated_ids[] = $product_id;
 				$processed++;
 				$batch_success_count++;
 			}
@@ -326,15 +316,22 @@ class DbMigration {
 			update_option( self::OPTION_MIGRATED_PRODUCTS, array_unique( $migrated_products ) );
 			update_option( self::OPTION_MIGRATION_PROCESSED, $processed );
 
-			// Log batch completion.
+			// Log batch completion with product IDs.
+			$migrated_ids_str = ! empty( $batch_migrated_ids ) ? implode( ', ', $batch_migrated_ids ) : 'none';
 			self::log(
 				sprintf(
-					'Batch completed. Successfully migrated: %d, Errors: %d. Total progress: %d/%d (%.2f%%)',
+					'Batch completed. Successfully migrated: %d, Errors: %d. Total progress: %d/%d (%.2f%%).',
 					$batch_success_count,
 					$batch_error_count,
 					$processed,
 					$total,
 					$total > 0 ? round( ( $processed / $total ) * 100, 2 ) : 0
+				)
+			);
+			self::log(
+				sprintf(
+					'Migrated product IDs: [%s]',
+					$migrated_ids_str
 				)
 			);
 
@@ -375,14 +372,67 @@ class DbMigration {
 		$history = get_post_meta( $product_id, HistoryStorage::cf_key, true );
 		$history = is_array( $history ) ? $history : [];
 
+		$has_error = false;
+
+		// If no history in post_meta, add current product price to table.
 		if ( empty( $history ) ) {
-			self::log(
-				sprintf(
-					'WARNING: Product %d has no price history in post_meta. Skipping.',
-					$product_id
+			$product = wc_get_product( $product_id );
+
+			if ( ! $product ) {
+				self::log(
+					sprintf(
+						'ERROR: Product %d not found. Skipping.',
+						$product_id
+					)
+				);
+				return false;
+			}
+
+			$current_price = (float) $product->get_price();
+			$current_sale_price = $product->is_on_sale() ? (float) $product->get_sale_price() : null;
+
+			// Use current time for the entry.
+			$timestamp_utc = time();
+			$date_gmt = gmdate( 'Y-m-d H:i:s', $timestamp_utc );
+			$date     = get_date_from_gmt( $date_gmt );
+
+			// Insert current price as first entry.
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.DirectDatabaseQuery.DirectQuery
+			$result = $wpdb->query(
+				$wpdb->prepare(
+					"INSERT IGNORE INTO {$wpdb->prefix}wc_price_history
+					(product_id, price, sale_price, previous_price, previous_sale_price, date, date_gmt, include_in_history)
+					VALUES (%d, %s, %s, NULL, NULL, %s, %s, 1)",
+					$product_id,
+					$current_price,
+					$current_sale_price,
+					$date,
+					$date_gmt
 				)
 			);
-			return false;
+
+			// Check for database errors.
+			if ( $result === false || ! empty( $wpdb->last_error ) ) {
+				$has_error = true;
+				self::log(
+					sprintf(
+						'ERROR: Migration failed for product %d (no history, adding current price). Database error: %s',
+						$product_id,
+						$wpdb->last_error
+					)
+				);
+			} else {
+				self::log(
+					sprintf(
+						'Product %d has no price history in post_meta. Added current price: %s (sale: %s)',
+						$product_id,
+						$current_price,
+						$current_sale_price ?? 'NULL'
+					)
+				);
+			}
+
+			return ! $has_error;
 		}
 
 		// Sort by timestamp.
@@ -390,7 +440,6 @@ class DbMigration {
 
 		$previous_price       = null;
 		$previous_sale_price  = null;
-		$has_error            = false;
 
 		foreach ( $history as $timestamp => $price ) {
 			// Convert offset-adjusted timestamp (from post_meta legacy format) to UTC timestamp.
