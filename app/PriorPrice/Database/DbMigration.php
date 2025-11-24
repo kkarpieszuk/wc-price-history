@@ -145,16 +145,34 @@ class DbMigration {
 		// Get all products with _wc_price_history meta (including empty ones).
 		// Exclude products that already have entries in the new table.
 		// Only include products that actually exist in the posts table (including trash).
+		// Exclude products that are already in the migrated_products list (including failed ones).
+		$migrated_products = get_option( self::OPTION_MIGRATED_PRODUCTS, [] );
+		$migrated_products = is_array( $migrated_products ) ? $migrated_products : [];
+
 		$query = "SELECT DISTINCT pm.post_id
 			FROM {$wpdb->postmeta} pm
 			INNER JOIN {$wpdb->posts} p ON pm.post_id = p.ID
 			LEFT JOIN {$wpdb->prefix}wc_price_history ph ON pm.post_id = ph.product_id
 			WHERE pm.meta_key = %s
-			AND ph.product_id IS NULL
-			LIMIT %d";
+			AND ph.product_id IS NULL";
 
+		$args = [ HistoryStorage::cf_key ];
+
+		// Exclude already processed products (including failed ones).
+		if ( ! empty( $migrated_products ) ) {
+			$placeholders = implode( ',', array_fill( 0, count( $migrated_products ), '%d' ) );
+			$query .= " AND pm.post_id NOT IN ($placeholders)";
+			$args = array_merge( $args, $migrated_products );
+		}
+
+		$query .= " LIMIT %d";
+		$args[] = $limit;
+
+		// Build prepared query with variable number of arguments.
+		$prepared_args = array_merge( [ $query ], $args );
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.PreparedSQL.NotPrepared
-		return $wpdb->get_col( $wpdb->prepare( $query, HistoryStorage::cf_key, $limit ) );
+		/** @phpstan-ignore-next-line */
+		return $wpdb->get_col( call_user_func_array( [ $wpdb, 'prepare' ], $prepared_args ) );
 	}
 
 	/**
@@ -307,6 +325,8 @@ class DbMigration {
 			foreach ( $products as $product_id ) {
 				if ( ! self::migrate_product( $product_id ) ) {
 					$batch_error_count++;
+					// Add failed product to migrated list to prevent infinite retry.
+					$migrated_products[] = $product_id;
 					continue;
 				}
 
@@ -319,6 +339,32 @@ class DbMigration {
 			// Save migrated products list once per batch.
 			update_option( self::OPTION_MIGRATED_PRODUCTS, array_unique( $migrated_products ) );
 			update_option( self::OPTION_MIGRATION_PROCESSED, $processed );
+
+			// Check if there are more products to migrate.
+			// If all products in this batch failed and there are no more products, complete migration.
+			$remaining_products = self::get_products_to_migrate( self::BATCH_SIZE );
+			if ( empty( $remaining_products ) ) {
+				update_option( self::OPTION_MIGRATION_STATUS, self::STATUS_COMPLETED );
+				Install::update_db_version();
+
+				// Log migration completion.
+				self::log(
+					sprintf(
+						'Migration completed successfully. Total products migrated: %d',
+						$processed
+					)
+				);
+
+				$percentage = $total > 0 ? round( ( $processed / $total ) * 100, 2 ) : 100;
+
+				return [
+					'processed'  => $processed,
+					'total'     => $total,
+					'percentage' => $percentage,
+					'completed' => true,
+					'message'   => esc_html__( 'Migration completed successfully.', 'wc-price-history' ),
+				];
+			}
 
 			// Log batch completion with product IDs.
 			$migrated_ids_str = ! empty( $batch_migrated_ids ) ? implode( ', ', $batch_migrated_ids ) : 'none';
