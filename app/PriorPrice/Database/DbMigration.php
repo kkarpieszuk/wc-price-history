@@ -115,11 +115,13 @@ class DbMigration {
 
 		// Count all products with _wc_price_history meta (including empty ones)
 		// that don't already have entries in the new table.
+		// Only include products that actually exist in the posts table (including trash).
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.DirectDatabaseQuery.DirectQuery
 		return (int) $wpdb->get_var(
 			$wpdb->prepare(
 				"SELECT COUNT(DISTINCT pm.post_id)
 				FROM {$wpdb->postmeta} pm
+				INNER JOIN {$wpdb->posts} p ON pm.post_id = p.ID
 				LEFT JOIN {$wpdb->prefix}wc_price_history ph ON pm.post_id = ph.product_id
 				WHERE pm.meta_key = %s
 				AND ph.product_id IS NULL",
@@ -142,8 +144,10 @@ class DbMigration {
 
 		// Get all products with _wc_price_history meta (including empty ones).
 		// Exclude products that already have entries in the new table.
+		// Only include products that actually exist in the posts table (including trash).
 		$query = "SELECT DISTINCT pm.post_id
 			FROM {$wpdb->postmeta} pm
+			INNER JOIN {$wpdb->posts} p ON pm.post_id = p.ID
 			LEFT JOIN {$wpdb->prefix}wc_price_history ph ON pm.post_id = ph.product_id
 			WHERE pm.meta_key = %s
 			AND ph.product_id IS NULL
