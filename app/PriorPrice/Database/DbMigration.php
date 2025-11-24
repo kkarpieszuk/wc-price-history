@@ -225,6 +225,15 @@ class DbMigration {
 			$processed = (int) get_option( self::OPTION_MIGRATION_PROCESSED, 0 );
 			$percentage = $total > 0 ? round( ( $processed / $total ) * 100, 2 ) : 0;
 
+			self::log(
+				sprintf(
+					'Lock already acquired by another request. Skipping batch. Current progress: %d/%d (%.2f%%)',
+					$processed,
+					$total,
+					$percentage
+				)
+			);
+
 			return [
 				'processed'  => $processed,
 				'total'     => $total,
@@ -248,6 +257,14 @@ class DbMigration {
 				update_option( self::OPTION_MIGRATION_PROCESSED, 0 );
 				update_option( self::OPTION_MIGRATED_PRODUCTS, [] );
 				update_option( self::OPTION_MIGRATION_STATUS, self::STATUS_IN_PROGRESS );
+
+				// Log migration start.
+				self::log(
+					sprintf(
+						'Migration started. Total products to migrate: %d',
+						$total_products
+					)
+				);
 			}
 
 			$products = self::get_products_to_migrate( self::BATCH_SIZE );
@@ -258,6 +275,14 @@ class DbMigration {
 				update_option( self::OPTION_MIGRATION_STATUS, self::STATUS_COMPLETED );
 				Install::update_db_version();
 
+				// Log migration completion.
+				self::log(
+					sprintf(
+						'Migration completed successfully. Total products migrated: %d',
+						$total
+					)
+				);
+
 				return [
 					'processed'  => $total,
 					'total'     => $total,
@@ -267,22 +292,51 @@ class DbMigration {
 				];
 			}
 
+			// Log batch start.
+			self::log(
+				sprintf(
+					'Batch started. Processing %d products (batch size: %d). Current progress: %d/%d (%.2f%%)',
+					count( $products ),
+					self::BATCH_SIZE,
+					$processed,
+					$total,
+					$total > 0 ? round( ( $processed / $total ) * 100, 2 ) : 0
+				)
+			);
+
 			// Load migrated products list once per batch.
 			$migrated_products = get_option( self::OPTION_MIGRATED_PRODUCTS, [] );
 			$migrated_products = is_array( $migrated_products ) ? $migrated_products : [];
 
+			$batch_success_count = 0;
+			$batch_error_count   = 0;
+
 			foreach ( $products as $product_id ) {
 				if ( ! self::migrate_product( $product_id ) ) {
+					$batch_error_count++;
 					continue;
 				}
 
 				$migrated_products[] = $product_id;
 				$processed++;
+				$batch_success_count++;
 			}
 
 			// Save migrated products list once per batch.
 			update_option( self::OPTION_MIGRATED_PRODUCTS, array_unique( $migrated_products ) );
 			update_option( self::OPTION_MIGRATION_PROCESSED, $processed );
+
+			// Log batch completion.
+			self::log(
+				sprintf(
+					'Batch completed. Successfully migrated: %d, Errors: %d. Total progress: %d/%d (%.2f%%)',
+					$batch_success_count,
+					$batch_error_count,
+					$processed,
+					$total,
+					$total > 0 ? round( ( $processed / $total ) * 100, 2 ) : 0
+				)
+			);
 
 			$percentage = $total > 0 ? round( ( $processed / $total ) * 100, 2 ) : 0;
 
@@ -322,6 +376,12 @@ class DbMigration {
 		$history = is_array( $history ) ? $history : [];
 
 		if ( empty( $history ) ) {
+			self::log(
+				sprintf(
+					'WARNING: Product %d has no price history in post_meta. Skipping.',
+					$product_id
+				)
+			);
 			return false;
 		}
 
@@ -363,9 +423,9 @@ class DbMigration {
 			if ( $result === false || ! empty( $wpdb->last_error ) ) {
 				$has_error = true;
 				// Log error but continue processing other records.
-				error_log(
+				self::log(
 					sprintf(
-						'WC Price History: Migration failed for product %d, timestamp %d. Error: %s',
+						'ERROR: Migration failed for product %d, timestamp %d. Database error: %s',
 						$product_id,
 						$timestamp,
 						$wpdb->last_error
@@ -508,5 +568,19 @@ class DbMigration {
 	 */
 	private static function release_lock(): void {
 		delete_option( self::OPTION_MIGRATION_LOCK );
+	}
+
+	/**
+	 * Log message to debug.log if WP_DEBUG_LOG is enabled.
+	 *
+	 * @since {VERSION}
+	 *
+	 * @param string $message Message to log.
+	 * @return void
+	 */
+	private static function log( string $message ): void {
+		if ( defined( 'WP_DEBUG_LOG' ) && WP_DEBUG_LOG ) {
+			error_log( '[wc pricehistory db migration] ' . $message );
+		}
 	}
 }
