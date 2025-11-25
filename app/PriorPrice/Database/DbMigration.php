@@ -323,6 +323,10 @@ class DbMigration {
 			$batch_migrated_ids  = [];
 
 			foreach ( $products as $product_id ) {
+				// Increment processed count for all products (success or failure),
+				// as they have all been attempted.
+				$processed++;
+
 				if ( ! self::migrate_product( $product_id ) ) {
 					$batch_error_count++;
 					// Add failed product to migrated list to prevent infinite retry.
@@ -332,7 +336,6 @@ class DbMigration {
 
 				$migrated_products[] = $product_id;
 				$batch_migrated_ids[] = $product_id;
-				$processed++;
 				$batch_success_count++;
 			}
 
