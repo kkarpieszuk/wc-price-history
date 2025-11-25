@@ -175,10 +175,10 @@ class AdminNotice {
 				<p class="progress-text"></p>
 			</div>
 			<p class="submit">
-				<a href="<?php echo esc_url( $start_url ); ?>" class="button-primary wc-price-history-migrate-button">
+				<button type="button" class="button-primary wc-price-history-migrate-button">
 					<?php esc_html_e( 'Update Database', 'wc-price-history' ); ?>
-				</a>
-				<a href="https://wcpricehistory.com/docs/" class="button-secondary">
+				</button>
+				<a href="https://wcpricehistory.com/docs/" target="_blank" class="button-secondary">
 					<?php esc_html_e( 'Learn more about updates', 'wc-price-history' ); ?>
 				</a>
 			</p>
