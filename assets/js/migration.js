@@ -8,12 +8,77 @@
 
 	// Wait for DOM to be ready.
 	document.addEventListener('DOMContentLoaded', function() {
+		// Check if migration object is available.
+		if (typeof wcPriceHistoryMigration === 'undefined') {
+			return;
+		}
+
 		const migrateButton = document.querySelector('.wc-price-history-migrate-button');
 		const progressBar = document.querySelector('.wc-price-history-migration-progress-bar');
 		const progressFill = document.querySelector('.progress-bar-fill');
 		const progressText = document.querySelector('.progress-text');
+		const migrationNotice = document.querySelector('.wc-price-history-migration-notice');
 
-		if (!migrateButton || !progressBar || !progressFill || !progressText) {
+		// Check if migration is in progress.
+		// Primary check: if notice has 'notice-info' class, migration is in progress.
+		const isInProgressNotice = migrationNotice && migrationNotice.classList.contains('notice-info');
+
+		// Secondary checks: if progress bar exists and has data.
+		let hasProgressData = false;
+		if (progressBar && progressFill && progressText) {
+			// Check if progress text has content (migration was in progress).
+			const hasProgressText = progressText.textContent && progressText.textContent.trim().length > 0;
+
+			// Check if progress fill has width set (even if hidden by CSS).
+			// Check both inline style and computed style.
+			const inlineWidth = progressFill.style.width;
+			const computedWidth = window.getComputedStyle(progressFill).width;
+			const fillWidth = inlineWidth || computedWidth;
+
+			// Parse width value (remove 'px' or '%' and convert to number).
+			let widthValue = 0;
+			if (fillWidth) {
+				const numericValue = parseFloat(fillWidth);
+				if (!isNaN(numericValue) && numericValue > 0) {
+					widthValue = numericValue;
+				}
+			}
+			const hasProgressWidth = widthValue > 0;
+
+			hasProgressData = hasProgressText || hasProgressWidth;
+		}
+
+		// If notice indicates in_progress status OR progress bar has data, resume migration.
+		if (isInProgressNotice || hasProgressData) {
+			// Ensure progress bar elements exist before proceeding.
+			if (!progressBar || !progressFill || !progressText) {
+				// If progress bar elements don't exist, we can't track progress.
+				// This shouldn't happen if notice is in_progress, but handle gracefully.
+				return;
+			}
+
+			// Migration is in progress - automatically resume.
+			// Ensure progress bar is visible (override CSS display: none).
+			progressBar.style.display = 'block';
+
+			// Disable button if it exists.
+			if (migrateButton) {
+				migrateButton.disabled = true;
+				migrateButton.textContent = wcPriceHistoryMigration.i18n.processing || 'Processing...';
+			}
+
+			// Start/resume migration automatically.
+			migrateBatch();
+			return;
+		}
+
+		// If button doesn't exist, we can't start migration manually.
+		if (!migrateButton) {
+			return;
+		}
+
+		// If progress bar elements don't exist, we can't track progress.
+		if (!progressBar || !progressFill || !progressText) {
 			return;
 		}
 
@@ -87,8 +152,12 @@
 		 * @param {string} message Message.
 		 */
 		function updateProgress(percentage, message) {
-			progressFill.style.width = percentage + '%';
-			progressText.textContent = message;
+			if (progressFill) {
+				progressFill.style.width = percentage + '%';
+			}
+			if (progressText) {
+				progressText.textContent = message;
+			}
 
 			// Update notice header if needed.
 			const header = document.querySelector('.wc-price-history-migration-notice .wc-price-history-migration-header p strong');
@@ -124,9 +193,11 @@
 				notice.insertAdjacentElement('afterend', errorDiv);
 			}
 
-			// Re-enable button.
-			migrateButton.disabled = false;
-			migrateButton.textContent = wcPriceHistoryMigration.i18n.retry || 'Retry Migration';
+			// Re-enable button if it exists.
+			if (migrateButton) {
+				migrateButton.disabled = false;
+				migrateButton.textContent = wcPriceHistoryMigration.i18n.retry || 'Retry Migration';
+			}
 		}
 	});
 })();
