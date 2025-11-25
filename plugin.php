@@ -37,7 +37,7 @@ function get_wc_price_history_version(): string {
 // Register activation hook.
 register_activation_hook( __FILE__, [ Install::class, 'install' ] );
 
-// Handle missing WooCommerce.
+// Handle missing WooCommerce and ensure database tables exist.
 add_action( 'plugins_loaded', function () {
 	if ( ! function_exists( 'WC' ) ) {
 		add_action( 'admin_notices', function () {
@@ -50,8 +50,10 @@ add_action( 'plugins_loaded', function () {
 		return;
 	}
 
-	// Check if database tables need to be created or updated.
-	if ( ! Install::tables_exist() ) {
+	// Ensure database tables exist (handles manual FTP updates without reactivation).
+	// This is a safety check for cases where plugin files are updated via FTP
+	// without deactivating/reactivating, which would skip the activation hook.
+	if ( ! Install::tables_exist() || Install::get_db_version() !== Install::DB_VERSION ) {
 		Install::create_tables();
 		Install::update_db_version();
 	}
