@@ -140,7 +140,11 @@ class HistoryStorageTable {
 		$previous_sale_price = $previous_prices['sale_price'] ?? null;
 
 		// If on_change_only, check if prices actually changed.
-		if ( $on_change_only && $regular_price === $previous_price ) {
+		// Check both regular_price and sale_price changes.
+		if ( $on_change_only
+			&& $regular_price === $previous_price
+			&& $sale_price === $previous_sale_price
+		) {
 			return 0;
 		}
 
