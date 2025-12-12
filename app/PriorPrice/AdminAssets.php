@@ -71,6 +71,10 @@ class AdminAssets {
 	 * @return void
 	 */
 	private function maybe_enqueue_migration_scripts( string $nonce ): void {
+		// Initialize migration status if needed (before checking status).
+		// This ensures status is set before we check if scripts should be enqueued.
+		$this->maybe_init_migration_status();
+
 		$migration_status = \PriorPrice\Database\DbMigration::get_migration_status( true );
 
 		if ( $migration_status === \PriorPrice\Database\DbMigration::STATUS_NOT_NEEDED ) {
@@ -107,6 +111,27 @@ class AdminAssets {
 				],
 			]
 		);
+	}
+
+	/**
+	 * Maybe initialize migration status.
+	 *
+	 * @since {VERSION}
+	 *
+	 * @return void
+	 */
+	private function maybe_init_migration_status(): void {
+		$status = \PriorPrice\Database\DbMigration::get_migration_status();
+
+		// Don't check if migration already completed or in progress.
+		if ( in_array( $status, [ \PriorPrice\Database\DbMigration::STATUS_COMPLETED, \PriorPrice\Database\DbMigration::STATUS_IN_PROGRESS ], true ) ) {
+			return;
+		}
+
+		// If status is 'not_needed' or not set, check if migration is actually needed.
+		if ( \PriorPrice\Database\DbMigration::needs_migration() ) {
+			update_option( \PriorPrice\Database\DbMigration::OPTION_MIGRATION_STATUS, \PriorPrice\Database\DbMigration::STATUS_PENDING );
+		}
 	}
 
 	private function is_product_edit_page() : bool {
