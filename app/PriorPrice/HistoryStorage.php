@@ -54,6 +54,12 @@ class HistoryStorage {
 			return $use_tables;
 		}
 
+		// Allow forcing legacy post_meta storage for troubleshooting.
+		if ( defined( 'WC_PRICE_HISTORY_USE_POST_META' ) && WC_PRICE_HISTORY_USE_POST_META ) {
+			$use_tables = false;
+			return $use_tables;
+		}
+
 		// Check if migration is completed and tables exist.
 		$migration_status = DbMigration::get_migration_status( true );
 		$table_exists     = Install::tables_exist();
