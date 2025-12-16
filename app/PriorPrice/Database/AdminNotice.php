@@ -178,7 +178,7 @@ class AdminNotice {
 				<button type="button" class="button-primary wc-price-history-migrate-button">
 					<?php esc_html_e( 'Update Database', 'wc-price-history' ); ?>
 				</button>
-				<a href="https://wcpricehistory.com/docs/" target="_blank" class="button-secondary">
+				<a href="https://wcpricehistory.com/tuorials-howtos/docs/migration-to-database-tables-in-3-0/?utm_source=wp-admin&utm_medium=migration-notice&utm_campaign=wc-price-history" target="_blank" class="button-secondary">
 					<?php esc_html_e( 'Learn more about updates', 'wc-price-history' ); ?>
 				</a>
 			</p>
