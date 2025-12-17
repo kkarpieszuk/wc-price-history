@@ -2,6 +2,8 @@
 
 namespace PriorPrice;
 
+use PriorPrice\Database\DbMigration;
+
 /**
  * FirstScan class
  *
@@ -145,11 +147,13 @@ class FirstScan {
 
 		if ( empty( $products ) ) {
 			$this->settings_data->set_first_scan_status( self::SCAN_FINISHED );
+			DbMigration::mark_completed_for_fresh_install();
 
 			return;
 		}
 
 		$this->settings_data->set_first_scan_status( self::SCAN_IN_PROGRESS );
+		DbMigration::mark_completed_for_fresh_install();
 
 		foreach ( array_slice( $products, 0, 50 ) as $product ) {
 			$this->history_storage->fill_empty_history( $product->ID, [] );

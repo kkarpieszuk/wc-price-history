@@ -585,6 +585,20 @@ class DbMigration {
 	}
 
 	/**
+	 * Mark migration as completed for fresh installs (no legacy history).
+	 *
+	 * @since {VERSION}
+	 *
+	 * @return void
+	 */
+	public static function mark_completed_for_fresh_install(): void {
+		update_option( self::OPTION_MIGRATION_STATUS, self::STATUS_NOT_NEEDED );
+		update_option( self::OPTION_MIGRATION_TOTAL, 0 );
+		update_option( self::OPTION_MIGRATION_PROCESSED, 0 );
+		update_option( self::OPTION_MIGRATED_PRODUCTS, [] );
+	}
+
+	/**
 	 * Get migration status.
 	 *
 	 * @since {VERSION}
