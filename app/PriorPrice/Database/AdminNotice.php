@@ -62,7 +62,9 @@ class AdminNotice {
 		}
 
 		// If status is 'not_needed' or not set, check if migration is actually needed.
-		if ( DbMigration::needs_migration() ) {
+		$needs = DbMigration::needs_migration();
+
+		if ( $needs ) {
 			update_option( DbMigration::OPTION_MIGRATION_STATUS, DbMigration::STATUS_PENDING );
 		}
 	}

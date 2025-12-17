@@ -22,6 +22,7 @@ class DbMigration {
 	public const OPTION_MIGRATION_PROCESSED = 'wc_price_history_migration_processed';
 	public const OPTION_MIGRATED_PRODUCTS = 'wc_price_history_migrated_products';
 	public const OPTION_MIGRATION_LOCK = 'wc_price_history_migration_lock';
+	public const OPTION_MIGRATION_FRESH_DONE = 'wc_price_history_migration_fresh_done';
 
 	/**
 	 * Migration statuses.
@@ -66,6 +67,14 @@ class DbMigration {
 
 		$current_status = self::get_migration_status();
 
+		$fresh_done = (bool) get_option( self::OPTION_MIGRATION_FRESH_DONE, false );
+
+		if ( $fresh_done ) {
+			update_option( self::OPTION_MIGRATION_STATUS, self::STATUS_NOT_NEEDED );
+
+			return false;
+		}
+
 		// If already completed or in progress, no need to check again.
 		if ( in_array( $current_status, [ self::STATUS_COMPLETED, self::STATUS_IN_PROGRESS ], true ) ) {
 			return false;
@@ -89,11 +98,13 @@ class DbMigration {
 		// If DB version is already up to date AND there are no products with history in post_meta, no migration needed.
 		if ( version_compare( $db_version, Install::DB_VERSION, '>=' ) && (int) $count === 0 ) {
 			update_option( self::OPTION_MIGRATION_STATUS, self::STATUS_NOT_NEEDED );
+
 			return false;
 		}
 
 		// If there are products with post_meta history, migration is needed.
 		if ( $count > 0 ) {
+
 			return true;
 		}
 
@@ -596,6 +607,7 @@ class DbMigration {
 		update_option( self::OPTION_MIGRATION_TOTAL, 0 );
 		update_option( self::OPTION_MIGRATION_PROCESSED, 0 );
 		update_option( self::OPTION_MIGRATED_PRODUCTS, [] );
+		update_option( self::OPTION_MIGRATION_FRESH_DONE, true );
 	}
 
 	/**
