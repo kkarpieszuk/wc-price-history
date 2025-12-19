@@ -54,8 +54,7 @@ add_action( 'plugins_loaded', function () {
 	// This is a safety check for cases where plugin files are updated via FTP
 	// without deactivating/reactivating, which would skip the activation hook.
 	if ( ! Install::tables_exist() || Install::get_db_version() !== Install::DB_VERSION ) {
-		Install::create_tables();
-		Install::update_db_version();
+		Install::install();
 	}
 } );
 

@@ -70,8 +70,6 @@ CREATE TABLE {$wpdb->prefix}wc_price_history_meta (
 	 * @return void
 	 */
 	public static function create_tables(): void {
-		global $wpdb;
-
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 
 		$schema = self::get_schema();
