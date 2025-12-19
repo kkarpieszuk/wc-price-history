@@ -57,7 +57,13 @@ class AdminNotice {
 		$status = DbMigration::get_migration_status();
 
 		// Don't check if migration already completed or in progress.
-		if ( in_array( $status, [ DbMigration::STATUS_COMPLETED, DbMigration::STATUS_IN_PROGRESS ], true ) ) {
+		if (
+			in_array(
+				$status,
+				[ DbMigration::STATUS_COMPLETED, DbMigration::STATUS_IN_PROGRESS ],
+				true
+			)
+		) {
 			return;
 		}
 
@@ -142,10 +148,6 @@ class AdminNotice {
 	 * @return void
 	 */
 	private function render_pending_notice(): void {
-		$start_url = wp_nonce_url(
-			add_query_arg( 'wc_price_history_start_migration', '1', admin_url() ),
-			'wc_price_history_start_migration'
-		);
 		?>
 		<div class="notice notice-warning wc-price-history-migration-notice">
 			<div class="wc-price-history-migration-header">
@@ -234,10 +236,6 @@ class AdminNotice {
 	 */
 	private function render_completed_notice(): void {
 		$progress = DbMigration::get_progress();
-		$dismiss_url = wp_nonce_url(
-			add_query_arg( 'wc_price_history_dismiss_migration', '1', admin_url() ),
-			'wc_price_history_dismiss_migration'
-		);
 		?>
 		<div class="notice notice-success is-dismissible wc-price-history-migration-notice">
 			<div class="wc-price-history-migration-header">
