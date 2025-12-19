@@ -4,13 +4,6 @@
  * @since {VERSION}
  */
 
-.wc-price-history-migration-notice {
-	padding: 12px;
-	margin: 15px 0;
-	border-left-width: 4px;
-	border-left-style: solid;
-}
-
 .wc-price-history-migration-header {
 	margin-bottom: 10px;
 }
@@ -87,19 +80,4 @@
 .wc-price-history-migrate-button:disabled {
 	opacity: 0.6;
 	cursor: not-allowed;
-}
-
-/* Success notice */
-.wc-price-history-migration-notice.notice-success {
-	border-left-color: #00a32a;
-}
-
-/* Warning notice */
-.wc-price-history-migration-notice.notice-warning {
-	border-left-color: #dba617;
-}
-
-/* Info notice */
-.wc-price-history-migration-notice.notice-info {
-	border-left-color: #72aee6;
 }
