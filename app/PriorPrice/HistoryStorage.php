@@ -47,7 +47,7 @@ class HistoryStorage {
 	 *
 	 * @return bool
 	 */
-	private function should_use_tables(): bool {
+	public function should_use_tables(): bool {
 
 		static $use_tables = null;
 		if ( $use_tables !== null ) {

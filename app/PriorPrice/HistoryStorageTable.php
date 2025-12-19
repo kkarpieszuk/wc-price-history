@@ -290,29 +290,63 @@ class HistoryStorageTable {
 	}
 
 	/**
+	 * Get pricing history for $product_id with entry IDs.
+	 *
+	 * @since {VERSION}
+	 *
+	 * @param int $product_id Product ID.
+	 *
+	 * @return array<int, array{price: float, entry_id: int}> Array of timestamp => ['price' => float, 'entry_id' => int].
+	 */
+	public function get_history_with_entry_ids( int $product_id ): array {
+		global $wpdb;
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.DirectDatabaseQuery.DirectQuery
+		$results = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT id, date_gmt, price
+				FROM {$wpdb->prefix}wc_price_history
+				WHERE product_id = %d
+				AND include_in_history = 1
+				ORDER BY date_gmt ASC",
+				$product_id
+			)
+		);
+
+		$history = [];
+
+		foreach ( $results as $row ) {
+			$timestamp = $this->convert_from_utc_datetime( $row->date_gmt );
+			$history[ $timestamp ] = [
+				'price'    => (float) $row->price,
+				'entry_id' => (int) $row->id,
+			];
+		}
+
+		return $history;
+	}
+
+	/**
 	 * Delete price from history.
 	 *
 	 * @since {VERSION}
 	 *
 	 * @param int $product_id Product ID.
-	 * @param int $timestamp  Timestamp.
+	 * @param int $entry_id   Entry ID.
 	 *
 	 * @return bool
 	 */
-	public function delete_price( int $product_id, int $timestamp ): bool {
+	public function delete_price( int $product_id, int $entry_id ): bool {
 		global $wpdb;
-
-		$timestamp_utc = $this->convert_to_utc_timestamp( $timestamp );
-		$date_gmt = gmdate( 'Y-m-d H:i:s', $timestamp_utc );
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.DirectDatabaseQuery.DirectQuery
 		$result = $wpdb->query(
 			$wpdb->prepare(
 				"DELETE FROM {$wpdb->prefix}wc_price_history
 				WHERE product_id = %d
-				AND date_gmt = %s",
+				AND id = %d",
 				$product_id,
-				$date_gmt
+				$entry_id
 			)
 		);
 
