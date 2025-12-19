@@ -130,9 +130,7 @@ class HistoryStorageTable {
 			return 0;
 		}
 
-		// Use the $price parameter as the regular price.
-		$sale_price    = $product->get_sale_price();
-		$sale_price    = $sale_price ? (float) $sale_price : null;
+		$sale_price = $this->get_sale_price( $product );
 
 		// Get previous prices.
 		$previous_prices = $this->get_previous_prices( $product_id );
@@ -201,8 +199,7 @@ class HistoryStorageTable {
 			return 0;
 		}
 
-		$sale_price    = $product->get_sale_price();
-		$sale_price    = $sale_price ? (float) $sale_price : null;
+		$sale_price = $this->get_sale_price( $product );
 
 		$date_gmt = current_time( 'mysql', true );
 		$date     = current_time( 'mysql' );
@@ -529,5 +526,20 @@ class HistoryStorageTable {
 	public function fix_history(): void {
 		// Not applicable for table-based implementation.
 		// This is a legacy method.
+	}
+
+	/**
+	 * Get sale price for product.
+	 *
+	 * @since {VERSION}
+	 *
+	 * @param \WC_Product $product Product.
+	 *
+	 * @return float|null
+	 */
+	private function get_sale_price( \WC_Product $product ) {
+		$sale_price = $product->get_sale_price();
+
+		return $sale_price ? (float) $sale_price : null;
 	}
 }
