@@ -2,6 +2,8 @@
 
 namespace PriorPrice;
 
+use PriorPrice\Database\DbMigration;
+
 class AdminAssets {
 
 	/**
@@ -75,9 +77,18 @@ class AdminAssets {
 		// This ensures status is set before we check if scripts should be enqueued.
 		$this->maybe_init_migration_status();
 
-		$migration_status = \PriorPrice\Database\DbMigration::get_migration_status( true );
+		$migration_status = DbMigration::get_migration_status( true );
 
-		if ( $migration_status === \PriorPrice\Database\DbMigration::STATUS_NOT_NEEDED ) {
+		if (
+			in_array(
+				$migration_status,
+				[
+					DbMigration::STATUS_NOT_NEEDED,
+					DbMigration::STATUS_COMPLETED
+				],
+				true
+			)
+			) {
 			return;
 		}
 
@@ -121,16 +132,20 @@ class AdminAssets {
 	 * @return void
 	 */
 	private function maybe_init_migration_status(): void {
-		$status = \PriorPrice\Database\DbMigration::get_migration_status();
+		$status = DbMigration::get_migration_status();
 
 		// Don't check if migration already completed or in progress.
-		if ( in_array( $status, [ \PriorPrice\Database\DbMigration::STATUS_COMPLETED, \PriorPrice\Database\DbMigration::STATUS_IN_PROGRESS ], true ) ) {
+		if ( in_array(
+			$status,
+			[ DbMigration::STATUS_COMPLETED, DbMigration::STATUS_IN_PROGRESS ],
+			true
+		) ) {
 			return;
 		}
 
 		// If status is 'not_needed' or not set, check if migration is actually needed.
-		if ( \PriorPrice\Database\DbMigration::needs_migration() ) {
-			update_option( \PriorPrice\Database\DbMigration::OPTION_MIGRATION_STATUS, \PriorPrice\Database\DbMigration::STATUS_PENDING );
+		if ( DbMigration::needs_migration() ) {
+			update_option( DbMigration::OPTION_MIGRATION_STATUS, DbMigration::STATUS_PENDING );
 		}
 	}
 
