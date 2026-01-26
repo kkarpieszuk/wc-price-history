@@ -359,8 +359,8 @@ class HistoryStorage {
 	 *
 	 * @since 2.1
 	 *
-	 * @param int   $product_id Product ID.
-	 * @param int   $timestamp  Timestamp.
+	 * @param int $product_id Product ID.
+	 * @param int $timestamp  Timestamp or entry ID in database tables.
 	 *
 	 * @return bool
 	 */
