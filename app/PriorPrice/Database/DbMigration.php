@@ -663,8 +663,11 @@ class DbMigration {
 	 * @return int UTC timestamp.
 	 */
 	private static function convert_to_utc_timestamp( int $offset_timestamp ): int {
-		$gmt_offset = (int) get_option( 'gmt_offset' ) * HOUR_IN_SECONDS;
-		return $offset_timestamp - $gmt_offset;
+		// gmt_offset can be a float (e.g., 5.5 for UTC+5:30, 5.75 for UTC+5:45).
+		$gmt_offset_hours = (float) get_option( 'gmt_offset' );
+		$gmt_offset_seconds = (int) round( $gmt_offset_hours * HOUR_IN_SECONDS );
+
+		return $offset_timestamp - $gmt_offset_seconds;
 	}
 
 	/**

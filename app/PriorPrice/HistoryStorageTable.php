@@ -451,10 +451,13 @@ class HistoryStorageTable {
 	 *
 	 * @since {VERSION}
 	 *
-	 * @return int GMT offset in seconds.
+	 * @return int GMT offset in seconds (rounded to nearest second).
 	 */
 	private function get_gmt_offset_seconds(): int {
-		return (int) get_option( 'gmt_offset' ) * HOUR_IN_SECONDS;
+		// gmt_offset can be a float (e.g., 5.5 for UTC+5:30, 5.75 for UTC+5:45).
+		$gmt_offset_hours = (float) get_option( 'gmt_offset' );
+
+		return (int) round( $gmt_offset_hours * HOUR_IN_SECONDS );
 	}
 
 	/**
