@@ -60,12 +60,19 @@ class HistoryStorage {
 			return $use_tables;
 		}
 
-		// Check if migration is completed and tables exist.
+		// Check if migration is completed or not needed, and tables exist.
 		$migration_status = DbMigration::get_migration_status( true );
 		$table_exists     = Install::tables_exist();
 
-		// Use tables only if migration is completed and tables exist.
-		$use_tables = ( $migration_status === DbMigration::STATUS_COMPLETED && $table_exists );
+		// Use tables if:
+		// - Migration is completed (migrated from post_meta), OR
+		// - Migration is not needed (fresh install with tables), AND
+		// - Tables exist.
+		$use_tables = $table_exists && in_array(
+			$migration_status,
+			[ DbMigration::STATUS_COMPLETED, DbMigration::STATUS_NOT_NEEDED ],
+			true
+		);
 
 		return $use_tables;
 	}
