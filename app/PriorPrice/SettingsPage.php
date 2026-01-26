@@ -3,6 +3,7 @@
 namespace PriorPrice;
 
 use PriorPrice\Helpers\Pro;
+use PriorPrice\HistoryStorage;
 
 class SettingsPage {
 
@@ -521,6 +522,37 @@ class SettingsPage {
 					<p class="description">
 						<a href="https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:52021XC1229(06)" target="_blank"><?php esc_html_e( 'Guidance on the Price Indication Directive (2021)', 'wc-price-history' ); ?></a>
 					</p>
+
+					<h3><?php esc_html_e( 'Status', 'wc-price-history' ); ?></h3>
+					<?php
+					$history_storage = new HistoryStorage();
+					$uses_tables     = $history_storage->should_use_tables();
+					?>
+					<details class="wc-price-history-storage-status">
+						<summary>
+							<strong><?php esc_html_e( 'Storage method:', 'wc-price-history' ); ?></strong>
+							<?php
+							if ( $uses_tables ) {
+								?>
+								<?php esc_html_e( 'Database tables', 'wc-price-history' ); ?>
+								<?php
+							} else {
+								?>
+								<?php esc_html_e( 'Post meta (legacy)', 'wc-price-history' ); ?>
+								<?php
+							}
+							?>
+						</summary>
+						<p class="description" style="margin-top: 0.5em;">
+							<?php
+							if ( $uses_tables ) {
+								esc_html_e( 'Great! The plugin is using dedicated database tables for storing price history. This provides better performance and scalability.', 'wc-price-history' );
+							} else {
+								esc_html_e( 'The plugin is using post meta for storing price history. Consider migrating to database tables for better performance.', 'wc-price-history' );
+							}
+							?>
+						</p>
+					</details>
 				</div>
 			</div>
 		</div>
