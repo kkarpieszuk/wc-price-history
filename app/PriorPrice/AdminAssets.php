@@ -2,6 +2,8 @@
 
 namespace PriorPrice;
 
+use PriorPrice\Database\DbMigration;
+
 class AdminAssets {
 
 	/**
@@ -33,6 +35,7 @@ class AdminAssets {
 		wp_localize_script( 'wc-price-history-admin', 'wc_price_history_admin', [
 			'ajax_url'                         => admin_url( 'admin-ajax.php' ),
 			'first_scan_finished_notice_nonce' => $nonce,
+			'migration_notice_nonce'           => $nonce,
 			'clean_history_confirm'            => esc_html__( 'Are you sure you want to delete all price history?', 'wc-price-history' ),
 			'clean_history_nonce'              => $nonce,
 			'clean_history_success'            => esc_html__( 'Price history has been deleted.', 'wc-price-history' ),
@@ -50,11 +53,100 @@ class AdminAssets {
 			'nonce' => $nonce,
 		] );
 
+		// Enqueue migration scripts if migration is pending or in progress.
+		$this->maybe_enqueue_migration_scripts( $nonce );
+
 		if ( ! $this->is_settings_page() && ! $this->is_product_edit_page() ) {
 			return;
 		}
 
 		wp_enqueue_style( 'wc-price-history-admin', WC_PRICE_HISTORY_PLUGIN_URL . 'assets/css/admin.css', [], WC_PRICE_HISTORY_VERSION );
+	}
+
+	/**
+	 * Maybe enqueue migration scripts.
+	 *
+	 * @since {VERSION}
+	 *
+	 * @param string $nonce Nonce.
+	 *
+	 * @return void
+	 */
+	private function maybe_enqueue_migration_scripts( string $nonce ): void {
+		// Initialize migration status if needed (before checking status).
+		// This ensures status is set before we check if scripts should be enqueued.
+		$this->maybe_init_migration_status();
+
+		$migration_status = DbMigration::get_migration_status( true );
+
+		if (
+			in_array(
+				$migration_status,
+				[
+					DbMigration::STATUS_NOT_NEEDED,
+					DbMigration::STATUS_COMPLETED
+				],
+				true
+			)
+			) {
+			return;
+		}
+
+		wp_enqueue_script(
+			'wc-price-history-migration',
+			WC_PRICE_HISTORY_PLUGIN_URL . 'assets/js/migration.js',
+			[],
+			WC_PRICE_HISTORY_VERSION,
+			true
+		);
+
+		wp_enqueue_style(
+			'wc-price-history-migration',
+			WC_PRICE_HISTORY_PLUGIN_URL . 'assets/css/migration.css',
+			[],
+			WC_PRICE_HISTORY_VERSION
+		);
+
+		wp_localize_script(
+			'wc-price-history-migration',
+			'wcPriceHistoryMigration',
+			[
+				'nonce' => $nonce,
+				'ajaxurl' => admin_url( 'admin-ajax.php' ),
+				'i18n' => [
+					'processing' => esc_html__( 'Processing...', 'wc-price-history' ),
+					'error' => esc_html__( 'An error occurred during migration.', 'wc-price-history' ),
+					'errorTitle' => esc_html__( 'Migration Error', 'wc-price-history' ),
+					'retry' => esc_html__( 'Retry Migration', 'wc-price-history' ),
+					'inProgress' => esc_html__( 'Database update in progress...', 'wc-price-history' ),
+				],
+			]
+		);
+	}
+
+	/**
+	 * Maybe initialize migration status.
+	 *
+	 * @since {VERSION}
+	 *
+	 * @return void
+	 */
+	private function maybe_init_migration_status(): void {
+		$status = DbMigration::get_migration_status();
+
+		// Don't check if migration already completed or in progress.
+		if ( in_array(
+			$status,
+			[ DbMigration::STATUS_COMPLETED, DbMigration::STATUS_IN_PROGRESS ],
+			true
+		) ) {
+			return;
+		}
+
+		// If status is 'not_needed' or not set, check if migration is actually needed.
+		if ( DbMigration::needs_migration() ) {
+			update_option( DbMigration::OPTION_MIGRATION_STATUS, DbMigration::STATUS_PENDING );
+		}
 	}
 
 	private function is_product_edit_page() : bool {

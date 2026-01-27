@@ -133,6 +133,7 @@ Yes, I am available for hire. Please contact me at [LinkedIn](https://linkedin.c
 == Changelog ==
 
 = {VERSION} =
+- Database Migration: Price History moved from Post Meta to Custom Tables for better performance. See https://wcpricehistory.com/tuorials-howtos/docs/migration-to-database-tables-in-3-0/?utm_source=readme&utm_medium=changelog&utm_campaign=wc-price-history (#98)
 - New: Minimal price displayed with shortcode is now updated when product variant is changed. (#169)
 
 = 2.2.2 =
