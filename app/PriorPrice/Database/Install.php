@@ -135,4 +135,20 @@ CREATE TABLE {$wpdb->prefix}wc_price_history_meta (
 
 		return $result === $table_name;
 	}
+
+	/**
+	 * Get full names of price history tables (with prefix).
+	 *
+	 * @since {VERSION}
+	 *
+	 * @return array<int, string>
+	 */
+	public static function get_table_names(): array {
+		global $wpdb;
+
+		return [
+			$wpdb->prefix . 'wc_price_history',
+			$wpdb->prefix . 'wc_price_history_meta',
+		];
+	}
 }
