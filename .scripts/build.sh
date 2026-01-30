@@ -61,7 +61,7 @@ rm -rf .git .github .husky .scripts node_modules \
  README.md screenshot-1.png docs pr
 
 replace_version_number
-
+replace_version_always_top
 
 # create a zip file.
 zip -r ../wc-price-history.zip .
