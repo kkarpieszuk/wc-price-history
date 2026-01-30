@@ -558,8 +558,15 @@ class SettingsPage {
 									<?php
 									if ( $migration_status === DbMigration::STATUS_COMPLETED ) {
 										esc_html_e( 'Migration from post meta has been completed.', 'wc-price-history' );
-									} else {
+									} else if ( $migration_status === DbMigration::STATUS_NOT_NEEDED ) {
 										esc_html_e( 'Migration was not needed (e.g. fresh install with database tables).', 'wc-price-history' );
+									} else if ( $migration_status === false ) {
+										esc_html_e( 'Migration status is not set.', 'wc-price-history' );
+								    } else {
+										printf(
+											esc_html__( 'Migration status is %s.', 'wc-price-history' ),
+											'<strong>' . esc_attr( $migration_status ) . '</strong>'
+										);
 									}
 									?>
 								</p>
