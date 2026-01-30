@@ -63,7 +63,7 @@ class Variations {
 		/**
 		 * Filter the lowest price for variations.
 		 *
-		 * @since {VERSION}
+		 * @since 3.0.0
 		 *
 		 * @param float|string         $lowest               Lowest price.
 		 * @param array                $variation_attributes Variation attributes.

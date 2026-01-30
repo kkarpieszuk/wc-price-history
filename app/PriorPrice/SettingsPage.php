@@ -390,7 +390,7 @@ class SettingsPage {
 						/**
 						 * Action to add custom fields to settings page.
 						 *
-						 * @since {VERSION}
+						 * @since 3.0.0
 						 *
 						 * @param array $settings
 						 */
@@ -562,7 +562,7 @@ class SettingsPage {
 	/**
 	 * First scan section.
 	 *
-	 * @since {VERSION}
+	 * @since 3.0.0
 	 *
 	 * @param array<string, mixed> $settings Settings.
 	 */
@@ -620,7 +620,7 @@ class SettingsPage {
 	/**
 	 * Hire me section.
 	 *
-	 * @since {VERSION}
+	 * @since 3.0.0
 	 */
 	private function hire_me_section(): void {
 

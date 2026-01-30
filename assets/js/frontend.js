@@ -3,7 +3,7 @@
 /**
  * Frontend script for WC Price History plugin.
  *
- * @since {VERSION}
+ * @since 3.0.0
  *
  * @package WC_Price_History
  * @subpackage Frontend
@@ -40,7 +40,7 @@ WCPriceHistory.Frontend = WCPriceHistory.Frontend || ( function( document, windo
 			/**
 			 * Format price.
 			 *
-			 * @since {VERSION}
+			 * @since 3.0.0
 			 *
 			 * @param {number} price Price.
 			 *
@@ -58,7 +58,7 @@ WCPriceHistory.Frontend = WCPriceHistory.Frontend || ( function( document, windo
 			/**
 			 * Get original prices.
 			 *
-			 * @since {VERSION}
+			 * @since 3.0.0
 			 *
 			 * @return {array} Original prices.
 			 */
@@ -93,7 +93,7 @@ WCPriceHistory.Frontend = WCPriceHistory.Frontend || ( function( document, windo
 			/**
 			 * On found variation woocommerce event.
 			 *
-			 * @since {VERSION}
+			 * @since 3.0.0
 			 *
 			 * @param {object} event Event.
 			 * @param {object} variation Variation.
@@ -114,7 +114,7 @@ WCPriceHistory.Frontend = WCPriceHistory.Frontend || ( function( document, windo
 			/**
 			 * On reset data woocommerce event.
 			 *
-			 * @since {VERSION}
+			 * @since 3.0.0
 			 *
 			 * @param {object} event Event.
 			 * @param {object} variation Variation.

@@ -5,14 +5,14 @@ namespace PriorPrice;
 /**
  * HistoryStorageTable class - new implementation using database tables.
  *
- * @since {VERSION}
+ * @since 3.0.0
  */
 class HistoryStorageTable {
 
 	/**
 	 * Get minimal price for $product_id in last $days.
 	 *
-	 * @since {VERSION}
+	 * @since 3.0.0
 	 *
 	 * @param int $product_id Product ID.
 	 * @param int $days       Days span.
@@ -48,7 +48,7 @@ class HistoryStorageTable {
 	/**
 	 * Get minimal price for $product_id in last $days from sale start.
 	 *
-	 * @since {VERSION}
+	 * @since 3.0.0
 	 *
 	 * @param \WC_Product $wc_product WC Product.
 	 * @param int         $days       Days span.
@@ -113,7 +113,7 @@ class HistoryStorageTable {
 	/**
 	 * Add price to the history.
 	 *
-	 * @since {VERSION}
+	 * @since 3.0.0
 	 *
 	 * @param int   $product_id     Product ID.
 	 * @param float $regular_price  Price.
@@ -181,7 +181,7 @@ class HistoryStorageTable {
 	/**
 	 * Add first price to the history.
 	 *
-	 * @since {VERSION}
+	 * @since 3.0.0
 	 *
 	 * @param int   $product_id    Product ID.
 	 * @param float $regular_price Price.
@@ -226,7 +226,7 @@ class HistoryStorageTable {
 	/**
 	 * Add historical price at given timestamp.
 	 *
-	 * @since {VERSION}
+	 * @since 3.0.0
 	 *
 	 * @param int   $product_id Product ID.
 	 * @param float $price      Price.
@@ -258,7 +258,7 @@ class HistoryStorageTable {
 	/**
 	 * Get pricing history for $product_id.
 	 *
-	 * @since {VERSION}
+	 * @since 3.0.0
 	 *
 	 * @param int $product_id Product ID.
 	 *
@@ -292,7 +292,7 @@ class HistoryStorageTable {
 	/**
 	 * Get pricing history for $product_id with entry IDs.
 	 *
-	 * @since {VERSION}
+	 * @since 3.0.0
 	 *
 	 * @param int $product_id Product ID.
 	 *
@@ -329,7 +329,7 @@ class HistoryStorageTable {
 	/**
 	 * Delete price from history.
 	 *
-	 * @since {VERSION}
+	 * @since 3.0.0
 	 *
 	 * @param int $product_id Product ID.
 	 * @param int $entry_id   Entry ID.
@@ -356,7 +356,7 @@ class HistoryStorageTable {
 	/**
 	 * Clean history (truncate table).
 	 *
-	 * @since {VERSION}
+	 * @since 3.0.0
 	 *
 	 * @return void
 	 */
@@ -372,7 +372,7 @@ class HistoryStorageTable {
 	/**
 	 * Get previous prices for product.
 	 *
-	 * @since {VERSION}
+	 * @since 3.0.0
 	 *
 	 * @param int $product_id Product ID.
 	 *
@@ -412,7 +412,7 @@ class HistoryStorageTable {
 	/**
 	 * Insert meta.
 	 *
-	 * @since {VERSION}
+	 * @since 3.0.0
 	 *
 	 * @param int    $history_id History ID.
 	 * @param string $meta_key   Meta key.
@@ -438,7 +438,7 @@ class HistoryStorageTable {
 	/**
 	 * Get time with offset.
 	 *
-	 * @since {VERSION}
+	 * @since 3.0.0
 	 *
 	 * @return int
 	 */
@@ -449,7 +449,7 @@ class HistoryStorageTable {
 	/**
 	 * Get GMT offset in seconds.
 	 *
-	 * @since {VERSION}
+	 * @since 3.0.0
 	 *
 	 * @return int GMT offset in seconds (rounded to nearest second).
 	 */
@@ -466,7 +466,7 @@ class HistoryStorageTable {
 	 * Legacy post_meta format uses offset-adjusted timestamps (time() + offset),
 	 * but date_gmt in database is stored as UTC, so we need to subtract the offset.
 	 *
-	 * @since {VERSION}
+	 * @since 3.0.0
 	 *
 	 * @param int $offset_timestamp Offset-adjusted timestamp (matching legacy format).
 	 *
@@ -482,7 +482,7 @@ class HistoryStorageTable {
 	 * Converts UTC datetime from database to offset-adjusted timestamp
 	 * matching legacy post_meta format (for get_history() return value).
 	 *
-	 * @since {VERSION}
+	 * @since 3.0.0
 	 *
 	 * @param string $date_gmt UTC datetime string (Y-m-d H:i:s format).
 	 *
@@ -498,7 +498,7 @@ class HistoryStorageTable {
 	/**
 	 * Helper method - not used in new implementation.
 	 *
-	 * @since {VERSION}
+	 * @since 3.0.0
 	 *
 	 * @param int               $product_id Product ID.
 	 * @param array<int, float> $history    History array.
@@ -516,7 +516,7 @@ class HistoryStorageTable {
 	 * It saves current price with the current timestamp and timestamp for date 24 hours ago.
 	 * This matches the legacy post_meta implementation behavior.
 	 *
-	 * @since {VERSION}
+	 * @since 3.0.0
 	 *
 	 * @param int          $product_id Product ID.
 	 * @param array<mixed> $history    Empty history array.
@@ -556,7 +556,7 @@ class HistoryStorageTable {
 	/**
 	 * Fix history by extending all histories backward.
 	 *
-	 * @since {VERSION}
+	 * @since 3.0.0
 	 *
 	 * @return void
 	 */
@@ -568,7 +568,7 @@ class HistoryStorageTable {
 	/**
 	 * Get sale price for product.
 	 *
-	 * @since {VERSION}
+	 * @since 3.0.0
 	 *
 	 * @param \WC_Product $product Product.
 	 *

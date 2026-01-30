@@ -25,7 +25,7 @@ class HistoryStorage {
 	/**
 	 * Table storage instance.
 	 *
-	 * @since {VERSION}
+	 * @since 3.0.0
 	 *
 	 * @var HistoryStorageTable
 	 */
@@ -34,7 +34,7 @@ class HistoryStorage {
 	/**
 	 * Constructor.
 	 *
-	 * @since {VERSION}
+	 * @since 3.0.0
 	 */
 	public function __construct() {
 		$this->table_storage = new HistoryStorageTable();
@@ -43,7 +43,7 @@ class HistoryStorage {
 	/**
 	 * Check if should use tables.
 	 *
-	 * @since {VERSION}
+	 * @since 3.0.0
 	 *
 	 * @return bool
 	 */

@@ -93,7 +93,7 @@ class Marketing {
 	/**
 	 * Get site link.
 	 *
-	 * @since {VERSION}
+	 * @since 3.0.0
 	 *
 	 * @return string
 	 */

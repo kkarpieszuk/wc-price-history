@@ -7,14 +7,14 @@ use PriorPrice\HistoryStorage;
 /**
  * DbMigration class for migrating data from post_meta to tables.
  *
- * @since {VERSION}
+ * @since 3.0.0
  */
 class DbMigration {
 
 	/**
 	 * Option names.
 	 *
-	 * @since {VERSION}
+	 * @since 3.0.0
 	 */
 	public const OPTION_DB_VERSION = 'wc_price_history_db_version';
 	public const OPTION_MIGRATION_STATUS = 'wc_price_history_migration_status';
@@ -27,7 +27,7 @@ class DbMigration {
 	/**
 	 * Migration statuses.
 	 *
-	 * @since {VERSION}
+	 * @since 3.0.0
 	 */
 	public const STATUS_NOT_NEEDED = 'not_needed';
 	public const STATUS_PENDING = 'pending';
@@ -37,7 +37,7 @@ class DbMigration {
 	/**
 	 * Batch size.
 	 *
-	 * @since {VERSION}
+	 * @since 3.0.0
 	 *
 	 * @var int
 	 */
@@ -49,7 +49,7 @@ class DbMigration {
 	 * Maximum time a migration batch should take. If lock is older than this,
 	 * it's considered stale and can be acquired by another request.
 	 *
-	 * @since {VERSION}
+	 * @since 3.0.0
 	 *
 	 * @var int
 	 */
@@ -58,7 +58,7 @@ class DbMigration {
 	/**
 	 * Check if migration is needed.
 	 *
-	 * @since {VERSION}
+	 * @since 3.0.0
 	 *
 	 * @return bool
 	 */
@@ -117,7 +117,7 @@ class DbMigration {
 	/**
 	 * Get total number of products that need migration.
 	 *
-	 * @since {VERSION}
+	 * @since 3.0.0
 	 *
 	 * @return int
 	 */
@@ -144,7 +144,7 @@ class DbMigration {
 	/**
 	 * Get products to migrate.
 	 *
-	 * @since {VERSION}
+	 * @since 3.0.0
 	 *
 	 * @param int $limit Limit.
 	 *
@@ -189,7 +189,7 @@ class DbMigration {
 	/**
 	 * Migrate batch of products.
 	 *
-	 * @since {VERSION}
+	 * @since 3.0.0
 	 *
 	 * @return array{
 	 *   processed: int,
@@ -423,7 +423,7 @@ class DbMigration {
 	/**
 	 * Migrate single product.
 	 *
-	 * @since {VERSION}
+	 * @since 3.0.0
 	 *
 	 * @param int $product_id Product ID.
 	 *
@@ -561,7 +561,7 @@ class DbMigration {
 	/**
 	 * Get migration progress.
 	 *
-	 * @since {VERSION}
+	 * @since 3.0.0
 	 *
 	 * @return array{
 	 *   processed: int,
@@ -587,7 +587,7 @@ class DbMigration {
 	/**
 	 * Initialize migration.
 	 *
-	 * @since {VERSION}
+	 * @since 3.0.0
 	 *
 	 * @return void
 	 */
@@ -598,7 +598,7 @@ class DbMigration {
 	/**
 	 * Mark migration as completed for fresh installs (no legacy history).
 	 *
-	 * @since {VERSION}
+	 * @since 3.0.0
 	 *
 	 * @return void
 	 */
@@ -613,7 +613,7 @@ class DbMigration {
 	/**
 	 * Get migration status.
 	 *
-	 * @since {VERSION}
+	 * @since 3.0.0
 	 *
 	 * @param bool $use_default Use default value if option not set. Default false.
 	 *
@@ -632,7 +632,7 @@ class DbMigration {
 	/**
 	 * Check if migration should be checked on this request.
 	 *
-	 * @since {VERSION}
+	 * @since 3.0.0
 	 *
 	 * @return bool
 	 */
@@ -656,7 +656,7 @@ class DbMigration {
 	 * Legacy post_meta format uses offset-adjusted timestamps (time() + offset),
 	 * but date_gmt in database is stored as UTC, so we need to subtract the offset.
 	 *
-	 * @since {VERSION}
+	 * @since 3.0.0
 	 *
 	 * @param int $offset_timestamp Offset-adjusted timestamp (matching legacy format).
 	 *
@@ -673,7 +673,7 @@ class DbMigration {
 	/**
 	 * Acquire lock for batch migration to prevent concurrent execution.
 	 *
-	 * @since {VERSION}
+	 * @since 3.0.0
 	 *
 	 * @return bool True if lock was acquired, false if another request is already processing.
 	 */
@@ -693,7 +693,7 @@ class DbMigration {
 	/**
 	 * Release lock for batch migration.
 	 *
-	 * @since {VERSION}
+	 * @since 3.0.0
 	 *
 	 * @return void
 	 */
@@ -704,7 +704,7 @@ class DbMigration {
 	/**
 	 * Log message to debug.log if WP_DEBUG_LOG is enabled.
 	 *
-	 * @since {VERSION}
+	 * @since 3.0.0
 	 *
 	 * @param string $message Message to log.
 	 * @return void

@@ -1,7 +1,7 @@
 /**
  * Migration JavaScript for WC Price History.
  *
- * @since {VERSION}
+ * @since 3.0.0
  */
 (function() {
 	'use strict';
@@ -146,7 +146,7 @@
 		/**
 		 * Update progress bar.
 		 *
-		 * @since {VERSION}
+		 * @since 3.0.0
 		 *
 		 * @param {number} percentage Percentage.
 		 * @param {string} message Message.

@@ -14,7 +14,7 @@ class Ajax {
 	/**
 	 * First scan.
 	 *
-	 * @since {VERSION}
+	 * @since 3.0.0
 	 *
 	 * @var FirstScan
 	 */
@@ -23,7 +23,7 @@ class Ajax {
 	/**
 	 * Constructor.
 	 *
-	 * @since {VERSION}
+	 * @since 3.0.0
 	 *
 	 * @param FirstScan $first_scan First scan.
 	 */
@@ -130,7 +130,7 @@ class Ajax {
 	/**
 	 * Migrate batch of products to database tables.
 	 *
-	 * @since {VERSION}
+	 * @since 3.0.0
 	 *
 	 * @return void
 	 */
