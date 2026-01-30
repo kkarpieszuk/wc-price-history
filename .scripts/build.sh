@@ -2,30 +2,8 @@
 
 set -e
 
-function replace_version_number() {
-
-  # Function to traverse directories and replace {VERSION} with the real version number
-  traverse_and_replace() {
-    for file in "$1"/*; do
-      if [ -d "$file" ]; then
-        # Skip /vendor and /node_modules directories
-        if [[ "$file" == */vendor ]] || [[ "$file" == */node_modules ]]; then
-          continue
-        fi
-        # Recursively traverse directories
-        traverse_and_replace "$file"
-      elif [ -f "$file" ]; then
-        # Replace {VERSION} with the real version number in files
-        sed -i "s/{VERSION}/$VERSION/g" "$file"
-      fi
-    done
-  }
-
-  # Start traversal from the current working directory
-  traverse_and_replace "."
-
-  echo "Replaced {VERSION} with $VERSION in all files."
-}
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/replace-version.sh"
 
 # take the branch name from the command line argument. If not specified, default to develop.
 BRANCH=${1:-develop}
