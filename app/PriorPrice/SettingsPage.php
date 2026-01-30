@@ -570,8 +570,14 @@ class SettingsPage {
 									$rows = [];
 									foreach ( $table_names as $table_name ) {
 										// phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.DirectDatabaseQuery.DirectQuery
-										$count = $wpdb->get_var( "SELECT COUNT(*) FROM `{$table_name}`" );
-										$rows[] = $table_name . ' (' . (string) (int) $count . ' ' . esc_html__( 'rows', 'wc-price-history' ) . ')';
+										$exists = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table_name ) ) === $table_name;
+										if ( $exists ) {
+											// phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.DirectDatabaseQuery.DirectQuery
+											$count = $wpdb->get_var( "SELECT COUNT(*) FROM `{$table_name}`" );
+											$rows[] = $table_name . ' (' . (string) (int) $count . ' ' . esc_html__( 'rows', 'wc-price-history' ) . ')';
+										} else {
+											$rows[] = $table_name . ' (' . esc_html__( 'table missing', 'wc-price-history' ) . ')';
+										}
 									}
 									echo esc_html( implode( ', ', $rows ) );
 									?>
