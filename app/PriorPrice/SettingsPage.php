@@ -578,9 +578,10 @@ class SettingsPage {
 								</p>
 							<?php } else {
 								esc_html_e( 'The plugin is using post meta for storing price history. Consider migrating to database tables for better performance.', 'wc-price-history' );
-							}
-							?>
+								?>
 						</p>
+							<?php }
+							?>
 					</details>
 				</div>
 			</div>
