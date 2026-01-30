@@ -32,6 +32,28 @@ function replace_version_number() {
   echo "Replaced {VERSION} with $VERSION in all files."
 }
 
+# Replaces {VERSION_ALWAYS_TOP} with current version. For use only in release process (e.g. build.sh).
+# In repo files keep {VERSION_ALWAYS_TOP}; it is replaced only during build, not committed.
+function replace_version_always_top() {
+
+  traverse_and_replace_always_top() {
+    for file in "$1"/*; do
+      if [ -d "$file" ]; then
+        if [[ "$file" == */vendor ]] || [[ "$file" == */node_modules ]]; then
+          continue
+        fi
+        traverse_and_replace_always_top "$file"
+      elif [ -f "$file" ]; then
+        sed -i "s/{VERSION_ALWAYS_TOP}/$VERSION/g" "$file"
+      fi
+    done
+  }
+
+  traverse_and_replace_always_top "."
+
+  echo "Replaced {VERSION_ALWAYS_TOP} with $VERSION in all files."
+}
+
 # When run directly (not sourced), get VERSION and run replace_version_number
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
   VERSION="${1:-}"
