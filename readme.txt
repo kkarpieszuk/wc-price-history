@@ -133,6 +133,9 @@ Yes, I am available for hire. Please contact me at [LinkedIn](https://linkedin.c
 == Changelog ==
 
 = {VERSION_ALWAYS_TOP} =
+-
+
+= 3.0.1 =
 - Show more detailed plugin status report (#174)
 
 = 3.0.0 =
