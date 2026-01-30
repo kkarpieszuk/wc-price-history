@@ -139,7 +139,7 @@ CREATE TABLE {$wpdb->prefix}wc_price_history_meta (
 	/**
 	 * Get full names of price history tables (with prefix).
 	 *
-	 * @since {VERSION}
+	 * @since 3.0.1
 	 *
 	 * @return array<int, string>
 	 */
