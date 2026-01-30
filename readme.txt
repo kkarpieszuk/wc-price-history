@@ -133,7 +133,7 @@ Yes, I am available for hire. Please contact me at [LinkedIn](https://linkedin.c
 == Changelog ==
 
 = {VERSION_ALWAYS_TOP} =
--
+- Show more detailed plugin status report (#174)
 
 = 3.0.0 =
 - Database Migration: Price History moved from Post Meta to Custom Tables for better performance. See https://wcpricehistory.com/tuorials-howtos/docs/migration-to-database-tables-in-3-0/?utm_source=readme&utm_medium=changelog&utm_campaign=wc-price-history (#98)

@@ -2,6 +2,8 @@
 
 namespace PriorPrice;
 
+use PriorPrice\Database\DbMigration;
+use PriorPrice\Database\Install;
 use PriorPrice\Helpers\Pro;
 use PriorPrice\HistoryStorage;
 
@@ -547,11 +549,52 @@ class SettingsPage {
 							<?php
 							if ( $uses_tables ) {
 								esc_html_e( 'Great! The plugin is using dedicated database tables for storing price history. This provides better performance and scalability.', 'wc-price-history' );
-							} else {
+								$migration_status = DbMigration::get_migration_status( true );
+								$table_names      = Install::get_table_names();
+								?>
+								</p>
+								<p class="description" style="margin-top: 0.5em;">
+									<strong><?php esc_html_e( 'Why tables are used:', 'wc-price-history' ); ?></strong>
+									<?php
+									if ( $migration_status === DbMigration::STATUS_COMPLETED ) {
+										esc_html_e( 'Migration from post meta has been completed.', 'wc-price-history' );
+									} else if ( $migration_status === DbMigration::STATUS_NOT_NEEDED ) {
+										esc_html_e( 'Migration was not needed (e.g. fresh install with database tables).', 'wc-price-history' );
+									} else if ( $migration_status === false ) {
+										esc_html_e( 'Migration status is not set.', 'wc-price-history' );
+								    } else {
+										printf(
+											esc_html__( 'Migration status is %s.', 'wc-price-history' ),
+											'<strong>' . esc_attr( $migration_status ) . '</strong>'
+										);
+									}
+									?>
+								</p>
+								<p class="description" style="margin-top: 0.5em;">
+									<strong><?php esc_html_e( 'Tables:', 'wc-price-history' ); ?></strong>
+									<?php
+									global $wpdb;
+									$rows = [];
+									foreach ( $table_names as $table_name ) {
+										// phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.DirectDatabaseQuery.DirectQuery
+										$exists = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table_name ) ) === $table_name;
+										if ( $exists ) {
+											// phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.DirectDatabaseQuery.DirectQuery
+											$count = $wpdb->get_var( "SELECT COUNT(*) FROM `{$table_name}`" );
+											$rows[] = $table_name . ' (' . (string) (int) $count . ' ' . esc_html__( 'rows', 'wc-price-history' ) . ')';
+										} else {
+											$rows[] = $table_name . ' (' . esc_html__( 'table missing', 'wc-price-history' ) . ')';
+										}
+									}
+									echo esc_html( implode( ', ', $rows ) );
+									?>
+								</p>
+							<?php } else {
 								esc_html_e( 'The plugin is using post meta for storing price history. Consider migrating to database tables for better performance.', 'wc-price-history' );
-							}
-							?>
+								?>
 						</p>
+							<?php }
+							?>
 					</details>
 				</div>
 			</div>
