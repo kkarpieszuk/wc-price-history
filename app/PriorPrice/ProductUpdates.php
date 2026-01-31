@@ -2,6 +2,7 @@
 
 namespace PriorPrice;
 
+use PriorPrice\C11y\WPSheetEditor;
 use WC_Product;
 use WC_Product_Variable;
 
@@ -12,9 +13,15 @@ class ProductUpdates {
 	 */
 	private $history_storage;
 
-	public function __construct( HistoryStorage $history_storage ) {
+	/**
+	 * @var WPSheetEditor
+	 */
+	private $wpse;
+
+	public function __construct( HistoryStorage $history_storage, WPSheetEditor $wpse ) {
 
 		$this->history_storage = $history_storage;
+		$this->wpse            = $wpse;
 	}
 
 	/**
@@ -39,8 +46,6 @@ class ProductUpdates {
 	 */
 	public function update_price_history( int $product_id ): void {
 
-		remove_action( 'woocommerce_update_product', [ $this, 'update_price_history' ] );
-
 		if ( get_post_status( $product_id ) === 'draft' ) {
 			return;
 		}
@@ -51,13 +56,21 @@ class ProductUpdates {
 			return;
 		}
 
-		$this->history_storage->add_price( $product_id, (float) $product->get_price(), false );
+		$price = (float) $product->get_price();
+		$skip  = $this->wpse->should_skip_price_recording( $product_id, $price );
+		$skip  = (bool) apply_filters( 'wc_price_history_skip_recording', $skip, $product_id, $price );
 
+		if ( $skip ) {
+			return;
+		}
+
+		remove_action( 'woocommerce_update_product', [ $this, 'update_price_history' ] );
+		$this->history_storage->add_price( $product_id, $price, false );
 		if ( $product->is_type( 'variable' ) ) {
 			/** @var WC_Product_Variable $product */
 			$this->maybe_update_price_history_for_variation( $product );
 		}
-
+		add_action( 'woocommerce_update_product', [ $this, 'update_price_history' ] );
 	}
 
 	/**
@@ -83,7 +96,11 @@ class ProductUpdates {
 			return;
 		}
 
-		$this->history_storage->add_first_price( $product_id, (float) $product->get_price() );
+		$price = (float) $product->get_price();
+		if ( $this->wpse->should_skip_price_recording( $product_id, $price ) ) {
+			return;
+		}
+		$this->history_storage->add_first_price( $product_id, $price );
 	}
 
 	/**
@@ -98,7 +115,10 @@ class ProductUpdates {
 		$variations = $product->get_available_variations( 'objects' );
 		foreach ( $variations as $variation ) {
 			/** @var WC_Product $variation */
-			$this->history_storage->add_price( $variation->get_id(), (float) $variation->get_price(), false );
+			$price = (float) $variation->get_price();
+			if ( ! $this->wpse->should_skip_price_recording( $variation->get_id(), $price ) ) {
+				$this->history_storage->add_price( $variation->get_id(), $price, false );
+			}
 		}
 	}
 }

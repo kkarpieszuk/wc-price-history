@@ -2,12 +2,26 @@
 
 namespace PriorPrice;
 
+use PriorPrice\C11y\WPSheetEditor;
+
 /**
  * HistoryStorageTable class - new implementation using database tables.
  *
  * @since 3.0.0
  */
 class HistoryStorageTable {
+
+	/**
+	 * @var WPSheetEditor
+	 */
+	private $wpse;
+
+	/**
+	 * @param WPSheetEditor $wpse WP Sheet Editor compatibility helper.
+	 */
+	public function __construct( WPSheetEditor $wpse ) {
+		$this->wpse = $wpse;
+	}
 
 	/**
 	 * Get minimal price for $product_id in last $days.
@@ -124,6 +138,10 @@ class HistoryStorageTable {
 	public function add_price( int $product_id, float $regular_price, bool $on_change_only ): int {
 		global $wpdb;
 
+		if ( $this->wpse->should_skip_price_recording( $product_id, $regular_price ) ) {
+			return 0;
+		}
+
 		$product = wc_get_product( $product_id );
 
 		if ( ! $product ) {
@@ -189,7 +207,7 @@ class HistoryStorageTable {
 	 * @return int
 	 */
 	public function add_first_price( int $product_id, float $regular_price ): int {
-		if ( $regular_price <= 0 ) {
+		if ( $regular_price <= 0 || $this->wpse->should_skip_price_recording( $product_id, $regular_price ) ) {
 			return 0;
 		}
 
