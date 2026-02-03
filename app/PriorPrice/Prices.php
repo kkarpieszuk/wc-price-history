@@ -245,7 +245,12 @@ class Prices {
 	/**
 	 * Check if the product is the main product on the page.
 	 *
+	 * For variable products, the main product is the queried object.
+	 * For variations, the main product is the parent variable product (so variation
+	 * price_html in get_available_variations() includes lowest price on Blocks template).
+	 *
 	 * @since 1.6
+	 * @since {VERSION} Support variations: treat variation as main when parent is queried object (Blocks compatibility).
 	 *
 	 * @param \WC_Product $wc_product WC Product.
 	 *
@@ -255,7 +260,22 @@ class Prices {
 
 		global $wp_query;
 
-		return isset( $wp_query->queried_object_id ) && $wp_query->queried_object_id === $wc_product->get_id();
+		if ( ! isset( $wp_query->queried_object_id ) ) {
+			return false;
+		}
+
+		$queried_id = $wp_query->queried_object_id;
+
+		if ( $wc_product->get_id() === $queried_id ) {
+			return true;
+		}
+
+		// Variation on single product page: show lowest price for variant in Blocks template.
+		if ( $wc_product instanceof \WC_Product_Variation && $wc_product->get_parent_id() === $queried_id ) {
+			return true;
+		}
+
+		return false;
 	}
 
 	/**
