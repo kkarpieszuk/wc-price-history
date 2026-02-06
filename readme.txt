@@ -133,7 +133,7 @@ Yes, I am available for hire. Please contact me at [LinkedIn](https://linkedin.c
 == Changelog ==
 
 = {VERSION_ALWAYS_TOP} =
--
+- Fix: Lowest price (30-day low) now displays on a new line in themes that use flex/inline price layout (e.g. Twenty Twenty-Five). (#183)
 
 = 3.1.0 =
 - Fix: The lowest product variant prices were not displayed if product page was displayed with Gutenberg Blocks (#181)
