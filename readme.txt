@@ -133,7 +133,7 @@ Yes, I am available for hire. Please contact me at [LinkedIn](https://linkedin.c
 == Changelog ==
 
 = {VERSION_ALWAYS_TOP} =
--
+- Fix: The lowest product variant prices were not displayed if product page was displayed with Gutenberg Blocks (#181)
 
 = 3.0.1 =
 - Show more detailed plugin status report (#174)
