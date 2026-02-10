@@ -2,6 +2,7 @@
 	<admin-texts>
 		<key name="wc_price_history_settings">
 			<key name="display_text" />
+			<key name="variable_product_defer_placeholder_text" />
 		</key>
 	</admin-texts>
 </wpml-config>

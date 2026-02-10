@@ -12,6 +12,21 @@ jQuery(document).ready(function($) {
 		}
 	);
 
+	// Toggle the variable product placeholder text field when the defer checkbox is checked.
+	$( '#wc-price-history-variable-product-defer' ).on(
+		'change',
+		function() {
+			var isChecked = $( this ).is( ':checked' );
+			if ( isChecked ) {
+				$( '.wc-price-history-variable-product-placeholder-p' ).removeClass( 'hidden-fade' );
+				$( '#wc-price-history-variable-product-placeholder-text' ).prop( 'disabled', false );
+			} else {
+				$( '.wc-price-history-variable-product-placeholder-p' ).addClass( 'hidden-fade' );
+				$( '#wc-price-history-variable-product-placeholder-text' ).prop( 'disabled', true );
+			}
+		}
+	);
+
 	// There are tesxts like "What to do when price history is older than {days-set} days" on the page's HTML code.
 	// copy value from input field #wc-price-history-days-number to every place on page where is {days-set} placeholder in pages HTML (replace it).
 	$( '#wc-price-history-days-number' ).on(
