@@ -59,6 +59,16 @@ class SettingsData {
 			$update                             = true;
 		}
 
+		if ( ! isset( $settings['variable_product_defer_lowest_price'] ) ) {
+			$settings['variable_product_defer_lowest_price'] = false;
+			$update                                          = true;
+		}
+
+		if ( ! isset( $settings['variable_product_defer_placeholder_text'] ) ) {
+			$settings['variable_product_defer_placeholder_text'] = esc_html__( 'Select a variant to see the lowest price', 'wc-price-history' );
+			$update                                             = true;
+		}
+
 		if ( $update ) {
 			update_option( 'wc_price_history_settings', $settings );
 		}
@@ -254,5 +264,39 @@ class SettingsData {
 		$settings[ FirstScan::OPTION_NAME ] = $status;
 
 		update_option( 'wc_price_history_settings', $settings );
+	}
+
+	/**
+	 * Get variable product defer lowest price setting.
+	 *
+	 * When true, lowest price for variable products is shown only after a variant is selected.
+	 *
+	 * @since {VERSION}
+	 *
+	 * @return bool
+	 */
+	public function get_variable_product_defer_lowest_price(): bool {
+
+		$settings = get_option( 'wc_price_history_settings' );
+		if ( ! isset( $settings['variable_product_defer_lowest_price'] ) ) {
+			return false;
+		}
+		return (bool) $settings['variable_product_defer_lowest_price'];
+	}
+
+	/**
+	 * Get variable product placeholder text (shown before variant is selected).
+	 *
+	 * @since {VERSION}
+	 *
+	 * @return string
+	 */
+	public function get_variable_product_defer_placeholder_text(): string {
+
+		$settings = get_option( 'wc_price_history_settings' );
+		if ( ! isset( $settings['variable_product_defer_placeholder_text'] ) || $settings['variable_product_defer_placeholder_text'] === '' ) {
+			return '';
+		}
+		return esc_html( $settings['variable_product_defer_placeholder_text'] );
 	}
 }

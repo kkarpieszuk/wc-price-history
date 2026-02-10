@@ -99,6 +99,18 @@ class Prices {
 			return $this->display_from_template( $lowest_pre, $days_number, $wc_product );
 		}
 
+		// Variable product (main product, not a variation): show placeholder until variant is selected.
+		if ( $wc_product instanceof \WC_Product_Variable
+			&& $this->settings_data->get_variable_product_defer_lowest_price() ) {
+			$placeholder = $this->settings_data->get_variable_product_defer_placeholder_text();
+			if ( $placeholder !== '' ) {
+				return sprintf(
+					'<div class="wc-price-history prior-price lowest" data-product-id="%s"><span class="wc-price-history-lowest-inner">%s</span></div>',
+					$wc_product->get_id(),
+					$placeholder
+				);
+			}
+		}
 
 		$lowest = $this->get_lowest_price_raw_non_taxed( $wc_product );
 		$lowest = $this->taxes->apply_taxes( $lowest, $wc_product );

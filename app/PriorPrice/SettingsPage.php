@@ -388,6 +388,43 @@ class SettingsPage {
 									</p>
 								</fieldset>
 						</tr>
+						<tr>
+							<th scope="row"><?php esc_html_e( 'Variable products', 'wc-price-history' ); ?></th>
+							<td>
+								<fieldset id="wc-price-history-variable-product-fieldset">
+									<p>
+										<label>
+											<input
+												type="checkbox"
+												name="wc_price_history_settings[variable_product_defer_lowest_price]"
+												id="wc-price-history-variable-product-defer"
+												value="1"
+												<?php checked( ! empty( $settings['variable_product_defer_lowest_price'] ), true ); ?>
+											/>
+											<?php esc_html_e( 'Show lowest price only after a variant is selected', 'wc-price-history' ); ?>
+										</label>
+									</p>
+									<p class="description">
+										<?php esc_html_e( 'For variable products, the main product has no sale dates or on-sale state; only variants do. Enabling this avoids showing an incorrect lowest price before the customer selects a variant.', 'wc-price-history' ); ?>
+									</p>
+									<p class="wc-price-history-variable-product-placeholder-p <?php echo ! empty( $settings['variable_product_defer_lowest_price'] ) ? '' : 'hidden-fade'; ?>">
+										<label class="wc-price-history-wide-field">
+											<input
+												type="text"
+												name="wc_price_history_settings[variable_product_defer_placeholder_text]"
+												id="wc-price-history-variable-product-placeholder-text"
+												class="wc-price-history-wide-field"
+												value="<?php echo isset( $settings['variable_product_defer_placeholder_text'] ) ? esc_attr( $settings['variable_product_defer_placeholder_text'] ) : esc_attr__( 'Select a variant to see the lowest price', 'wc-price-history' ); ?>"
+												<?php disabled( empty( $settings['variable_product_defer_lowest_price'] ), true ); ?>
+											/>
+										</label>
+									</p>
+									<p class="description wc-price-history-variable-product-placeholder-p <?php echo ! empty( $settings['variable_product_defer_lowest_price'] ) ? '' : 'hidden-fade'; ?>">
+										<?php esc_html_e( 'Text to show next to the price before a variant is selected.', 'wc-price-history' ); ?>
+									</p>
+								</fieldset>
+							</td>
+						</tr>
 						<?php
 						/**
 						 * Action to add custom fields to settings page.
