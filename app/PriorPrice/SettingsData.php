@@ -271,7 +271,7 @@ class SettingsData {
 	 *
 	 * When true, lowest price for variable products is shown only after a variant is selected.
 	 *
-	 * @since {VERSION}
+	 * @since 3.2.0
 	 *
 	 * @return bool
 	 */
@@ -287,7 +287,7 @@ class SettingsData {
 	/**
 	 * Get variable product placeholder text (shown before variant is selected).
 	 *
-	 * @since {VERSION}
+	 * @since 3.2.0
 	 *
 	 * @return string
 	 */
