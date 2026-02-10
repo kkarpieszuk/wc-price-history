@@ -2,3 +2,19 @@
 .wc-price-history-shortcode.line-through {
 	text-decoration: line-through;
 }
+
+/*
+ * Ensure lowest price info appears on a new line. See: #183
+ */
+.wc-price-history.prior-price.lowest,
+.wc-price-history-lowest-inner {
+	display: block;
+	width: 100%;
+	flex-basis: 100%;
+	clear: both;
+	margin-top: 0.5em;
+}
+
+.wc-price-history.prior-price.lowest .wc-price-history-lowest-inner {
+	margin-top: 0;
+}

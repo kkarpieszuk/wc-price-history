@@ -307,7 +307,7 @@ class Prices {
 			$old_history_custom_text
 		);
 
-		return sprintf( '<div class="wc-price-history prior-price lowest" data-product-id="%s">%s</div>', $wc_product->get_id(), $old_history_custom_text );
+		return sprintf( '<div class="wc-price-history prior-price lowest" data-product-id="%s"><span class="wc-price-history-lowest-inner">%s</span></div>', $wc_product->get_id(), $old_history_custom_text );
 	}
 
 	/**
@@ -339,6 +339,6 @@ class Prices {
 		 */
 		$display_text = apply_filters( 'wc_price_history_display_from_template', $display_text, $lowest, $days_number );
 
-		return sprintf( '<div class="wc-price-history prior-price lowest" data-product-id="%s" data-original-price="%s">%s</div>', $wc_product->get_id(), $lowest, $display_text );
+		return sprintf( '<div class="wc-price-history prior-price lowest" data-product-id="%s" data-original-price="%s"><span class="wc-price-history-lowest-inner">%s</span></div>', $wc_product->get_id(), $lowest, $display_text );
 	}
 }
