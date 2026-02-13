@@ -98,6 +98,12 @@ class Shortcode {
 			return '';
 		}
 
+		// Variable product with defer: show placeholder until a variation is selected.
+		if ( $product instanceof \WC_Product_Variable
+			&& $this->settings_data->get_variable_product_defer_lowest_price() ) {
+			return $this->shortcode_deferred_variable_output( $product, $atts );
+		}
+
 		$days_number = $this->settings_data->get_days_number();
 		$count_from  = $this->settings_data->get_count_from();
 
@@ -135,6 +141,42 @@ class Shortcode {
 			$lowest,
 			$class,
 			$lowest_html
+		);
+	}
+
+	/**
+	 * Output for variable product when lowest price is deferred until variation is selected.
+	 *
+	 * Renders placeholder text and a hidden price block so frontend JS can show the price on found_variation.
+	 *
+	 * @since {VERSION}
+	 *
+	 * @param \WC_Product_Variable       $product Product.
+	 * @param array<string, int|string|null> $atts   Shortcode attributes (from shortcode_atts).
+	 *
+	 * @return string
+	 */
+	private function shortcode_deferred_variable_output( \WC_Product_Variable $product, array $atts ): string {
+
+		$placeholder = $this->settings_data->get_variable_product_defer_placeholder_text();
+		if ( $placeholder === '' ) {
+			return '';
+		}
+
+		$show_currency    = (bool) $atts['show_currency'];
+		$currency_str     = $show_currency ? get_woocommerce_currency_symbol() : '';
+		$price_format     = get_woocommerce_price_format();
+		$price_format     = str_replace( '%2$s', '<span class="wc-price-history-lowest-raw-value"></span>', $price_format );
+		$hidden_price_html = sprintf( $price_format, $currency_str, '' );
+
+		return sprintf(
+			'<div class="wc-price-history-shortcode wc-price-history-shortcode--defer" data-product-id="%1$s" data-show-currency="%2$s">' .
+			'<span class="wc-price-history-shortcode-placeholder">%3$s</span>' .
+			'<span class="wc-price-history-shortcode-price" style="display:none">%4$s</span></div>',
+			$product->get_id(),
+			$show_currency ? '1' : '0',
+			$placeholder,
+			$hidden_price_html
 		);
 	}
 }

@@ -133,6 +133,7 @@ Yes, I am available for hire. Please contact me at [LinkedIn](https://linkedin.c
 == Changelog ==
 
 = {VERSION_ALWAYS_TOP} =
+- Fix: Shortcode [wc_price_history] now respects the "defer lowest price" setting for variable products: shows placeholder until a variant is selected instead of the lowest price across all variations. (#185)
 
 = 3.2.0 =
 - Fix: Lowest price (30-day low) now displays on a new line in themes that use flex/inline price layout (e.g. Twenty Twenty-Five). (#183)

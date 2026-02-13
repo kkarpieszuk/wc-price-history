@@ -21,6 +21,9 @@ WCPriceHistory.Frontend = WCPriceHistory.Frontend || ( function( document, windo
 			rawPrice: '.wc-price-history-lowest-raw-value',
 			lowestPriceModule: '.wc-price-history.prior-price.lowest',
 			shortcodeModule: '.wc-price-history-shortcode',
+			shortcodeDefer: '.wc-price-history-shortcode--defer',
+			shortcodePlaceholder: '.wc-price-history-shortcode-placeholder',
+			shortcodePrice: '.wc-price-history-shortcode-price',
 		},
 
 		/**
@@ -108,7 +111,15 @@ WCPriceHistory.Frontend = WCPriceHistory.Frontend || ( function( document, windo
 				const $shortcodeModule = $( app.selectors.shortcodeModule + '[data-product-id="' + productId + '"]');
 
 				$lowestPriceModule.find( app.selectors.rawPrice ).text( app.methods.formatPrice( lowestInVariation ) );
-				$shortcodeModule.find( app.selectors.rawPrice ).text( app.methods.formatPrice( lowestInVariation ) );
+				$shortcodeModule.each( function() {
+					const $shortcode = $( this );
+					if ( $shortcode.hasClass( 'wc-price-history-shortcode--defer' ) ) {
+						$shortcode.find( app.selectors.shortcodePlaceholder ).hide();
+						$shortcode.find( app.selectors.shortcodePrice ).show().find( app.selectors.rawPrice ).text( app.methods.formatPrice( lowestInVariation ) );
+					} else {
+						$shortcode.find( app.selectors.rawPrice ).text( app.methods.formatPrice( lowestInVariation ) );
+					}
+				} );
 			},
 
 			/**
@@ -129,7 +140,15 @@ WCPriceHistory.Frontend = WCPriceHistory.Frontend || ( function( document, windo
 				const $shortcodeModule = $( app.selectors.shortcodeModule + '[data-product-id="' + productId + '"]');
 
 				$lowestPriceModule.find( app.selectors.rawPrice ).text( app.methods.formatPrice( originalPrice ) );
-				$shortcodeModule.find( app.selectors.rawPrice ).text( app.methods.formatPrice( originalPrice ) );
+				$shortcodeModule.each( function() {
+					const $shortcode = $( this );
+					if ( $shortcode.hasClass( 'wc-price-history-shortcode--defer' ) ) {
+						$shortcode.find( app.selectors.shortcodePlaceholder ).show();
+						$shortcode.find( app.selectors.shortcodePrice ).hide().find( app.selectors.rawPrice ).text( '' );
+					} else {
+						$shortcode.find( app.selectors.rawPrice ).text( app.methods.formatPrice( originalPrice ) );
+					}
+				} );
 			},
 		},
 
