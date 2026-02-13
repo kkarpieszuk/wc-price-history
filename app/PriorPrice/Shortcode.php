@@ -149,7 +149,7 @@ class Shortcode {
 	 *
 	 * Renders placeholder text and a hidden price block so frontend JS can show the price on found_variation.
 	 *
-	 * @since 3.2.0
+	 * @since {VERSION}
 	 *
 	 * @param \WC_Product_Variable       $product Product.
 	 * @param array<string, int|string|null> $atts   Shortcode attributes (from shortcode_atts).
