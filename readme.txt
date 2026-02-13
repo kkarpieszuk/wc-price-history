@@ -133,6 +133,7 @@ Yes, I am available for hire. Please contact me at [LinkedIn](https://linkedin.c
 == Changelog ==
 
 = {VERSION_ALWAYS_TOP} =
+- Fix: Custom DB tables – when saving the first price for a product, save it for the current moment and for 24h and 48h earlier so "lowest price in 30 days" has data from day one. Use NULL for sale_price when not set (not 0). (#188)
 
 = 3.2.1 =
 - Fix: Shortcode [wc_price_history] now respects the "defer lowest price" setting for variable products: shows placeholder until a variant is selected instead of the lowest price across all variations. (#185)
