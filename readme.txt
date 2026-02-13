@@ -133,6 +133,8 @@ Yes, I am available for hire. Please contact me at [LinkedIn](https://linkedin.c
 == Changelog ==
 
 = {VERSION_ALWAYS_TOP} =
+
+= 3.2.1 =
 - Fix: Shortcode [wc_price_history] now respects the "defer lowest price" setting for variable products: shows placeholder until a variant is selected instead of the lowest price across all variations. (#185)
 
 = 3.2.0 =
