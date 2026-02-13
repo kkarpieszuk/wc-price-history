@@ -169,6 +169,7 @@ Configure where the lowest price information appears:
 **Shortcode Alternative:**
 - Use `[wc_price_history]` shortcode anywhere in content
 - Provides maximum flexibility for custom placement
+- When "Do not display the lowest price on variable product before choosing a variation" is enabled, the shortcode also shows the placeholder text until a variant is selected (same behaviour as the default price block)
 
 #### When to Display Lowest Price
 
