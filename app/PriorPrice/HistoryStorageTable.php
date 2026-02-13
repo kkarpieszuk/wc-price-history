@@ -146,6 +146,12 @@ class HistoryStorageTable {
 			return 0;
 		}
 
+		// No prior history (e.g. new product): only update_product fires, not new_product.
+		// Save current + 24h + 48h back so "lowest in 30 days" has data from day one.
+		if ( $previous_prices['price'] === null && $previous_prices['sale_price'] === null ) {
+			return $this->add_first_price( $product_id, $regular_price );
+		}
+
 		$date_gmt = current_time( 'mysql', true );
 		$date     = current_time( 'mysql' );
 
@@ -181,12 +187,15 @@ class HistoryStorageTable {
 	/**
 	 * Add first price to the history.
 	 *
+	 * Saves the price for the current moment and for 24 and 48 hours earlier,
+	 * so that the "lowest price in last 30 days" logic has data for the first days.
+	 *
 	 * @since 3.0.0
 	 *
 	 * @param int   $product_id    Product ID.
 	 * @param float $regular_price Price.
 	 *
-	 * @return int
+	 * @return int Number of rows inserted (1 to 3).
 	 */
 	public function add_first_price( int $product_id, float $regular_price ): int {
 		if ( $regular_price <= 0 ) {
@@ -206,21 +215,34 @@ class HistoryStorageTable {
 
 		global $wpdb;
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.DirectDatabaseQuery.DirectQuery
-		$result = $wpdb->query(
-			$wpdb->prepare(
-				"INSERT IGNORE INTO {$wpdb->prefix}wc_price_history
+		// Current row: previous_* same as current (first save = no prior change).
+		// Use NULL for sale_price when not set (0 would mean "free product").
+		$sale_ph    = $sale_price !== null ? '%s' : 'NULL';
+		$insert_sql = "INSERT IGNORE INTO {$wpdb->prefix}wc_price_history
 				(product_id, price, sale_price, previous_price, previous_sale_price, date, date_gmt, include_in_history)
-				VALUES (%d, %s, %s, NULL, NULL, %s, %s, 1)",
-				$product_id,
-				$regular_price,
-				$sale_price,
-				$date,
-				$date_gmt
-			)
-		);
+				VALUES (%d, %s, {$sale_ph}, %s, {$sale_ph}, %s, %s, 1)";
+		$insert_params   = [ $product_id, $regular_price ];
+		if ( $sale_price !== null ) {
+			$insert_params[] = $sale_price;
+		}
+		$insert_params[] = $regular_price;
+		if ( $sale_price !== null ) {
+			$insert_params[] = $sale_price;
+		}
+		$insert_params[] = $date;
+		$insert_params[] = $date_gmt;
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.DirectDatabaseQuery.DirectQuery
+		$result = $wpdb->query( $wpdb->prepare( $insert_sql, ...$insert_params ) );
 
-		return $result ? 1 : 0;
+		$rows = $result ? 1 : 0;
+
+		// Save same price/sale/previous for 24h and 48h earlier (regression fix for #188).
+		$now = $this->get_time_with_offset();
+		$r24 = $this->add_historical_price( $product_id, $regular_price, $now - DAY_IN_SECONDS, $sale_price, $regular_price, $sale_price );
+		$r48 = $this->add_historical_price( $product_id, $regular_price, $now - ( 2 * DAY_IN_SECONDS ), $sale_price, $regular_price, $sale_price );
+		$rows += $r24 + $r48;
+
+		return $rows;
 	}
 
 	/**
@@ -228,31 +250,45 @@ class HistoryStorageTable {
 	 *
 	 * @since 3.0.0
 	 *
-	 * @param int   $product_id Product ID.
-	 * @param float $price      Price.
-	 * @param int   $timestamp Unix timestamp (offset-adjusted, matching legacy post_meta format).
+	 * @param int         $product_id          Product ID.
+	 * @param float       $price               Price.
+	 * @param int         $timestamp           Unix timestamp (offset-adjusted, matching legacy post_meta format).
+	 * @param float|null  $sale_price          Optional. Sale price; NULL when product has no sale price.
+	 * @param float|null  $previous_price       Optional. Previous price for the row.
+	 * @param float|null  $previous_sale_price Optional. Previous sale price; NULL when none.
 	 *
 	 * @return int
 	 */
-	public function add_historical_price( int $product_id, float $price, int $timestamp ): int {
+	public function add_historical_price( int $product_id, float $price, int $timestamp, ?float $sale_price = null, ?float $previous_price = null, ?float $previous_sale_price = null ): int {
 		$timestamp_utc = $this->convert_to_utc_timestamp( $timestamp );
 		$date_gmt = gmdate( 'Y-m-d H:i:s', $timestamp_utc );
 		$date     = get_date_from_gmt( $date_gmt );
 
 		global $wpdb;
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.DirectDatabaseQuery.DirectQuery
-		return $wpdb->query(
-			$wpdb->prepare(
-				"INSERT IGNORE INTO {$wpdb->prefix}wc_price_history
+		// Use NULL in SQL when no sale price (0 would mean "free product").
+		$sale_ph       = $sale_price !== null ? '%s' : 'NULL';
+		$prev_price_ph = $previous_price !== null ? '%s' : 'NULL';
+		$prev_sale_ph  = $previous_sale_price !== null ? '%s' : 'NULL';
+		$sql           = "INSERT IGNORE INTO {$wpdb->prefix}wc_price_history
 				(product_id, price, sale_price, previous_price, previous_sale_price, date, date_gmt, include_in_history)
-				VALUES (%d, %s, NULL, NULL, NULL, %s, %s, 1)",
-				$product_id,
-				$price,
-				$date,
-				$date_gmt
-			)
-		);
+				VALUES (%d, %s, {$sale_ph}, {$prev_price_ph}, {$prev_sale_ph}, %s, %s, 1)";
+		$params        = [ $product_id, $price ];
+		if ( $sale_price !== null ) {
+			$params[] = $sale_price;
+		}
+		if ( $previous_price !== null ) {
+			$params[] = $previous_price;
+		}
+		if ( $previous_sale_price !== null ) {
+			$params[] = $previous_sale_price;
+		}
+		$params[] = $date;
+		$params[] = $date_gmt;
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.DirectDatabaseQuery.DirectQuery
+		$q = $wpdb->query( $wpdb->prepare( $sql, ...$params ) );
+
+		return $q;
 	}
 
 	/**
@@ -513,8 +549,7 @@ class HistoryStorageTable {
 	/**
 	 * Fill empty history with current price.
 	 *
-	 * It saves current price with the current timestamp and timestamp for date 24 hours ago.
-	 * This matches the legacy post_meta implementation behavior.
+	 * Uses add_first_price which saves current price for now, 24h and 48h earlier.
 	 *
 	 * @since 3.0.0
 	 *
@@ -542,13 +577,7 @@ class HistoryStorageTable {
 			return $history;
 		}
 
-		// Add current price with current timestamp.
 		$this->add_first_price( $product_id, $price );
-
-		// Add same price for 24 hours earlier (matching legacy behavior).
-		$current_time = $this->get_time_with_offset();
-		$previous_timestamp = $current_time - DAY_IN_SECONDS;
-		$this->add_historical_price( $product_id, $price, $previous_timestamp );
 
 		return $this->get_history( $product_id );
 	}
