@@ -142,4 +142,51 @@ jQuery(document).ready(function($) {
 			);
 		}
 	} );
+
+	// PRO license slider and dynamic price (educational tab).
+	(function() {
+		var $slider = $( '#wc-price-history-pro-licenses' );
+		if ( ! $slider.length ) {
+			return;
+		}
+		var $valueDisplay = $( '#wc-price-history-pro-licenses-value' );
+		var $priceCurrent = $( '.wc-price-history-pro-price-current' );
+		var $priceStruck = $( '.wc-price-history-pro-price-struck' );
+		var $btn = $( '.wc-price-history-pro-checkout-btn' );
+		var $box = $slider.closest( '.wc-price-history-educational-tab-content' );
+		var baseCheckoutUrl = $box.data( 'checkout-url' ) || '';
+
+		function pricePerLicense( qty ) {
+			if ( qty >= 20 ) {
+				return 40;
+			}
+			if ( qty >= 5 ) {
+				return 45;
+			}
+			return 49;
+		}
+
+		function updateProUi() {
+			var qty = parseInt( $slider.val(), 10 );
+			var price = pricePerLicense( qty );
+			$valueDisplay.text( qty );
+			$priceCurrent.text( '€' + price );
+			if ( price < 49 ) {
+				$priceStruck.addClass( 'wc-price-history-pro-price-struck-visible' );
+			} else {
+				$priceStruck.removeClass( 'wc-price-history-pro-price-struck-visible' );
+			}
+			$btn.attr( 'data-checkout-url', baseCheckoutUrl + '?quantity=' + qty );
+		}
+
+		$slider.on( 'input change', updateProUi );
+		updateProUi();
+
+		$btn.on( 'click', function() {
+			var url = $( this ).attr( 'data-checkout-url' );
+			if ( url ) {
+				window.open( url, '_blank' );
+			}
+		} );
+	})();
 });

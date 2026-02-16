@@ -54,36 +54,39 @@ class EducationalTab {
 	public function add_panel() {
 		?>
 		<div id="educational_tab" class="panel woocommerce_options_panel">
-			<div class="wc-price-history-educational-tab-content">
-			<h3><?php esc_html_e( 'Coming soon: WC Price History PRO 🎉', 'wc-price-history' ); ?></h3>
+			<div class="wc-price-history-educational-tab-content" data-checkout-url="https://wcpricehistory.lemonsqueezy.com/checkout/buy/8a1850b9-78e7-4081-9bf0-f5ea2aa00f3a">
+			<h3><?php esc_html_e( 'WC Price History PRO — full history & edit past prices', 'wc-price-history' ); ?></h3>
 			<p>
 				<?php
 				printf(
 					/* translators: %1$s: WC Price History PRO */
-					esc_html__( 'I am working on %1$s!', 'wc-price-history' ),
+					esc_html__( 'Upgrade to %1$s to review the full price history and edit past prices directly in your store.', 'wc-price-history' ),
 					'<strong>' . esc_html__( 'WC Price History PRO', 'wc-price-history' ) . '</strong>'
-				);
-				?><br>
-				<?php
-				printf(
-					/* translators: %1$s: review the full price history, %2$s: edit past prices */
-					esc_html__( 'In the PRO version you will be able to %1$s and even %2$s directly in your store.', 'wc-price-history' ),
-					'<strong>' . esc_html__( 'review the full price history', 'wc-price-history' ) . '</strong>',
-					'<strong>' . esc_html__( 'edit past prices', 'wc-price-history' ) . '</strong>'
 				);
 				?>
 			</p>
-			<p>
-				<?php esc_html_e( "Leave your email below and I will let you know as soon as it's ready.", 'wc-price-history' ); ?><br>
-				<em><?php esc_html_e( 'Bonus: Early subscribers may receive a', 'wc-price-history' ); ?> <strong><?php esc_html_e( 'lifetime license', 'wc-price-history' ); ?></strong> <?php esc_html_e( '— normally licenses will be yearly!', 'wc-price-history' ); ?></em>
+			<p class="wc-price-history-pro-price-line">
+				<span class="wc-price-history-pro-price-display" aria-live="polite">
+					<span class="wc-price-history-pro-price-struck">€49</span>
+					<span class="wc-price-history-pro-price-current">€49</span>
+					<?php echo ' ' . esc_html__( '/ site / year', 'wc-price-history' ); ?>
+				</span>
 			</p>
-
+			<p class="wc-price-history-pro-licenses-row">
+				<label for="wc-price-history-pro-licenses"><?php esc_html_e( 'Choose number of sites', 'wc-price-history' ); ?></label>
+				<span class="wc-price-history-pro-licenses-slider-row">
+					<input type="range" id="wc-price-history-pro-licenses" min="1" max="25" value="1" class="wc-price-history-pro-licenses-slider">
+					<span id="wc-price-history-pro-licenses-value" class="wc-price-history-pro-licenses-value">1</span>
+				</span>
+			</p>
 			<button type="button"
-				onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLSdmdCMAp3AtfXQy2Aoej2IhnuZTtAAU5YKC4FWt2l_Ei-EL4A/viewform', '_blank')"
-				class="wc-price-history-button-get-pro"
-				title="<?php esc_html_e( 'Click to get notified about the PRO version and get a lifetime license!', 'wc-price-history' ); ?>">
-				<?php esc_html_e( 'Notify me about PRO!', 'wc-price-history' ); ?>
+				class="wc-price-history-button-get-pro wc-price-history-pro-checkout-btn"
+				title="<?php esc_html_e( 'Get WC Price History PRO', 'wc-price-history' ); ?>">
+				<?php esc_html_e( 'Get PRO', 'wc-price-history' ); ?>
 			</button>
+			<p class="wc-price-history-pro-learn-more">
+				<a href="https://wcpricehistory.com/pro/" target="_blank" rel="noopener"><?php esc_html_e( 'Learn more', 'wc-price-history' ); ?></a>
+			</p>
 			</div>
 		</div>
 		<?php
