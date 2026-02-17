@@ -142,5 +142,4 @@ jQuery(document).ready(function($) {
 			);
 		}
 	} );
-
 });
