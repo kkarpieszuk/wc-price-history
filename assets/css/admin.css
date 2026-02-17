@@ -164,6 +164,7 @@ ul.wc-tabs li.wc_price_history_educational_tab {
 .wc-price-history-pro-licenses-row label {
 	display: block;
 	margin-bottom: 6px;
+	margin-left: 0 !important;
 }
 
 .wc-price-history-pro-licenses-slider-row {

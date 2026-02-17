@@ -85,7 +85,8 @@ class EducationalTab {
 				<?php esc_html_e( 'Get PRO', 'wc-price-history' ); ?>
 			</button>
 			<p class="wc-price-history-pro-learn-more">
-				<a href="https://wcpricehistory.com/pro/" target="_blank" rel="noopener"><?php esc_html_e( 'Learn more', 'wc-price-history' ); ?></a>
+				<a href="https://wcpricehistory.com/pro/" target="_blank" rel="noopener"><?php esc_html_e( 'Learn more about Pro features', 'wc-price-history' ); ?></a> |
+				<a href="https://www.youtube.com/watch?v=vBfiUauQp68" target="_blank" rel="noopener"><?php esc_html_e( 'Watch demo video on Youtube', 'wc-price-history' ); ?></a>
 			</p>
 			</div>
 		</div>
