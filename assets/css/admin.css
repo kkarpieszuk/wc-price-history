@@ -143,6 +143,43 @@ ul.wc-tabs li.wc_price_history_educational_tab {
 	}
 }
 
+.wc-price-history-pro-headline-row {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: 1em;
+	margin-bottom: 0.5em;
+}
+
+.wc-price-history-pro-headline-row .wc-price-history-pro-headline {
+	margin: 0;
+	flex-shrink: 0;
+}
+
+.wc-price-history-pro-social-proof {
+	font-size: 0.85em;
+	color: #646970;
+	margin: 0;
+	text-align: right;
+	flex-shrink: 0;
+}
+
+.wc-price-history-pro-stars {
+	color: #dba617;
+	letter-spacing: 0.05em;
+	margin-right: 0.35em;
+}
+
+.wc-price-history-pro-benefits {
+	margin: 0.75em 0 1em 1.25em;
+	padding: 0;
+	list-style: disc;
+}
+
+.wc-price-history-pro-benefits li {
+	margin-bottom: 0.35em;
+}
+
 .wc-price-history-pro-price-line {
 	margin-bottom: 1em;
 }
