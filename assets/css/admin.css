@@ -143,45 +143,8 @@ ul.wc-tabs li.wc_price_history_educational_tab {
 	}
 }
 
-.wc-price-history-pro-price-display .wc-price-history-pro-price-struck {
-	display: none;
-}
-
-.wc-price-history-pro-price-display .wc-price-history-pro-price-struck.wc-price-history-pro-price-struck-visible {
-	display: inline;
-	text-decoration: line-through;
-	margin-right: 0.25em;
-}
-
 .wc-price-history-pro-price-line {
 	margin-bottom: 1em;
-}
-
-.wc-price-history-pro-licenses-row {
-	margin-bottom: 12px;
-}
-
-.wc-price-history-pro-licenses-row label {
-	display: block;
-	margin-bottom: 6px;
-	margin-left: 0 !important;
-}
-
-.wc-price-history-pro-licenses-slider-row {
-	display: flex;
-	align-items: center;
-	gap: 10px;
-}
-
-.wc-price-history-pro-licenses-slider {
-	flex: 1;
-	min-width: 0;
-}
-
-.wc-price-history-pro-licenses-value {
-	font-weight: 600;
-	min-width: 1.5em;
-	flex-shrink: 0;
 }
 
 .wc-price-history-pro-learn-more {
