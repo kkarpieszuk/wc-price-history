@@ -234,6 +234,8 @@ When price history is older than the set period:
 - Cleaning history
 - Fixing history
 - Exporting debug data
+  - Product data in the export includes the front-end permalink URL (`permalink`). For variable products, each variation also has its `permalink`.
+  - Settings in the export include detailed storage method info (`storage_method`): whether database tables or post meta are used, migration status, and for tables — table names, existence, and row counts (same as shown in WooCommerce → Price History settings, right column).
 
 ### 7. Sale Handling
 - Setting sale dates
