@@ -133,6 +133,9 @@ Yes, I am available for hire. Please contact me at [LinkedIn](https://linkedin.c
 == Changelog ==
 
 = {VERSION_ALWAYS_TOP} =
+- Enhancement: More data in exported JSON file (#195)
+
+= 3.2.3 =
 - Fix: "Day before product went on sale" – lowest price now excludes sale start moment (was showing promotional price). (#192)
 
 = 3.2.2 =
