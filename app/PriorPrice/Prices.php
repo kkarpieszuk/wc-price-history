@@ -146,7 +146,12 @@ class Prices {
 		$count_from  = $this->settings_data->get_count_from();
 
 		if ( in_array( $count_from, [ 'sale_start', 'sale_start_inclusive' ] ) && $wc_product->is_on_sale() ) {
-			return $this->history_storage->get_minimal_from_sale_start( $wc_product, $days_number, $count_from );
+			$minimal = $this->history_storage->get_minimal_from_sale_start( $wc_product, $days_number, $count_from );
+			// For "sale_start" (exclude promotional), when no history before sale exists, use regular price as "lowest before discount".
+			if ( $count_from === 'sale_start' && (float) $minimal <= 0 ) {
+				return (float) $wc_product->get_regular_price();
+			}
+			return $minimal;
 		}
 
 		return (float) $this->history_storage->get_minimal( $wc_product->get_id(), $days_number );

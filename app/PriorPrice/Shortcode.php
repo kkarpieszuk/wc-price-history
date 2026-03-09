@@ -109,6 +109,10 @@ class Shortcode {
 
 		if ( in_array( $count_from, [ 'sale_start', 'sale_start_inclusive' ] ) && $product->is_on_sale() ) {
 			$lowest = $this->history_storage->get_minimal_from_sale_start( $product, $days_number, $count_from );
+			// For "sale_start" (exclude promotional), when no history before sale exists, use regular price.
+			if ( $count_from === 'sale_start' && (float) $lowest <= 0 ) {
+				$lowest = (float) $product->get_regular_price();
+			}
 		} else {
 			$lowest = $this->history_storage->get_minimal( $id, $days_number );
 		}
