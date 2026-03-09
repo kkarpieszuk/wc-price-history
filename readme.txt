@@ -133,6 +133,9 @@ Yes, I am available for hire. Please contact me at [LinkedIn](https://linkedin.c
 == Changelog ==
 
 = {VERSION_ALWAYS_TOP} =
+- Fix: "Day before product went on sale" – lowest price now excludes sale start moment (was showing promotional price). (#192)
+
+= 3.2.2 =
 - Fix: Custom DB tables – when saving the first price for a product, save it for the current moment and for 24h and 48h earlier so "lowest price in 30 days" has data from day one. Use NULL for sale_price when not set (not 0). (#188)
 - Pro: Promotional widget for Pro version. (#190)
 

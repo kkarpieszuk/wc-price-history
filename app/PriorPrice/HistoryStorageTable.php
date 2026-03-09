@@ -89,6 +89,9 @@ class HistoryStorageTable {
 		$sale_start_date = gmdate( 'Y-m-d H:i:s', $sale_start_timestamp_utc );
 		$cutoff_date     = gmdate( 'Y-m-d H:i:s', $cutoff_timestamp_utc );
 
+		// For "sale_start" (exclude promotional price) use strict < so we only consider history before sale started.
+		$end_op = ( $count_from === 'sale_start_inclusive' ) ? '<=' : '<';
+
 		global $wpdb;
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.DirectDatabaseQuery.DirectQuery
@@ -98,7 +101,7 @@ class HistoryStorageTable {
 				FROM {$wpdb->prefix}wc_price_history
 				WHERE product_id = %d
 				AND date_gmt >= %s
-				AND date_gmt <= %s
+				AND date_gmt {$end_op} %s
 				AND include_in_history = 1
 				AND price > 0",
 				$wc_product->get_id(),
