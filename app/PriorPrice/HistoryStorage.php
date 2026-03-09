@@ -152,11 +152,16 @@ class HistoryStorage {
 
 		$history = $this->get_history( $wc_product->get_id() );
 
+		// For "sale_start" (exclude promotional price) use strict < so we only consider history before sale started.
+		$include_sale_start = ( $count_from === 'sale_start_inclusive' );
+
 		// Get only $days last items.
 		$the_last = array_filter(
 			$history,
-			static function( $timestamp ) use ( $days, $sale_start_timestamp ) {
-				return $timestamp >= ( $sale_start_timestamp - ( $days * DAY_IN_SECONDS ) ) && $timestamp <= $sale_start_timestamp;
+			static function( $timestamp ) use ( $days, $sale_start_timestamp, $include_sale_start ) {
+				$in_range = $timestamp >= ( $sale_start_timestamp - ( $days * DAY_IN_SECONDS ) );
+				$before_end = $include_sale_start ? ( $timestamp <= $sale_start_timestamp ) : ( $timestamp < $sale_start_timestamp );
+				return $in_range && $before_end;
 			},
 			ARRAY_FILTER_USE_KEY
 		);
