@@ -2,6 +2,8 @@
 
 namespace PriorPrice;
 
+use PriorPrice\C11y\WPSheetEditor;
+
 /**
  * Hooks class.
  *
@@ -26,7 +28,9 @@ class Hooks {
 	 */
 	public function plugins_loaded() : void {
 
-		$history_storage = new HistoryStorage();
+		$wpse = new WPSheetEditor();
+		WPSheetEditor::register_response_filter_flag();
+		$history_storage  = new HistoryStorage( $wpse );
 
 		$settings_data = new SettingsData();
 		$settings_data->register_hooks();
@@ -43,7 +47,7 @@ class Hooks {
 		$variations = new Variations( $prices );
 		$variations->register_hooks();
 
-		$updates = new ProductUpdates( $history_storage );
+		$updates = new ProductUpdates( $history_storage, $wpse );
 		$updates->register_hooks();
 
 		$duplicate = new ProductDuplicate();

@@ -2,6 +2,7 @@
 
 namespace PriorPrice;
 
+use PriorPrice\C11y\WPSheetEditor;
 use PriorPrice\Database\DbMigration;
 use PriorPrice\Database\Install;
 
@@ -32,12 +33,20 @@ class HistoryStorage {
 	private $table_storage;
 
 	/**
+	 * @var WPSheetEditor
+	 */
+	private $wpse;
+
+	/**
 	 * Constructor.
 	 *
 	 * @since 3.0.0
+	 *
+	 * @param WPSheetEditor|null $wpse WP Sheet Editor compatibility helper. If null, a new instance is created.
 	 */
-	public function __construct() {
-		$this->table_storage = new HistoryStorageTable();
+	public function __construct( ?WPSheetEditor $wpse = null ) {
+		$this->wpse           = $wpse ?? new WPSheetEditor();
+		$this->table_storage  = new HistoryStorageTable( $this->wpse );
 	}
 
 	/**
@@ -183,6 +192,9 @@ class HistoryStorage {
 	 * @return int
 	 */
 	public function add_price( int $product_id, float $new_price, bool $on_change_only ): int {
+		if ( $this->wpse->should_skip_price_recording( $product_id, $new_price ) ) {
+			return 0;
+		}
 		if ( $this->should_use_tables() ) {
 			return $this->table_storage->add_price( $product_id, $new_price, $on_change_only );
 		}
@@ -229,15 +241,14 @@ class HistoryStorage {
 	 * @return int
 	 */
 	public function add_first_price( int $product_id, float $price ) {
+		if ( $price <= 0 || $this->wpse->should_skip_price_recording( $product_id, $price ) ) {
+			return 0;
+		}
 		if ( $this->should_use_tables() ) {
 			return $this->table_storage->add_first_price( $product_id, $price );
 		}
 
 		// Legacy post_meta implementation.
-		if ( $price <= 0 ) {
-			return 0;
-		}
-
 		$history = [];
 
 		$history[ $this->get_time_with_offset() ] = $price;
