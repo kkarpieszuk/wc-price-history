@@ -51,7 +51,13 @@ class ProductUpdates {
 			return;
 		}
 
-		$this->history_storage->add_price( $product_id, (float) $product->get_price(), false );
+		$price_raw_non_taxed = apply_filters(
+			'wc_price_history_price_raw_non_taxed',
+			(float) $product->get_price(),
+			$product
+		);
+
+		$this->history_storage->add_price( $product_id, $price_raw_non_taxed, false );
 
 		if ( $product->is_type( 'variable' ) ) {
 			/** @var WC_Product_Variable $product */
@@ -83,7 +89,13 @@ class ProductUpdates {
 			return;
 		}
 
-		$this->history_storage->add_first_price( $product_id, (float) $product->get_price() );
+		$price_raw_non_taxed = apply_filters(
+			'wc_price_history_price_raw_non_taxed',
+			(float) $product->get_price(),
+			$product
+		);
+
+		$this->history_storage->add_first_price( $product_id, $price_raw_non_taxed );
 	}
 
 	/**

@@ -308,14 +308,27 @@ class Prices {
 		}
 
 		if ( $old_history === 'current_price' ) {
-			return $this->display_from_template( (float) $wc_product->get_price(), $days_number, $wc_product );
+			$price_raw_non_taxed = apply_filters(
+				'wc_price_history_price_raw_non_taxed',
+				(float) $wc_product->get_price(),
+				$wc_product
+			);
+
+			return $this->display_from_template( $price_raw_non_taxed, $days_number, $wc_product );
 		}
 
 		$old_history_custom_text = $this->settings_data->get_old_history_custom_text();
 
 		$old_history_custom_text = str_replace(
 			[ '{price}', '{days}' ],
-			[ $this->display_price_value_html( (float) $wc_product->get_price() ), $days_number ],
+			[
+				$this->display_price_value_html( apply_filters(
+					'wc_price_history_price_raw_non_taxed',
+					(float) $wc_product->get_price(),
+					$wc_product
+				) ),
+				$days_number
+			],
 			$old_history_custom_text
 		);
 
