@@ -452,7 +452,11 @@ class DbMigration {
 				return false;
 			}
 
-			$current_price = (float) $product->get_price();
+			$current_price = apply_filters(
+				'wc_price_history_price_raw_non_taxed',
+				(float) $product->get_price(),
+				$product
+			);
 			$current_sale_price = $product->is_on_sale() ? (float) $product->get_sale_price() : null;
 
 			// Use current time for the entry.

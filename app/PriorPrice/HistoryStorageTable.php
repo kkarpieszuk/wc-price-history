@@ -572,7 +572,11 @@ class HistoryStorageTable {
 			return [];
 		}
 
-		$price = (float) $product->get_price();
+		$price = apply_filters(
+			'wc_price_history_price_raw_non_taxed',
+			(float) $product->get_price(),
+			$product
+		);
 
 		if ( $price <= 0 ) {
 			// Don't create history for products with zero or negative prices
