@@ -178,7 +178,7 @@ class Export {
 	/**
 	 * Get storage method detailed info for export (same as in WC > Price History settings right column).
 	 *
-	 * @since {VERSION}
+	 * @since 3.2.4
 	 *
 	 * @return array<string, mixed> Storage method details.
 	 */
