@@ -134,6 +134,7 @@ Yes, I am available for hire. Please contact me at [LinkedIn](https://linkedin.c
 
 = {VERSION_ALWAYS_TOP} =
 - Enhancement: More data in exported JSON file (#195)
+- Compatibility: Added compatibility with WooCommerce Product Bundles plugin: if bundled products are priced individually, it was not taken into account when stored Bundle Product in history. Requires WC Price History Pro 1.0.1 or later. (#145)
 
 = 3.2.3 =
 - Fix: "Day before product went on sale" – lowest price now excludes sale start moment (was showing promotional price). (#192)
