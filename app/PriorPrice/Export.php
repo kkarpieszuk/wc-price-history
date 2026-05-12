@@ -121,7 +121,8 @@ class Export {
 			wp_send_json_error( [ 'message' => esc_html__( 'Product not found', 'wc-price-history' ) ] );
 		}
 
-		$history = $this->history_storage->get_history( $product_id );
+		$history    = $this->history_storage->get_history( $product_id );
+		$sale_start = get_post_meta( $product_id, '_sale_price_dates_from', true );
 
 		$plugin_settings = array_merge(
 			$this->settings_data->get_settings(),
@@ -129,13 +130,15 @@ class Export {
 		);
 
 		$product_data = [
-			'regular_price' => $product->get_regular_price(),
-			'sale_price'    => $product->get_sale_price(),
-			'product_id'    => $product_id,
-			'product_name'  => $product->get_name(),
-			'permalink'     => $product->get_permalink(),
-			'attributes'    => $product->get_attributes( 'edit' ),
-			'history'       => $history,
+			'regular_price'          => $product->get_regular_price(),
+			'sale_price'             => $product->get_sale_price(),
+			'sale_start_date_is_set' => $sale_start !== '',
+			'sale_start'             => $sale_start,
+			'product_id'             => $product_id,
+			'product_name'           => $product->get_name(),
+			'permalink'              => $product->get_permalink(),
+			'attributes'             => $product->get_attributes( 'edit' ),
+			'history'                => $history,
 		];
 
 		$export_data = [
@@ -150,16 +153,19 @@ class Export {
 			foreach ( $variations as $variation ) {
 
 				/** @var WC_Product $variation */
-				$variation_history = $this->history_storage->get_history( $variation->get_id() );
+				$variation_history    = $this->history_storage->get_history( $variation->get_id() );
+				$variation_sale_start = get_post_meta( $variation->get_id(), '_sale_price_dates_from', true );
 
 				$variation_data = [
-					'regular_price' => $variation->get_regular_price(),
-					'sale_price'    => $variation->get_sale_price(),
-					'product_id'    => $variation->get_id(),
-					'product_name'  => $variation->get_name(),
-					'permalink'     => $variation->get_permalink(),
-					'attributes'    => $variation->get_attributes( 'edit' ),
-					'history'       => $variation_history,
+					'regular_price'          => $variation->get_regular_price(),
+					'sale_price'             => $variation->get_sale_price(),
+					'sale_start_date_is_set' => $variation_sale_start !== '',
+					'sale_start'             => $variation_sale_start,
+					'product_id'             => $variation->get_id(),
+					'product_name'           => $variation->get_name(),
+					'permalink'              => $variation->get_permalink(),
+					'attributes'             => $variation->get_attributes( 'edit' ),
+					'history'                => $variation_history,
 				];
 
 				$export_data['variations'][] = $variation_data;
