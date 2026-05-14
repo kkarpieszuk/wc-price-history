@@ -133,6 +133,7 @@ Yes, I am available for hire. Please contact me at [LinkedIn](https://linkedin.c
 == Changelog ==
 
 = {VERSION_ALWAYS_TOP} =
+- Enhancement: Optional WooCommerce REST API fields `wc_price_history.lowest` and `wc_price_history.history` (settings under WooCommerce → Price History, off by default). (#202)
 - Enhancement: More data in exported JSON file (#195)
 - Compatibility: Added compatibility with WooCommerce Product Bundles plugin: if bundled products are priced individually, it was not taken into account when stored Bundle Product in history. Requires WC Price History Pro 1.0.1 or later. (#145)
 

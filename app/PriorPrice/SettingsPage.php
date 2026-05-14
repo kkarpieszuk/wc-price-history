@@ -425,6 +425,41 @@ class SettingsPage {
 								</fieldset>
 							</td>
 						</tr>
+						<tr>
+							<th scope="row"><?php esc_html_e( 'WooCommerce REST API', 'wc-price-history' ); ?></th>
+							<td>
+								<fieldset>
+									<p>
+										<label>
+											<input
+												type="checkbox"
+												name="wc_price_history_settings[rest_api_show_lowest_price]"
+												value="1"
+												<?php checked( ! empty( $settings['rest_api_show_lowest_price'] ), true ); ?>
+											/>
+											<?php esc_html_e( 'Expose lowest prior price in the WooCommerce REST API', 'wc-price-history' ); ?>
+										</label>
+									</p>
+									<p class="description">
+										<?php esc_html_e( 'When enabled, product and variation responses include wc_price_history.lowest (float, tax-inclusive like the storefront).', 'wc-price-history' ); ?>
+									</p>
+									<p>
+										<label>
+											<input
+												type="checkbox"
+												name="wc_price_history_settings[rest_api_show_full_history]"
+												value="1"
+												<?php checked( ! empty( $settings['rest_api_show_full_history'] ), true ); ?>
+											/>
+											<?php esc_html_e( 'Expose full price history in the WooCommerce REST API', 'wc-price-history' ); ?>
+										</label>
+									</p>
+									<p class="description">
+										<?php esc_html_e( 'When enabled, responses include wc_price_history.history: an object whose keys are Unix timestamps and values are prices (float). Anyone who can read products via the REST API will see this data—leave off unless you need it. Not the same as the Store API (wc/store).', 'wc-price-history' ); ?>
+									</p>
+								</fieldset>
+							</td>
+						</tr>
 						<?php
 						/**
 						 * Action to add custom fields to settings page.

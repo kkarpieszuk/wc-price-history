@@ -14,6 +14,7 @@ WC Price History is a powerful WordPress plugin designed specifically for WooCom
 - Full compliance with EU Omnibus Directive (98/6/EC Article 6a)
 - Flexible display options (product pages, shop, categories, tags)
 - Shortcode support for custom placement
+- Optional WooCommerce REST API exposure of lowest price and full history (off by default; see Plugin Configuration)
 - Support for product variations and sales
 
 #### Benefits of using the plugin
@@ -216,6 +217,17 @@ When price history is older than the set period:
 - **Hide**: Don't display anything
 - **Current Price**: Show current price instead
 - **Custom Text**: Display custom message with placeholders
+
+#### WooCommerce REST API
+
+Under **WooCommerce → Price History**, two optional checkboxes control whether price history data is attached to **WooCommerce REST API** product and variation responses (`/wp-json/wc/v2/products`, `/wp-json/wc/v3/products`, and the matching variation endpoints). **Both are disabled by default.**
+
+- **Expose lowest prior price in the WooCommerce REST API** — When enabled, each response includes a `wc_price_history` object with a `lowest` property: a floating-point value that matches the tax-inclusive lowest price logic used on the storefront.
+- **Expose full price history in the WooCommerce REST API** — When enabled, `wc_price_history` also includes `history`: an object whose keys are Unix timestamps (as strings in JSON) and whose values are prices (floats). Anyone who can read products through the REST API will see this data; enable only if your integrations need it. If nothing is stored yet, `history` is empty; reading products via the REST API does **not** create or backfill history rows.
+
+This applies to the classic WooCommerce REST API, **not** the separate Store API used by some blocks (`/wc/store/...`).
+
+For variable products, the parent product and each variation have their own history and product ID; the REST payload reflects the **same** product or variation as the endpoint, the same way debug export works per ID.
 
 ### 4. Displaying Lowest Price
 - On product page
