@@ -69,6 +69,16 @@ class SettingsData {
 			$update                                             = true;
 		}
 
+		if ( ! isset( $settings['rest_api_show_lowest_price'] ) ) {
+			$settings['rest_api_show_lowest_price'] = false;
+			$update                                 = true;
+		}
+
+		if ( ! isset( $settings['rest_api_show_full_history'] ) ) {
+			$settings['rest_api_show_full_history'] = false;
+			$update                                 = true;
+		}
+
 		if ( $update ) {
 			update_option( 'wc_price_history_settings', $settings );
 		}
@@ -298,5 +308,37 @@ class SettingsData {
 			return '';
 		}
 		return esc_html( $settings['variable_product_defer_placeholder_text'] );
+	}
+
+	/**
+	 * Whether to expose lowest prior price on WooCommerce REST API product responses.
+	 *
+	 * @since 3.2.5
+	 *
+	 * @return bool
+	 */
+	public function get_rest_api_show_lowest_price(): bool {
+
+		$settings = get_option( 'wc_price_history_settings' );
+		if ( ! isset( $settings['rest_api_show_lowest_price'] ) ) {
+			return false;
+		}
+		return (bool) $settings['rest_api_show_lowest_price'];
+	}
+
+	/**
+	 * Whether to expose full price history on WooCommerce REST API product responses.
+	 *
+	 * @since 3.2.5
+	 *
+	 * @return bool
+	 */
+	public function get_rest_api_show_full_history(): bool {
+
+		$settings = get_option( 'wc_price_history_settings' );
+		if ( ! isset( $settings['rest_api_show_full_history'] ) ) {
+			return false;
+		}
+		return (bool) $settings['rest_api_show_full_history'];
 	}
 }
