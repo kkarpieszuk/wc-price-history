@@ -88,7 +88,7 @@ class ProductRestApi {
 		}
 
 		if ( $show_history ) {
-			$history                       = $this->history_storage->get_history( $product->get_id() );
+			$history                       = $this->history_storage->get_history( $product->get_id(), false );
 			$wc_price_history['history'] = [];
 			foreach ( $history as $timestamp => $price ) {
 				$wc_price_history['history'][ (string) (int) $timestamp ] = (float) $price;

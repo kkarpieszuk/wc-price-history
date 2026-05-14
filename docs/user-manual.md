@@ -223,7 +223,7 @@ When price history is older than the set period:
 Under **WooCommerce → Price History**, two optional checkboxes control whether price history data is attached to **WooCommerce REST API** product and variation responses (`/wp-json/wc/v2/products`, `/wp-json/wc/v3/products`, and the matching variation endpoints). **Both are disabled by default.**
 
 - **Expose lowest prior price in the WooCommerce REST API** — When enabled, each response includes a `wc_price_history` object with a `lowest` property: a floating-point value that matches the tax-inclusive lowest price logic used on the storefront.
-- **Expose full price history in the WooCommerce REST API** — When enabled, `wc_price_history` also includes `history`: an object whose keys are Unix timestamps (as strings in JSON) and whose values are prices (floats). Anyone who can read products through the REST API will see this data; enable only if your integrations need it.
+- **Expose full price history in the WooCommerce REST API** — When enabled, `wc_price_history` also includes `history`: an object whose keys are Unix timestamps (as strings in JSON) and whose values are prices (floats). Anyone who can read products through the REST API will see this data; enable only if your integrations need it. If nothing is stored yet, `history` is empty; reading products via the REST API does **not** create or backfill history rows.
 
 This applies to the classic WooCommerce REST API, **not** the separate Store API used by some blocks (`/wc/store/...`).
 
