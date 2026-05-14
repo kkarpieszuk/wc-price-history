@@ -441,7 +441,7 @@ class SettingsPage {
 										</label>
 									</p>
 									<p class="description">
-										<?php esc_html_e( 'When enabled, product and variation responses include wc_price_history.lowest (float, tax-inclusive like the storefront). Disabled by default.', 'wc-price-history' ); ?>
+										<?php esc_html_e( 'When enabled, product and variation responses include wc_price_history.lowest (float, tax-inclusive like the storefront).', 'wc-price-history' ); ?>
 									</p>
 									<p>
 										<label>
@@ -455,7 +455,7 @@ class SettingsPage {
 										</label>
 									</p>
 									<p class="description">
-										<?php esc_html_e( 'When enabled, responses include wc_price_history.history: an object whose keys are Unix timestamps and values are prices (float). Anyone who can read products via the REST API will see this data—leave off unless you need it. Not the same as the Store API (wc/store). Disabled by default.', 'wc-price-history' ); ?>
+										<?php esc_html_e( 'When enabled, responses include wc_price_history.history: an object whose keys are Unix timestamps and values are prices (float). Anyone who can read products via the REST API will see this data—leave off unless you need it. Not the same as the Store API (wc/store).', 'wc-price-history' ); ?>
 									</p>
 								</fieldset>
 							</td>
