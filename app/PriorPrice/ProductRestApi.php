@@ -73,8 +73,9 @@ class ProductRestApi {
 			return $response;
 		}
 
-		$show_lowest  = $this->settings_data->get_rest_api_show_lowest_price();
-		$show_history = $this->settings_data->get_rest_api_show_full_history();
+		$flags        = $this->settings_data->get_rest_api_product_response_flags();
+		$show_lowest  = $flags['show_lowest_price'];
+		$show_history = $flags['show_full_history'];
 
 		if ( ! $show_lowest && ! $show_history ) {
 			return $response;

@@ -5,6 +5,13 @@ namespace PriorPrice;
 class SettingsData {
 
 	/**
+	 * Cached REST API response flags; invalidated when settings are written.
+	 *
+	 * @var array{show_lowest_price: bool, show_full_history: bool}|null
+	 */
+	private $rest_api_response_flags_cache = null;
+
+	/**
 	 * Register hooks.
 	 *
 	 * @since 1.2
@@ -13,6 +20,7 @@ class SettingsData {
 	 */
 	public function register_hooks() : void {
 		add_action( 'admin_init', [ $this, 'set_defaults' ] );
+		add_action( 'update_option_wc_price_history_settings', [ $this, 'bust_rest_api_response_flags_cache' ] );
 	}
 
 	/**
@@ -311,6 +319,18 @@ class SettingsData {
 	}
 
 	/**
+	 * REST API product response toggles (one option read per instance until cache bust).
+	 *
+	 * @since 3.2.5
+	 *
+	 * @return array{show_lowest_price: bool, show_full_history: bool}
+	 */
+	public function get_rest_api_product_response_flags(): array {
+
+		return $this->resolve_rest_api_response_flags();
+	}
+
+	/**
 	 * Whether to expose lowest prior price on WooCommerce REST API product responses.
 	 *
 	 * @since 3.2.5
@@ -319,11 +339,7 @@ class SettingsData {
 	 */
 	public function get_rest_api_show_lowest_price(): bool {
 
-		$settings = get_option( 'wc_price_history_settings' );
-		if ( ! isset( $settings['rest_api_show_lowest_price'] ) ) {
-			return false;
-		}
-		return (bool) $settings['rest_api_show_lowest_price'];
+		return $this->resolve_rest_api_response_flags()['show_lowest_price'];
 	}
 
 	/**
@@ -335,10 +351,52 @@ class SettingsData {
 	 */
 	public function get_rest_api_show_full_history(): bool {
 
-		$settings = get_option( 'wc_price_history_settings' );
-		if ( ! isset( $settings['rest_api_show_full_history'] ) ) {
-			return false;
+		return $this->resolve_rest_api_response_flags()['show_full_history'];
+	}
+
+	/**
+	 * Clear cached REST API flags after option write (any source).
+	 *
+	 * Callback for {@see 'update_option_wc_price_history_settings'}.
+	 *
+	 * @since 3.2.5
+	 *
+	 * @param mixed ...$_args Old value, new value, option name (see WordPress core).
+	 *
+	 * @return void
+	 */
+	public function bust_rest_api_response_flags_cache( ...$_args ): void {
+
+		$this->rest_api_response_flags_cache = null;
+	}
+
+	/**
+	 * @return array{show_lowest_price: bool, show_full_history: bool}
+	 */
+	private function resolve_rest_api_response_flags(): array {
+
+		if ( null !== $this->rest_api_response_flags_cache ) {
+			return $this->rest_api_response_flags_cache;
 		}
-		return (bool) $settings['rest_api_show_full_history'];
+
+		$settings = get_option( 'wc_price_history_settings' );
+		$lowest   = false;
+		$history  = false;
+
+		if ( is_array( $settings ) ) {
+			if ( isset( $settings['rest_api_show_lowest_price'] ) ) {
+				$lowest = (bool) $settings['rest_api_show_lowest_price'];
+			}
+			if ( isset( $settings['rest_api_show_full_history'] ) ) {
+				$history = (bool) $settings['rest_api_show_full_history'];
+			}
+		}
+
+		$this->rest_api_response_flags_cache = [
+			'show_lowest_price' => $lowest,
+			'show_full_history' => $history,
+		];
+
+		return $this->rest_api_response_flags_cache;
 	}
 }
