@@ -347,19 +347,19 @@ Common pitfalls and recovery steps are documented in [Maintenance and Troublesho
 
 ### 10. FAQ - Frequently Asked Questions
 
-**Are the default settings Omnibus-oriented?**  
+**Are the default settings Omnibus-oriented?**
 Yes. By default, the plugin shows the message for on-sale products, uses a 30-day window, and counts from the day before the sale started.
 
-**Why is nothing displayed?**  
+**Why is nothing displayed?**
 The most common causes are: the product is not on sale, the display location is disabled, no valid price history exists yet, or the product has a zero/empty price.
 
-**Does the plugin support variable products?**  
+**Does the plugin support variable products?**
 Yes. History is tracked per variation. If the defer setting is enabled, the storefront and shortcode show placeholder text until a customer selects a variation.
 
-**Does the REST API expose history automatically?**  
+**Does the REST API expose history automatically?**
 No. REST fields are off by default. Enable them under **WooCommerce -> Price History** only when an integration needs them.
 
-**Does this replace legal advice?**  
+**Does this replace legal advice?**
 No. The plugin provides technical support for lowest-price display, but store owners remain responsible for legal compliance.
 
 ### 11. Changelog and Updates
