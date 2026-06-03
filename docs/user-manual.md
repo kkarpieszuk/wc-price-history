@@ -230,63 +230,170 @@ This applies to the classic WooCommerce REST API, **not** the separate Store API
 For variable products, the parent product and each variation have their own history and product ID; the REST payload reflects the **same** product or variation as the endpoint, the same way debug export works per ID.
 
 ### 4. Displaying Lowest Price
-- On product page
-- On shop page
-- On category and tag pages
-- Using shortcode
+
+The plugin adds the lowest-price message to WooCommerce price HTML after it checks both display location and sale-status settings.
+
+**Default behavior after activation:**
+- The message is enabled on the single product page and main shop page.
+- It appears only for products WooCommerce reports as "on sale".
+- It uses "Day before product went on sale" and 30 days by default, which is the recommended Omnibus setup.
+
+**Display locations you can enable:**
+- Single product page
+- Related and upsell products on a single product page
+- Main shop page
+- Product category archives
+- Product tag archives
+
+If you need a custom placement inside page content, use the `[wc_price_history]` shortcode instead of enabling another automatic location. See [Display and Shortcode Guide](display-and-shortcode.md).
 
 ### 5. Shortcode [wc_price_history]
-- Basic usage
-- Shortcode parameters
-- Usage examples
-- Implementation locations
+
+Use the shortcode when your theme, page builder, or product template needs the lowest price in a specific place.
+
+```text
+[wc_price_history]
+[wc_price_history id="123"]
+[wc_price_history id="123" show_currency="0"]
+```
+
+**Supported attributes:**
+- `id` - Product or variation ID. If omitted on a product page, the current product is used.
+- `show_currency` - `1` by default. Set to `0` to hide the currency symbol.
+
+Important constraints:
+- The shortcode outputs the formatted price only, wrapped in plugin markup. It does not use the "Minimal price text" template.
+- It does not apply the automatic "Display minimal price when" visibility setting.
+- It uses the configured day range and sale-start counting method.
+- It returns nothing when there is no valid lowest price for the requested product; the automatic old-history fallback text is not used.
+- For variable products, the defer setting also affects the shortcode: it can show the configured placeholder until the customer selects a variation.
+
+See [Display and Shortcode Guide](display-and-shortcode.md) for variable-product examples and styling hooks.
 
 ### 6. Price History Management
-- Viewing price history
-- Cleaning history
-- Fixing history
-- Exporting debug data
-  - Product data in the export includes the front-end permalink URL (`permalink`). For variable products, each variation also has its `permalink`.
-  - Settings in the export include detailed storage method info (`storage_method`): whether database tables or post meta are used, migration status, and for tables — table names, existence, and row counts (same as shown in WooCommerce → Price History settings, right column).
+
+Price history is stored automatically. Most stores do not need manual maintenance after setup.
+
+**Initial product scan**
+- After activation, the plugin scans published products with prices so existing products receive initial history.
+- While the scan is running, the admin notice asks you not to edit products.
+- The settings page can force-finish a stuck scan or restart the scan if some products still have no history.
+
+**Storage status**
+- Go to **WooCommerce -> Price History** and open the **Status** panel in the right column.
+- Current versions use dedicated database tables after migration or on fresh installs.
+- Legacy post meta can still be forced for troubleshooting with `WC_PRICE_HISTORY_USE_POST_META`; see [Migration to Database Tables](migration-to-db-tables.md).
+
+**Danger zone actions**
+- **Clean history** removes all stored price history. With table storage it truncates the plugin tables; with legacy storage it removes the `_wc_price_history` post meta. Make a database backup first.
+- **Fix prices history** is a legacy post-meta repair action. On stores using database tables, it does not change table data.
+
+**Export debug data**
+- On a product edit screen, use the **Price History** side box to export debug data to JSON.
+- The export includes product data, price history, plugin settings, storage method details, and the product permalink.
+- For variable products, each variation is exported with its own history and permalink.
+
+For support workflows and common fixes, see [Maintenance and Troubleshooting](maintenance-and-troubleshooting.md).
 
 ### 7. Sale Handling
-- Setting sale dates
-- Counting from sale start
-- Omnibus Directive compliance
-- Troubleshooting
+
+For Omnibus-style display, set sale dates in WooCommerce for each discounted product:
+
+1. Edit the product or variation.
+2. Set a regular price and sale price.
+3. Set **Sale price dates from** to the date the sale starts.
+4. Save the product.
+
+When the setting is **Day before product went on sale**, the plugin calculates the lowest price in the configured period before the sale start moment and excludes the promotional price at the sale start.
+
+If an on-sale product has no sale start date, the plugin falls back to counting from the current day and logs the product in **WooCommerce -> Status -> Logs** with a source starting with `wc-price-history`.
+
+For variable products, set price history inputs on each variation. The parent variable product does not have its own sale dates in the same way variations do.
 
 ### 8. Appearance Customization
-- CSS styles
-- CSS classes
-- Template modification
-- Theme integration
+
+The automatic storefront output uses:
+
+```html
+<div class="wc-price-history prior-price lowest">
+	<span class="wc-price-history-lowest-inner">30-day low: ...</span>
+</div>
+```
+
+Useful CSS classes:
+- `.wc-price-history`
+- `.prior-price`
+- `.prior-price-value`
+- `.wc-price-history-lowest-inner`
+- `.wc-price-history-shortcode`
+- `.line-through` when the line-through option is enabled
+
+The plugin CSS makes the lowest-price block appear on its own line in themes that use inline or flex price layouts. For custom text, edit **Minimal price text** and use `{price}` and `{days}` placeholders.
+
+For advanced customization with filters and shortcode markup, see [Display and Shortcode Guide](display-and-shortcode.md).
 
 ### 9. Troubleshooting
-- Common issues
-- Checking logs
-- Debugging
-- Technical support
+
+Start with these checks:
+
+- Confirm WooCommerce is active.
+- Confirm the product is published and has a positive price.
+- With default settings, confirm the product is on sale and has a sale start date.
+- Check **WooCommerce -> Price History** settings for display location and "Display minimal price when".
+- Check **WooCommerce -> Status -> Logs** for logs whose source starts with `wc-price-history`.
+- Export debug data from the product edit screen before opening a support request.
+
+Common pitfalls and recovery steps are documented in [Maintenance and Troubleshooting](maintenance-and-troubleshooting.md).
 
 ### 10. FAQ - Frequently Asked Questions
-- Legal compliance questions
-- Technical questions
-- Configuration questions
-- Performance questions
+
+**Are the default settings Omnibus-oriented?**  
+Yes. By default, the plugin shows the message for on-sale products, uses a 30-day window, and counts from the day before the sale started.
+
+**Why is nothing displayed?**  
+The most common causes are: the product is not on sale, the display location is disabled, no valid price history exists yet, or the product has a zero/empty price.
+
+**Does the plugin support variable products?**  
+Yes. History is tracked per variation. If the defer setting is enabled, the storefront and shortcode show placeholder text until a customer selects a variation.
+
+**Does the REST API expose history automatically?**  
+No. REST fields are off by default. Enable them under **WooCommerce -> Price History** only when an integration needs them.
+
+**Does this replace legal advice?**  
+No. The plugin provides technical support for lowest-price display, but store owners remain responsible for legal compliance.
 
 ### 11. Changelog and Updates
-- Version history
-- Update process
-- Backward compatibility
-- Planned features
+
+For version history, see the WordPress.org `readme.txt` changelog or the plugin page in the WordPress repository.
+
+When updating from a version before 3.0, review [Migration to Database Tables](migration-to-db-tables.md). The migration keeps legacy post meta for safety and can be switched back temporarily with `WC_PRICE_HISTORY_USE_POST_META`.
+
+After any major update:
+- Open **WooCommerce -> Price History** and check the **Status** panel.
+- Review display settings.
+- Test one simple product and one variable product if your store uses variations.
+- Export debug data for any product whose history looks unexpected.
 
 ### 12. Support and Contact
-- WordPress support forum
-- Official plugin website
-- Bug reporting
-- Feature requests
+
+Use these channels when you need help:
+
+- [WordPress support forum](https://wordpress.org/support/plugin/wc-price-history/)
+- [Official plugin website](https://wcpricehistory.com/)
+- [GitHub issues](https://github.com/kkarpieszuk/wc-price-history/issues)
+
+When reporting a product-specific issue, include:
+- WordPress and WooCommerce versions
+- WC Price History version
+- Whether storage is **Database tables** or **Post meta (legacy)**
+- Product type: simple, variable, or variation
+- A debug export JSON file from the product edit screen
+- Any `wc-price-history` WooCommerce log messages
 
 ### 13. Additional Resources
-- EU legal documentation links
-- WooCommerce guides
-- Community support
-- Educational materials
+
+- [Display and Shortcode Guide](display-and-shortcode.md)
+- [Maintenance and Troubleshooting](maintenance-and-troubleshooting.md)
+- [Migration to Database Tables](migration-to-db-tables.md)
+- [European Commission guidance on price indication](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:52021XC1229(06))
+- [WooCommerce REST API documentation](https://woocommerce.github.io/woocommerce-rest-api-docs/)
