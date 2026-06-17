@@ -4,7 +4,7 @@
 
 Starting with version 3.0 the plugin moves price history from post meta into dedicated database tables. Post meta does not scale for long-running history: each change appends more serialized data, reads and writes require heavy PHP processing, and querying specific ranges or minimums is slow and hard to optimize. The meta field structure also limits what we can store (e.g., separate sale price, previous values, future metadata) and makes indexing impossible.
 
-Custom tables fix this: inserts and reads are faster, indexed lookups (by product and date) make calculations like “minimal in last 30 days” cheap, and extra columns let us store more structured data (regular price, sale price, previous prices, flags) now and in the future without bending serialized arrays. This is the foundation for further features and more reliable analytics.
+Custom tables fix this: inserts and reads are faster, indexed lookups (by product and date) make calculations like “minimal in last 30 days” cheap, and extra columns let us store more structured data (tracked price, sale price, previous prices, flags) now and in the future without bending serialized arrays. This is the foundation for further features and more reliable analytics.
 
 ## Prerequisites
 
@@ -35,9 +35,9 @@ Two tables are created:
 1) `{prefix}wc_price_history` (main records)
    - `id` (bigint, PK, auto increment)
    - `product_id` (bigint, product/post ID)
-   - `price` (decimal 19,4) — regular price at that time
-   - `sale_price` (decimal 19,4, nullable) — sale price at that time
-   - `previous_price` (decimal 19,4, nullable) — previous regular price before the change
+   - `price` (decimal 19,4) — tracked WooCommerce product price used for lowest-price calculations
+   - `sale_price` (decimal 19,4, nullable) — WooCommerce sale price at that time, when set
+   - `previous_price` (decimal 19,4, nullable) — previous tracked price before the change
    - `previous_sale_price` (decimal 19,4, nullable) — previous sale price before the change
    - `date` (datetime, local)
    - `date_gmt` (datetime, UTC)

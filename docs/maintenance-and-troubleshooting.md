@@ -17,6 +17,14 @@ If the scan appears stuck, go to **WooCommerce -> Price History**:
 - **Force finish scan** marks the scan as finished. Use it only when you are sure the scan will not continue.
 - **Restart scan** starts the scan status over. Use it when some products still have no history.
 
+On current database-table storage, the first price written for a product is stored for:
+
+- the current moment,
+- 24 hours earlier,
+- 48 hours earlier.
+
+These entries all use the same price. They give new or newly backfilled products usable "last 30 days" history immediately without pretending that older price changes happened.
+
 ## Database table storage
 
 Current versions store price history in dedicated database tables after migration or on fresh installs. The settings page shows the active storage method in the **Status** panel.
@@ -60,6 +68,23 @@ Use the export when reporting issues. It includes:
 - For variable products, each variation's price data, permalink, attributes, and history.
 
 The export is intended for debugging. Review it before sharing if your store data is sensitive.
+
+The JSON downloaded by the browser has this outer shape:
+
+```json
+{
+  "product_name": "Example product",
+  "serialized": "..."
+}
+```
+
+The `serialized` value is PHP-serialized data. After unserializing it, support can inspect:
+
+- `settings` - plugin settings plus storage method details,
+- `product` - exported product data and history,
+- `variations` - exported variation data and history, present for variable products.
+
+If a product has no stored history yet, exporting can trigger the same empty-history fill used by normal history reads. On database-table storage, that means the current price can be saved for now, 24 hours earlier, and 48 hours earlier.
 
 For a local developer/support workflow, the repository includes:
 
@@ -129,6 +154,23 @@ Check the variations, not only the parent product:
 - Each variation should have its own regular price.
 - Sale price and sale start date should be set on the discounted variation.
 - If the parent product shows a value before a variation is selected, enable **Show lowest price only after a variant is selected**.
+- If your single product template is built with blocks or a page builder, confirm it still renders WooCommerce variation data and the `form.variations_form` element. The front-end updater listens for WooCommerce variation-selection events on single product pages.
+
+### A new product already has history entries
+
+That can be expected. On database-table storage, the first price is saved for now, 24 hours earlier, and 48 hours earlier so the configured day-window calculation works from day one.
+
+These entries should have the same price. If they do not, export debug data and include it in a support request.
+
+### The lowest price includes or excludes the sale price unexpectedly
+
+Check **For products being on sale, count minimal price from**:
+
+- **Day before product went on sale** searches history before the sale start moment and excludes the promotional price at sale start.
+- **Day when product went on sale** includes the sale start day.
+- **Current day** ignores the sale start date and searches back from today.
+
+Also confirm **Sale price dates from** is set. Without it, sale-start modes fall back to current-day counting and log an error under **WooCommerce -> Status -> Logs**.
 
 ### Shortcode output is empty
 
@@ -150,6 +192,8 @@ That is expected. The plugin skips draft products and starts/updates history aft
 ### Dynamic pricing plugins
 
 Compatibility depends on how the other plugin changes WooCommerce product prices. If a discount plugin does not update the values WC Price History reads, history or display may not match your promotion. Test on a staging site before relying on a dynamic-pricing workflow.
+
+See [Pricing Integrations and Bundles](pricing-integrations-and-bundles.md) for staging checks, Woo Discount Rules notes, WooCommerce Product Bundles constraints, and the `wc_price_history_price_raw_non_taxed` filter.
 
 ## What to include in a support request
 
