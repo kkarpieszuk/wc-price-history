@@ -156,34 +156,26 @@ class HistoryStorage {
 		$include_sale_start = ( $count_from === 'sale_start_inclusive' );
 		$cutoff_timestamp   = $sale_start_timestamp - ( $days * DAY_IN_SECONDS );
 
-		$is_before_sale_end = static function ( int $timestamp ) use ( $sale_start_timestamp, $include_sale_start ): bool {
-			return $include_sale_start
+		$window_prices = [];
+		$older_prices  = [];
+
+		foreach ( $history as $timestamp => $price ) {
+			$before_sale_end = $include_sale_start
 				? ( $timestamp <= $sale_start_timestamp )
 				: ( $timestamp < $sale_start_timestamp );
-		};
 
-		// Get only $days last items.
-		$the_last = array_filter(
-			$history,
-			static function ( $timestamp ) use ( $cutoff_timestamp, $is_before_sale_end ) {
-				return $timestamp >= $cutoff_timestamp && $is_before_sale_end( $timestamp );
-			},
-			ARRAY_FILTER_USE_KEY
-		);
+			if ( ! $before_sale_end ) {
+				continue;
+			}
 
-		if ( ! empty( $the_last ) ) {
-			return $this->reduce_to_minimal( $the_last );
+			if ( $timestamp >= $cutoff_timestamp ) {
+				$window_prices[ $timestamp ] = $price;
+			} else {
+				$older_prices[ $timestamp ] = $price;
+			}
 		}
 
-		$before_window = array_filter(
-			$history,
-			static function ( $timestamp ) use ( $cutoff_timestamp, $is_before_sale_end ) {
-				return $timestamp < $cutoff_timestamp && $is_before_sale_end( $timestamp );
-			},
-			ARRAY_FILTER_USE_KEY
-		);
-
-		return $this->reduce_to_minimal( $before_window );
+		return $this->reduce_to_minimal( ! empty( $window_prices ) ? $window_prices : $older_prices );
 	}
 
 	/**
