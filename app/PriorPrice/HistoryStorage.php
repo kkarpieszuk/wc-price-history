@@ -154,14 +154,19 @@ class HistoryStorage {
 
 		// For "sale_start" (exclude promotional price) use strict < so we only consider history before sale started.
 		$include_sale_start = ( $count_from === 'sale_start_inclusive' );
+		$cutoff_timestamp   = $sale_start_timestamp - ( $days * DAY_IN_SECONDS );
+
+		$is_before_sale_end = static function ( int $timestamp ) use ( $sale_start_timestamp, $include_sale_start ): bool {
+			return $include_sale_start
+				? ( $timestamp <= $sale_start_timestamp )
+				: ( $timestamp < $sale_start_timestamp );
+		};
 
 		// Get only $days last items.
 		$the_last = array_filter(
 			$history,
-			static function( $timestamp ) use ( $days, $sale_start_timestamp, $include_sale_start ) {
-				$in_range = $timestamp >= ( $sale_start_timestamp - ( $days * DAY_IN_SECONDS ) );
-				$before_end = $include_sale_start ? ( $timestamp <= $sale_start_timestamp ) : ( $timestamp < $sale_start_timestamp );
-				return $in_range && $before_end;
+			static function ( $timestamp ) use ( $cutoff_timestamp, $is_before_sale_end ) {
+				return $timestamp >= $cutoff_timestamp && $is_before_sale_end( $timestamp );
 			},
 			ARRAY_FILTER_USE_KEY
 		);
@@ -170,14 +175,10 @@ class HistoryStorage {
 			return $this->reduce_to_minimal( $the_last );
 		}
 
-		$cutoff_timestamp = $sale_start_timestamp - ( $days * DAY_IN_SECONDS );
-
 		$before_window = array_filter(
 			$history,
-			static function( $timestamp ) use ( $cutoff_timestamp, $sale_start_timestamp, $include_sale_start ) {
-				$before_cutoff = $timestamp < $cutoff_timestamp;
-				$before_end    = $include_sale_start ? ( $timestamp <= $sale_start_timestamp ) : ( $timestamp < $sale_start_timestamp );
-				return $before_cutoff && $before_end;
+			static function ( $timestamp ) use ( $cutoff_timestamp, $is_before_sale_end ) {
+				return $timestamp < $cutoff_timestamp && $is_before_sale_end( $timestamp );
 			},
 			ARRAY_FILTER_USE_KEY
 		);
