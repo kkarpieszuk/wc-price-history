@@ -90,50 +90,17 @@ class HistoryStorageTable {
 		$cutoff_date     = gmdate( 'Y-m-d H:i:s', $cutoff_timestamp_utc );
 
 		// For "sale_start" (exclude promotional price) use strict < so we only consider history before sale started.
-		$end_op = ( $count_from === 'sale_start_inclusive' ) ? '<=' : '<';
+		$end_op     = ( $count_from === 'sale_start_inclusive' ) ? '<=' : '<';
+		$product_id = $wc_product->get_id();
 
-		global $wpdb;
-
-		// Two-step lookup: first the configured period before sale start, then older history.
-		// Kept as separate queries because the fallback is rare (no edits in the window) and the
-		// primary query stays a simple indexed MIN on the usual date range.
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.DirectDatabaseQuery.DirectQuery
-		$result = $wpdb->get_var(
-			$wpdb->prepare(
-				"SELECT MIN(price)
-				FROM {$wpdb->prefix}wc_price_history
-				WHERE product_id = %d
-				AND date_gmt >= %s
-				AND date_gmt {$end_op} %s
-				AND include_in_history = 1
-				AND price > 0",
-				$wc_product->get_id(),
-				$cutoff_date,
-				$sale_start_date
-			)
-		);
+		// Two-step lookup: configured period first, then older history when the window is empty.
+		$result = $this->query_min_price_before_sale_start( $product_id, $cutoff_date, $sale_start_date, $end_op, '>=' );
 
 		if ( $result !== null ) {
 			return (float) $result;
 		}
 
-		// Window is empty: use the lowest price recorded before the window (still before sale start).
-		// Only reached when the query above returns NULL, so most requests never run this one.
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.DirectDatabaseQuery.DirectQuery
-		$fallback = $wpdb->get_var(
-			$wpdb->prepare(
-				"SELECT MIN(price)
-				FROM {$wpdb->prefix}wc_price_history
-				WHERE product_id = %d
-				AND date_gmt < %s
-				AND date_gmt {$end_op} %s
-				AND include_in_history = 1
-				AND price > 0",
-				$wc_product->get_id(),
-				$cutoff_date,
-				$sale_start_date
-			)
-		);
+		$fallback = $this->query_min_price_before_sale_start( $product_id, $cutoff_date, $sale_start_date, $end_op, '<' );
 
 		return (float) ( $fallback ?? 0.0 );
 	}
@@ -522,6 +489,52 @@ class HistoryStorageTable {
 		$gmt_offset_hours = (float) get_option( 'gmt_offset' );
 
 		return (int) round( $gmt_offset_hours * HOUR_IN_SECONDS );
+	}
+
+	/**
+	 * Query MIN(price) for a product within a date range before sale start.
+	 *
+	 * @since {VERSION}
+	 *
+	 * @param int    $product_id      Product ID.
+	 * @param string $cutoff_date     Cutoff date (Y-m-d H:i:s UTC).
+	 * @param string $sale_start_date Sale start date (Y-m-d H:i:s UTC).
+	 * @param string $end_op          Comparison before sale start ('<' or '<=').
+	 * @param string $cutoff_op       Comparison against cutoff ('>=' or '<').
+	 *
+	 * @return string|null MIN price as string, or null when no matching rows.
+	 */
+	private function query_min_price_before_sale_start(
+		int $product_id,
+		string $cutoff_date,
+		string $sale_start_date,
+		string $end_op,
+		string $cutoff_op
+	): ?string {
+
+		global $wpdb;
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.DirectDatabaseQuery.DirectQuery
+		$result = $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT MIN(price)
+				FROM {$wpdb->prefix}wc_price_history
+				WHERE product_id = %d
+				AND date_gmt {$cutoff_op} %s
+				AND date_gmt {$end_op} %s
+				AND include_in_history = 1
+				AND price > 0",
+				$product_id,
+				$cutoff_date,
+				$sale_start_date
+			)
+		);
+
+		if ( $result === null ) {
+			return null;
+		}
+
+		return (string) $result;
 	}
 
 	/**
