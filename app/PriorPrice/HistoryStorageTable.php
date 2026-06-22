@@ -94,6 +94,9 @@ class HistoryStorageTable {
 
 		global $wpdb;
 
+		// Two-step lookup: first the configured period before sale start, then older history.
+		// Kept as separate queries because the fallback is rare (no edits in the window) and the
+		// primary query stays a simple indexed MIN on the usual date range.
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.DirectDatabaseQuery.DirectQuery
 		$result = $wpdb->get_var(
 			$wpdb->prepare(
@@ -115,6 +118,7 @@ class HistoryStorageTable {
 		}
 
 		// Window is empty: use the lowest price recorded before the window (still before sale start).
+		// Only reached when the query above returns NULL, so most requests never run this one.
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.DirectDatabaseQuery.DirectQuery
 		$fallback = $wpdb->get_var(
 			$wpdb->prepare(
