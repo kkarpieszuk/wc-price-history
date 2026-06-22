@@ -162,6 +162,28 @@ class HistoryStorageTest extends TestCase {
 		$this->assertEquals( $expected_minimal, $minimal );
 	}
 
+	/**
+	 * @dataProvider data_provider_table_get_minimal_from_sale_start_fallback
+	 */
+	public function test_table_get_minimal_from_sale_start_falls_back_before_window( $primary_min_price, $fallback_min_price, $expected_minimal ) {
+
+		$product_id           = 1;
+		$sale_start_timestamp = strtotime( '2026-06-18 00:00:00' );
+
+		$this->mock_table_wpdb_for_sale_start( $primary_min_price, $fallback_min_price );
+		$this->mock_gmt_offset();
+
+		$subject = new HistoryStorageTable();
+
+		$minimal = $subject->get_minimal_from_sale_start(
+			$this->mock_product_with_sale_start( $product_id, $sale_start_timestamp ),
+			30,
+			'sale_start'
+		);
+
+		$this->assertEquals( $expected_minimal, $minimal );
+	}
+
 	private function mock_legacy_storage(): HistoryStorage {
 
 		\WP_Mock::userFunction( 'get_option', [
@@ -180,6 +202,51 @@ class HistoryStorageTest extends TestCase {
 		] );
 
 		return $this->get_subject();
+	}
+
+	private function mock_gmt_offset(): void {
+
+		\WP_Mock::userFunction( 'get_option', [
+			'args' => [ 'gmt_offset' ],
+			'return' => 0,
+		] );
+	}
+
+	/**
+	 * @param string|null $primary_min_price  MIN(price) in the sale-start window, or null when empty.
+	 * @param string|null $fallback_min_price MIN(price) before the window, or null when empty.
+	 */
+	private function mock_table_wpdb_for_sale_start( ?string $primary_min_price, ?string $fallback_min_price ): void {
+
+		global $wpdb;
+		$wpdb = new class( $primary_min_price, $fallback_min_price ) {
+			public $prefix = 'wp_';
+
+			private ?string $primary_min_price;
+
+			private ?string $fallback_min_price;
+
+			public function __construct( ?string $primary_min_price, ?string $fallback_min_price ) {
+				$this->primary_min_price   = $primary_min_price;
+				$this->fallback_min_price  = $fallback_min_price;
+			}
+
+			public function prepare( $query, ...$args ) {
+				return sprintf( $query, ...$args );
+			}
+
+			public function get_var( $query ) {
+				if ( stripos( $query, 'date_gmt >=' ) !== false ) {
+					return $this->primary_min_price;
+				}
+
+				if ( stripos( $query, 'SELECT MIN(price)' ) !== false ) {
+					return $this->fallback_min_price;
+				}
+
+				return null;
+			}
+		};
 	}
 
 	private function mock_product_with_sale_start( int $product_id, int $sale_start_timestamp ): \WC_Product {
@@ -225,6 +292,14 @@ class HistoryStorageTest extends TestCase {
 		return [
 			'empty window falls back to lowest before cutoff' => [ $history_only_before_window, 44.99 ],
 			'non-empty window does not use fallback'          => [ $history_with_entry_in_window, 59.99 ],
+		];
+	}
+
+	public function data_provider_table_get_minimal_from_sale_start_fallback() {
+
+		return [
+			'empty window falls back to lowest before cutoff' => [ null, '44.99', 44.99 ],
+			'non-empty window does not use fallback'          => [ '59.99', '44.99', 59.99 ],
 		];
 	}
 
