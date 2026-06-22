@@ -166,7 +166,23 @@ class HistoryStorage {
 			ARRAY_FILTER_USE_KEY
 		);
 
-		return $this->reduce_to_minimal( $the_last );
+		if ( ! empty( $the_last ) ) {
+			return $this->reduce_to_minimal( $the_last );
+		}
+
+		$cutoff_timestamp = $sale_start_timestamp - ( $days * DAY_IN_SECONDS );
+
+		$before_window = array_filter(
+			$history,
+			static function( $timestamp ) use ( $cutoff_timestamp, $sale_start_timestamp, $include_sale_start ) {
+				$before_cutoff = $timestamp < $cutoff_timestamp;
+				$before_end    = $include_sale_start ? ( $timestamp <= $sale_start_timestamp ) : ( $timestamp < $sale_start_timestamp );
+				return $before_cutoff && $before_end;
+			},
+			ARRAY_FILTER_USE_KEY
+		);
+
+		return $this->reduce_to_minimal( $before_window );
 	}
 
 	/**

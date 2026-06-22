@@ -137,6 +137,97 @@ class HistoryStorageTest extends TestCase {
 		$this->assertEquals( 1, $result );
 	}
 
+	/**
+	 * @dataProvider data_provider_get_minimal_from_sale_start_fallback
+	 */
+	public function test_get_minimal_from_sale_start_falls_back_before_window( $history, $expected_minimal ) {
+
+		$product_id = 1;
+		$sale_start_timestamp = strtotime( '2026-06-18 00:00:00' );
+
+		$subject = $this->mock_legacy_storage();
+
+		\WP_Mock::userFunction( 'get_post_meta', [
+			'times' => 1,
+			'args' => [ $product_id, '_wc_price_history', true ],
+			'return' => $history,
+		] );
+
+		$minimal = $subject->get_minimal_from_sale_start(
+			$this->mock_product_with_sale_start( $product_id, $sale_start_timestamp ),
+			30,
+			'sale_start'
+		);
+
+		$this->assertEquals( $expected_minimal, $minimal );
+	}
+
+	private function mock_legacy_storage(): HistoryStorage {
+
+		\WP_Mock::userFunction( 'get_option', [
+			'args' => [ 'wc_price_history_migration_status', \WP_Mock\Functions::type( 'string' ) ],
+			'return' => 'not_needed',
+		] );
+
+		\WP_Mock::userFunction( 'get_option', [
+			'args' => [ 'gmt_offset' ],
+			'return' => 0,
+		] );
+
+		\WP_Mock::userFunction( 'get_option', [
+			'args' => [ 'wc_price_history_migration_status' ],
+			'return' => 'not_needed',
+		] );
+
+		return $this->get_subject();
+	}
+
+	private function mock_product_with_sale_start( int $product_id, int $sale_start_timestamp ): \WC_Product {
+
+		$sale_start = new class( $sale_start_timestamp ) {
+			private int $timestamp;
+
+			public function __construct( int $timestamp ) {
+				$this->timestamp = $timestamp;
+			}
+
+			public function getOffsetTimestamp(): int {
+				return $this->timestamp;
+			}
+		};
+
+		$product = $this->getMockBuilder( \WC_Product::class )
+			->disableOriginalConstructor()
+			->addMethods( [ 'get_id', 'get_date_on_sale_from' ] )
+			->getMock();
+		$product->method( 'get_id' )
+			->willReturn( $product_id );
+		$product->method( 'get_date_on_sale_from' )
+			->willReturn( $sale_start );
+
+		return $product;
+	}
+
+	public function data_provider_get_minimal_from_sale_start_fallback() {
+
+		$sale_start_timestamp = strtotime( '2026-06-18 00:00:00' );
+		$cutoff_timestamp     = $sale_start_timestamp - ( 30 * DAY_IN_SECONDS );
+
+		$history_only_before_window = [
+			strtotime( '2025-06-23 10:00:00' ) => 44.99,
+			strtotime( '2025-11-04 01:00:00' ) => 59.99,
+		];
+
+		$history_with_entry_in_window = $history_only_before_window + [
+			$cutoff_timestamp + DAY_IN_SECONDS => 59.99,
+		];
+
+		return [
+			'empty window falls back to lowest before cutoff' => [ $history_only_before_window, 44.99 ],
+			'non-empty window does not use fallback'          => [ $history_with_entry_in_window, 59.99 ],
+		];
+	}
+
 	public function data_provider_get_minimal() {
 
 		$history = [

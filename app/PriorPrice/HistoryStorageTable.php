@@ -110,7 +110,28 @@ class HistoryStorageTable {
 			)
 		);
 
-		return (float) ( $result ?? 0.0 );
+		if ( $result !== null ) {
+			return (float) $result;
+		}
+
+		// Window is empty: use the lowest price recorded before the window (still before sale start).
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.DirectDatabaseQuery.DirectQuery
+		$fallback = $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT MIN(price)
+				FROM {$wpdb->prefix}wc_price_history
+				WHERE product_id = %d
+				AND date_gmt < %s
+				AND date_gmt {$end_op} %s
+				AND include_in_history = 1
+				AND price > 0",
+				$wc_product->get_id(),
+				$cutoff_date,
+				$sale_start_date
+			)
+		);
+
+		return (float) ( $fallback ?? 0.0 );
 	}
 
 	/**
