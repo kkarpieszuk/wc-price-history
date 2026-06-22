@@ -140,7 +140,7 @@ class HistoryStorageTest extends TestCase {
 	/**
 	 * @dataProvider data_provider_get_minimal_from_sale_start_fallback
 	 */
-	public function test_get_minimal_from_sale_start_falls_back_before_window( $history, $expected_minimal ) {
+	public function test_get_minimal_from_sale_start_falls_back_before_window( $history, $expected_minimal, $count_from ) {
 
 		$product_id = 1;
 		$sale_start_timestamp = strtotime( '2026-06-18 00:00:00' );
@@ -156,7 +156,7 @@ class HistoryStorageTest extends TestCase {
 		$minimal = $subject->get_minimal_from_sale_start(
 			$this->mock_product_with_sale_start( $product_id, $sale_start_timestamp ),
 			30,
-			'sale_start'
+			$count_from
 		);
 
 		$this->assertEquals( $expected_minimal, $minimal );
@@ -165,7 +165,7 @@ class HistoryStorageTest extends TestCase {
 	/**
 	 * @dataProvider data_provider_table_get_minimal_from_sale_start_fallback
 	 */
-	public function test_table_get_minimal_from_sale_start_falls_back_before_window( $primary_min_price, $fallback_min_price, $expected_minimal ) {
+	public function test_table_get_minimal_from_sale_start_falls_back_before_window( $primary_min_price, $fallback_min_price, $expected_minimal, $count_from ) {
 
 		$product_id           = 1;
 		$sale_start_timestamp = strtotime( '2026-06-18 00:00:00' );
@@ -178,7 +178,7 @@ class HistoryStorageTest extends TestCase {
 		$minimal = $subject->get_minimal_from_sale_start(
 			$this->mock_product_with_sale_start( $product_id, $sale_start_timestamp ),
 			30,
-			'sale_start'
+			$count_from
 		);
 
 		$this->assertEquals( $expected_minimal, $minimal );
@@ -289,17 +289,26 @@ class HistoryStorageTest extends TestCase {
 			$cutoff_timestamp + DAY_IN_SECONDS => 59.99,
 		];
 
+		$history_with_sale_start_day_entry = $history_only_before_window + [
+			$sale_start_timestamp => 49.99,
+		];
+
 		return [
-			'empty window falls back to lowest before cutoff' => [ $history_only_before_window, 44.99 ],
-			'non-empty window does not use fallback'          => [ $history_with_entry_in_window, 59.99 ],
+			'empty window falls back to lowest before cutoff' => [ $history_only_before_window, 44.99, 'sale_start' ],
+			'non-empty window does not use fallback'          => [ $history_with_entry_in_window, 59.99, 'sale_start' ],
+			'inclusive empty window falls back to lowest before cutoff' => [ $history_only_before_window, 44.99, 'sale_start_inclusive' ],
+			'inclusive entry on sale start day stays in window' => [ $history_with_sale_start_day_entry, 49.99, 'sale_start_inclusive' ],
+			'sale start excludes entry on sale start day' => [ $history_with_sale_start_day_entry, 44.99, 'sale_start' ],
 		];
 	}
 
 	public function data_provider_table_get_minimal_from_sale_start_fallback() {
 
 		return [
-			'empty window falls back to lowest before cutoff' => [ null, '44.99', 44.99 ],
-			'non-empty window does not use fallback'          => [ '59.99', '44.99', 59.99 ],
+			'empty window falls back to lowest before cutoff' => [ null, '44.99', 44.99, 'sale_start' ],
+			'non-empty window does not use fallback'          => [ '59.99', '44.99', 59.99, 'sale_start' ],
+			'inclusive empty window falls back to lowest before cutoff' => [ null, '44.99', 44.99, 'sale_start_inclusive' ],
+			'inclusive non-empty window does not use fallback' => [ '49.99', '44.99', 49.99, 'sale_start_inclusive' ],
 		];
 	}
 
