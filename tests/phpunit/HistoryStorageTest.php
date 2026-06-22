@@ -39,30 +39,14 @@ class HistoryStorageTest extends TestCase {
 
 		$product_id = 1;
 
+		$this->mock_legacy_storage_options();
 		$subject = $this->get_subject();
-
-		// Mock migration status to use post_meta (legacy mode).
-		\WP_Mock::userFunction( 'get_option', [
-			'args' => [ 'wc_price_history_migration_status', \WP_Mock\Functions::type( 'string' ) ],
-			'return' => 'not_needed'
-		] );
 
 		\WP_Mock::userFunction( 'get_post_meta', [
 			'times' => 1,
 			'args' => [ $product_id, '_wc_price_history', true ],
 			'return' => $history
 		] );
-
-		\WP_Mock::userFunction( 'get_option', [
-			'args' => [ 'gmt_offset' ],
-			'return' => 0
-		] );
-
-		\WP_Mock::userFunction( 'get_option', [
-			'args' => [ 'wc_price_history_migration_status' ],
-			'return' => 'not_needed'
-		] );
-
 
 		$minimal = $subject->get_minimal( $product_id, 30 );
 
@@ -76,18 +60,8 @@ class HistoryStorageTest extends TestCase {
 
 		$product_id = 1;
 
+		$this->mock_legacy_storage_options();
 		$subject = $this->get_subject();
-
-		// Mock migration status to use post_meta (legacy mode).
-		\WP_Mock::userFunction( 'get_option', [
-			'args' => [ 'wc_price_history_migration_status', \WP_Mock\Functions::type( 'string' ) ],
-			'return' => 'not_needed'
-		] );
-
-		\WP_Mock::userFunction( 'get_option', [
-			'args' => [ 'gmt_offset' ],
-			'return' => 0
-		] );
 
 		$product = $this->getMockBuilder( 'WC_Product' )
 			->disableOriginalConstructor()
@@ -186,6 +160,13 @@ class HistoryStorageTest extends TestCase {
 
 	private function mock_legacy_storage(): HistoryStorage {
 
+		$this->mock_legacy_storage_options();
+
+		return $this->get_subject();
+	}
+
+	private function mock_legacy_storage_options(): void {
+
 		\WP_Mock::userFunction( 'get_option', [
 			'args' => [ 'wc_price_history_migration_status', \WP_Mock\Functions::type( 'string' ) ],
 			'return' => 'not_needed',
@@ -200,8 +181,6 @@ class HistoryStorageTest extends TestCase {
 			'args' => [ 'wc_price_history_migration_status' ],
 			'return' => 'not_needed',
 		] );
-
-		return $this->get_subject();
 	}
 
 	private function mock_gmt_offset(): void {
