@@ -5,7 +5,7 @@ Short Description: Show the lowest product price in the last 30 days, Omnibus co
 Contributors: kkarpieszuk
 Tags: omnibus, WooCommerce, prices, history, lowest
 Requires at least: 5.8
-Tested up to: 6.9.1
+Tested up to: 7.0
 Requires PHP: 7.2
 Stable tag: 3.2.4
 License: Expat
