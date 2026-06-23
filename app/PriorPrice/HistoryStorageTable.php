@@ -494,7 +494,7 @@ class HistoryStorageTable {
 	/**
 	 * Query MIN(price) for a product within a date range before sale start.
 	 *
-	 * @since {VERSION}
+	 * @since 3.2.4
 	 *
 	 * @param int    $product_id      Product ID.
 	 * @param string $cutoff_date     Cutoff date (Y-m-d H:i:s UTC).
