@@ -133,6 +133,8 @@ Yes, I am available for hire. Please contact me at [LinkedIn](https://linkedin.c
 == Changelog ==
 
 = {VERSION_ALWAYS_TOP} =
+
+= 3.2.4 =
 - Enhancement: Optional WooCommerce REST API fields `wc_price_history.lowest` and `wc_price_history.history` (settings under WooCommerce → Price History, off by default). (#202)
 - Enhancement: More data in exported JSON file (#195)
 - Fix: When counting from sale start, if the configured period before the sale has no history entries (e.g. no product edits for a long time), use the lowest price from older history still before the sale start. (#208)
