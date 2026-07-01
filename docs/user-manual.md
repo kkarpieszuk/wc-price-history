@@ -358,6 +358,9 @@ The most common causes are: the product is not on sale, the display location is 
 **Does the plugin support variable products?**
 Yes. History is tracked per variation. If the defer setting is enabled, the storefront and shortcode show placeholder text until a customer selects a variation.
 
+**Does the plugin support WooCommerce Product Bundles?**
+The free plugin records bundle price history when bundled products use "Priced Individually" (with WC Price History Pro 1.0.1+). **Displaying** the Omnibus lowest price on bundle product pages (bundle total and individually priced bundled items, including variable components with bundle discounts) is a **WC Price History Pro** feature (1.1.0+). Requires the official WooCommerce Product Bundles plugin.
+
 **Does the REST API expose history automatically?**
 No. REST fields are off by default. Enable them under **WooCommerce -> Price History** only when an integration needs them.
 
