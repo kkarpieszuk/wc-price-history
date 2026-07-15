@@ -114,8 +114,6 @@ class HistoryStorageTable {
 		/**
 		 * Filter candidate prices used to compute the lowest price in the sale-start window.
 		 *
-		 * @since 3.2.5
-		 *
 		 * @param array<float> $candidates Candidate prices.
 		 * @param \WC_Product  $wc_product WC Product.
 		 * @param int          $cutoff_timestamp Window start timestamp.
@@ -575,8 +573,6 @@ class HistoryStorageTable {
 
 	/**
 	 * Query price from the latest history entry before the sale-start window.
-	 *
-	 * @since 3.2.5
 	 *
 	 * @param int    $product_id      Product ID.
 	 * @param string $cutoff_date     Cutoff date (Y-m-d H:i:s UTC).

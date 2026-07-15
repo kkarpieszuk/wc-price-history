@@ -172,8 +172,6 @@ class HistoryStorage {
 	 *
 	 * Includes change events inside the window plus carry-forward from the last entry before the window.
 	 *
-	 * @since 3.2.5
-	 *
 	 * @param array<float> $history            Price history keyed by timestamp.
 	 * @param int          $cutoff_timestamp   Window start timestamp.
 	 * @param int          $sale_start_timestamp Window end timestamp.
@@ -219,8 +217,6 @@ class HistoryStorage {
 
 		/**
 		 * Filter candidate prices used to compute the lowest price in the sale-start window.
-		 *
-		 * @since 3.2.5
 		 *
 		 * @param array<float> $candidates Candidate prices.
 		 * @param \WC_Product  $wc_product WC Product.
