@@ -112,7 +112,7 @@ class HistoryStorageTest extends TestCase {
 	}
 
 	/**
-	 * @dataProvider data_provider_get_minimal_from_sale_start_fallback
+	 * @dataProvider data_provider_get_minimal_from_sale_start_uses_effective_window_prices
 	 */
 	public function test_get_minimal_from_sale_start_uses_effective_window_prices( $history, $expected_minimal, $count_from ) {
 
@@ -137,7 +137,7 @@ class HistoryStorageTest extends TestCase {
 	}
 
 	/**
-	 * @dataProvider data_provider_table_get_minimal_from_sale_start_fallback
+	 * @dataProvider data_provider_table_get_minimal_from_sale_start_uses_effective_window_prices
 	 */
 	public function test_table_get_minimal_from_sale_start_uses_effective_window_prices( $window_min_price, $carry_forward_price, $expected_minimal, $count_from ) {
 
@@ -334,7 +334,7 @@ class HistoryStorageTest extends TestCase {
 		return $product;
 	}
 
-	public function data_provider_get_minimal_from_sale_start_fallback() {
+	public function data_provider_get_minimal_from_sale_start_uses_effective_window_prices() {
 
 		$sale_start_timestamp = strtotime( '2026-06-18 00:00:00' );
 		$cutoff_timestamp     = $sale_start_timestamp - ( 30 * DAY_IN_SECONDS );
@@ -381,7 +381,7 @@ class HistoryStorageTest extends TestCase {
 		];
 	}
 
-	public function data_provider_table_get_minimal_from_sale_start_fallback() {
+	public function data_provider_table_get_minimal_from_sale_start_uses_effective_window_prices() {
 
 		return [
 			'empty window uses carry-forward price before cutoff' => [ null, '59.99', 59.99, 'sale_start' ],
