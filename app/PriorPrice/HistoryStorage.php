@@ -156,8 +156,43 @@ class HistoryStorage {
 		$include_sale_start = ( $count_from === 'sale_start_inclusive' );
 		$cutoff_timestamp   = $sale_start_timestamp - ( $days * DAY_IN_SECONDS );
 
-		$window_prices = [];
-		$older_prices  = [];
+		$candidates = $this->collect_effective_prices_in_sale_window(
+			$history,
+			$cutoff_timestamp,
+			$sale_start_timestamp,
+			$include_sale_start,
+			$wc_product
+		);
+
+		return $this->reduce_to_minimal( $candidates );
+	}
+
+	/**
+	 * Collect effective prices within the sale-start window.
+	 *
+	 * Includes change events inside the window plus carry-forward from the last entry before the window.
+	 *
+	 * @since 3.2.5
+	 *
+	 * @param array<float> $history            Price history keyed by timestamp.
+	 * @param int          $cutoff_timestamp   Window start timestamp.
+	 * @param int          $sale_start_timestamp Window end timestamp.
+	 * @param bool         $include_sale_start Whether the sale start moment is included.
+	 * @param \WC_Product  $wc_product         WC Product.
+	 *
+	 * @return array<float>
+	 */
+	private function collect_effective_prices_in_sale_window(
+		array $history,
+		int $cutoff_timestamp,
+		int $sale_start_timestamp,
+		bool $include_sale_start,
+		\WC_Product $wc_product
+	): array {
+
+		$window_prices          = [];
+		$last_before_cutoff     = null;
+		$last_before_cutoff_key = null;
 
 		foreach ( $history as $timestamp => $price ) {
 			$before_sale_end = $include_sale_start
@@ -169,13 +204,36 @@ class HistoryStorage {
 			}
 
 			if ( $timestamp >= $cutoff_timestamp ) {
-				$window_prices[ $timestamp ] = $price;
-			} else {
-				$older_prices[ $timestamp ] = $price;
+				$window_prices[ $timestamp ] = (float) $price;
+			} elseif ( $last_before_cutoff_key === null || $timestamp > $last_before_cutoff_key ) {
+				$last_before_cutoff_key = $timestamp;
+				$last_before_cutoff     = (float) $price;
 			}
 		}
 
-		return $this->reduce_to_minimal( ! empty( $window_prices ) ? $window_prices : $older_prices );
+		$candidates = array_values( $window_prices );
+
+		if ( $last_before_cutoff !== null ) {
+			$candidates[] = $last_before_cutoff;
+		}
+
+		/**
+		 * Filter candidate prices used to compute the lowest price in the sale-start window.
+		 *
+		 * @since 3.2.5
+		 *
+		 * @param array<float> $candidates Candidate prices.
+		 * @param \WC_Product  $wc_product WC Product.
+		 * @param int          $cutoff_timestamp Window start timestamp.
+		 * @param int          $sale_start_timestamp Window end timestamp.
+		 */
+		return apply_filters(
+			'wc_price_history_sale_start_window_candidates',
+			$candidates,
+			$wc_product,
+			$cutoff_timestamp,
+			$sale_start_timestamp
+		);
 	}
 
 	/**

@@ -114,7 +114,7 @@ class HistoryStorageTest extends TestCase {
 	/**
 	 * @dataProvider data_provider_get_minimal_from_sale_start_fallback
 	 */
-	public function test_get_minimal_from_sale_start_falls_back_before_window( $history, $expected_minimal, $count_from ) {
+	public function test_get_minimal_from_sale_start_uses_effective_window_prices( $history, $expected_minimal, $count_from ) {
 
 		$product_id = 1;
 		$sale_start_timestamp = strtotime( '2026-06-18 00:00:00' );
@@ -139,12 +139,12 @@ class HistoryStorageTest extends TestCase {
 	/**
 	 * @dataProvider data_provider_table_get_minimal_from_sale_start_fallback
 	 */
-	public function test_table_get_minimal_from_sale_start_falls_back_before_window( $primary_min_price, $fallback_min_price, $expected_minimal, $count_from ) {
+	public function test_table_get_minimal_from_sale_start_uses_effective_window_prices( $window_min_price, $carry_forward_price, $expected_minimal, $count_from ) {
 
 		$product_id           = 1;
 		$sale_start_timestamp = strtotime( '2026-06-18 00:00:00' );
 
-		$this->mock_table_wpdb_for_sale_start( $primary_min_price, $fallback_min_price );
+		$this->mock_table_wpdb_for_sale_start( $window_min_price, $carry_forward_price );
 		$this->mock_gmt_offset();
 
 		$subject = new HistoryStorageTable();
@@ -192,22 +192,22 @@ class HistoryStorageTest extends TestCase {
 	}
 
 	/**
-	 * @param string|null $primary_min_price  MIN(price) in the sale-start window, or null when empty.
-	 * @param string|null $fallback_min_price MIN(price) before the window, or null when empty.
+	 * @param string|null $window_min_price    MIN(price) in the sale-start window, or null when empty.
+	 * @param string|null $carry_forward_price Price from the latest entry before the window, or null when empty.
 	 */
-	private function mock_table_wpdb_for_sale_start( ?string $primary_min_price, ?string $fallback_min_price ): void {
+	private function mock_table_wpdb_for_sale_start( ?string $window_min_price, ?string $carry_forward_price ): void {
 
 		global $wpdb;
-		$wpdb = new class( $primary_min_price, $fallback_min_price ) {
+		$wpdb = new class( $window_min_price, $carry_forward_price ) {
 			public $prefix = 'wp_';
 
-			private ?string $primary_min_price;
+			private ?string $window_min_price;
 
-			private ?string $fallback_min_price;
+			private ?string $carry_forward_price;
 
-			public function __construct( ?string $primary_min_price, ?string $fallback_min_price ) {
-				$this->primary_min_price   = $primary_min_price;
-				$this->fallback_min_price  = $fallback_min_price;
+			public function __construct( ?string $window_min_price, ?string $carry_forward_price ) {
+				$this->window_min_price    = $window_min_price;
+				$this->carry_forward_price = $carry_forward_price;
 			}
 
 			public function prepare( $query, ...$args ) {
@@ -215,12 +215,12 @@ class HistoryStorageTest extends TestCase {
 			}
 
 			public function get_var( $query ) {
-				if ( stripos( $query, 'date_gmt >=' ) !== false ) {
-					return $this->primary_min_price;
+				if ( stripos( $query, 'SELECT MIN(price)' ) !== false && stripos( $query, 'date_gmt >=' ) !== false ) {
+					return $this->window_min_price;
 				}
 
-				if ( stripos( $query, 'SELECT MIN(price)' ) !== false ) {
-					return $this->fallback_min_price;
+				if ( stripos( $query, 'ORDER BY date_gmt DESC' ) !== false ) {
+					return $this->carry_forward_price;
 				}
 
 				return null;
@@ -272,22 +272,37 @@ class HistoryStorageTest extends TestCase {
 			$sale_start_timestamp => 49.99,
 		];
 
+		$history_with_in_window_drop = [
+			strtotime( '2026-03-30 10:00:00' ) => 490.0,
+			$cutoff_timestamp + DAY_IN_SECONDS => 300.0,
+		];
+
+		$history_merchant_regression = [
+			1715634324 => 149.0,
+			1731793560 => 179.0,
+			1772024266 => 490.0,
+			1774866394 => 490.0,
+		];
+
 		return [
-			'empty window falls back to lowest before cutoff' => [ $history_only_before_window, 44.99, 'sale_start' ],
-			'non-empty window does not use fallback'          => [ $history_with_entry_in_window, 59.99, 'sale_start' ],
-			'inclusive empty window falls back to lowest before cutoff' => [ $history_only_before_window, 44.99, 'sale_start_inclusive' ],
+			'empty window uses carry-forward price before cutoff' => [ $history_only_before_window, 59.99, 'sale_start' ],
+			'non-empty window uses min of carry-forward and in-window entries' => [ $history_with_entry_in_window, 59.99, 'sale_start' ],
+			'inclusive empty window uses carry-forward price before cutoff' => [ $history_only_before_window, 59.99, 'sale_start_inclusive' ],
 			'inclusive entry on sale start day stays in window' => [ $history_with_sale_start_day_entry, 49.99, 'sale_start_inclusive' ],
-			'sale start excludes entry on sale start day' => [ $history_with_sale_start_day_entry, 44.99, 'sale_start' ],
+			'sale start excludes entry on sale start day' => [ $history_with_sale_start_day_entry, 59.99, 'sale_start' ],
+			'in-window drop beats carry-forward' => [ $history_with_in_window_drop, 300.0, 'sale_start' ],
+			'merchant regression empty window returns stable pre-sale price' => [ $history_merchant_regression, 490.0, 'sale_start' ],
 		];
 	}
 
 	public function data_provider_table_get_minimal_from_sale_start_fallback() {
 
 		return [
-			'empty window falls back to lowest before cutoff' => [ null, '44.99', 44.99, 'sale_start' ],
-			'non-empty window does not use fallback'          => [ '59.99', '44.99', 59.99, 'sale_start' ],
-			'inclusive empty window falls back to lowest before cutoff' => [ null, '44.99', 44.99, 'sale_start_inclusive' ],
-			'inclusive non-empty window does not use fallback' => [ '49.99', '44.99', 49.99, 'sale_start_inclusive' ],
+			'empty window uses carry-forward price before cutoff' => [ null, '59.99', 59.99, 'sale_start' ],
+			'non-empty window uses min of carry-forward and in-window entries' => [ '59.99', '59.99', 59.99, 'sale_start' ],
+			'in-window drop beats carry-forward' => [ '300.00', '490.00', 300.00, 'sale_start' ],
+			'inclusive empty window uses carry-forward price before cutoff' => [ null, '59.99', 59.99, 'sale_start_inclusive' ],
+			'inclusive non-empty window uses min of carry-forward and in-window entries' => [ '49.99', '59.99', 49.99, 'sale_start_inclusive' ],
 		];
 	}
 
