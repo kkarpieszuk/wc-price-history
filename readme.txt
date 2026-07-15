@@ -133,7 +133,6 @@ Yes, I am available for hire. Please contact me at [LinkedIn](https://linkedin.c
 == Changelog ==
 
 = {VERSION_ALWAYS_TOP} =
-
 - Fix: When counting from sale start, an empty 30-day pre-sale window now uses the last known price before the window (carry-forward) instead of the global minimum from all older history. (#213)
 
 = 3.2.4 =
