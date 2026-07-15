@@ -158,6 +158,86 @@ class HistoryStorageTest extends TestCase {
 		$this->assertEquals( $expected_minimal, $minimal );
 	}
 
+	public function test_get_minimal_from_sale_start_returns_zero_when_history_is_empty() {
+
+		$product_id           = 1;
+		$sale_start_timestamp = strtotime( '2026-06-18 00:00:00' );
+
+		$subject = $this->mock_legacy_storage();
+
+		\WP_Mock::userFunction( 'get_post_meta', [
+			'times'  => 1,
+			'args'   => [ $product_id, '_wc_price_history', true ],
+			'return' => [],
+		] );
+
+		\WP_Mock::userFunction( 'wc_get_product', [
+			'times'  => 1,
+			'args'   => [ $product_id ],
+			'return' => null,
+		] );
+
+		$minimal = $subject->get_minimal_from_sale_start(
+			$this->mock_product_with_sale_start( $product_id, $sale_start_timestamp ),
+			30,
+			'sale_start'
+		);
+
+		$this->assertEquals( 0.0, $minimal );
+	}
+
+	public function test_get_minimal_from_sale_start_returns_zero_when_filter_clears_candidates() {
+
+		$product_id           = 1;
+		$sale_start_timestamp = strtotime( '2026-06-18 00:00:00' );
+		$history              = [
+			strtotime( '2025-11-04 01:00:00' ) => 59.99,
+		];
+
+		$subject = $this->mock_legacy_storage();
+
+		\WP_Mock::userFunction( 'get_post_meta', [
+			'times'  => 1,
+			'args'   => [ $product_id, '_wc_price_history', true ],
+			'return' => $history,
+		] );
+
+		\WP_Mock::onFilter( 'wc_price_history_sale_start_window_candidates' )
+			->withAnyArgs()
+			->reply( [] );
+
+		$minimal = $subject->get_minimal_from_sale_start(
+			$this->mock_product_with_sale_start( $product_id, $sale_start_timestamp ),
+			30,
+			'sale_start'
+		);
+
+		$this->assertEquals( 0.0, $minimal );
+	}
+
+	public function test_table_get_minimal_from_sale_start_returns_zero_when_filter_clears_candidates() {
+
+		$product_id           = 1;
+		$sale_start_timestamp = strtotime( '2026-06-18 00:00:00' );
+
+		$this->mock_table_wpdb_for_sale_start( null, '59.99' );
+		$this->mock_gmt_offset();
+
+		\WP_Mock::onFilter( 'wc_price_history_sale_start_window_candidates' )
+			->withAnyArgs()
+			->reply( [] );
+
+		$subject = new HistoryStorageTable();
+
+		$minimal = $subject->get_minimal_from_sale_start(
+			$this->mock_product_with_sale_start( $product_id, $sale_start_timestamp ),
+			30,
+			'sale_start'
+		);
+
+		$this->assertEquals( 0.0, $minimal );
+	}
+
 	private function mock_legacy_storage(): HistoryStorage {
 
 		$this->mock_legacy_storage_options();
@@ -284,6 +364,10 @@ class HistoryStorageTest extends TestCase {
 			1774866394 => 490.0,
 		];
 
+		$history_only_after_sale_start = [
+			$sale_start_timestamp + ( 2 * DAY_IN_SECONDS ) => 49.99,
+		];
+
 		return [
 			'empty window uses carry-forward price before cutoff' => [ $history_only_before_window, 59.99, 'sale_start' ],
 			'non-empty window uses min of carry-forward and in-window entries' => [ $history_with_entry_in_window, 59.99, 'sale_start' ],
@@ -292,6 +376,8 @@ class HistoryStorageTest extends TestCase {
 			'sale start excludes entry on sale start day' => [ $history_with_sale_start_day_entry, 59.99, 'sale_start' ],
 			'in-window drop beats carry-forward' => [ $history_with_in_window_drop, 300.0, 'sale_start' ],
 			'merchant regression empty window returns stable pre-sale price' => [ $history_merchant_regression, 490.0, 'sale_start' ],
+			'no pre-sale history returns zero' => [ $history_only_after_sale_start, 0.0, 'sale_start' ],
+			'inclusive no pre-sale history returns zero' => [ $history_only_after_sale_start, 0.0, 'sale_start_inclusive' ],
 		];
 	}
 
@@ -303,6 +389,8 @@ class HistoryStorageTest extends TestCase {
 			'in-window drop beats carry-forward' => [ '300.00', '490.00', 300.00, 'sale_start' ],
 			'inclusive empty window uses carry-forward price before cutoff' => [ null, '59.99', 59.99, 'sale_start_inclusive' ],
 			'inclusive non-empty window uses min of carry-forward and in-window entries' => [ '49.99', '59.99', 49.99, 'sale_start_inclusive' ],
+			'no pre-sale history returns zero' => [ null, null, 0.0, 'sale_start' ],
+			'inclusive no pre-sale history returns zero' => [ null, null, 0.0, 'sale_start_inclusive' ],
 		];
 	}
 
