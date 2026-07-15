@@ -129,7 +129,16 @@ class HistoryStorageTable {
 			$sale_start_timestamp
 		);
 
-		return (float) min( $candidates );
+		$valid_candidates = array_filter(
+			$candidates,
+			static fn( $price ) => (float) $price > 0
+		);
+
+		if ( empty( $valid_candidates ) ) {
+			return 0.0;
+		}
+
+		return (float) min( $valid_candidates );
 	}
 
 	/**
