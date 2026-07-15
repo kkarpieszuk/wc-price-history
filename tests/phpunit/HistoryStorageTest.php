@@ -387,6 +387,7 @@ class HistoryStorageTest extends TestCase {
 			'empty window uses carry-forward price before cutoff' => [ null, '59.99', 59.99, 'sale_start' ],
 			'non-empty window uses min of carry-forward and in-window entries' => [ '59.99', '59.99', 59.99, 'sale_start' ],
 			'in-window drop beats carry-forward' => [ '300.00', '490.00', 300.00, 'sale_start' ],
+			'merchant regression empty window returns stable pre-sale price' => [ null, '490.00', 490.0, 'sale_start' ],
 			'inclusive empty window uses carry-forward price before cutoff' => [ null, '59.99', 59.99, 'sale_start_inclusive' ],
 			'inclusive non-empty window uses min of carry-forward and in-window entries' => [ '49.99', '59.99', 49.99, 'sale_start_inclusive' ],
 			'no pre-sale history returns zero' => [ null, null, 0.0, 'sale_start' ],
