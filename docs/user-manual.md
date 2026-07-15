@@ -306,7 +306,9 @@ For Omnibus-style display, set sale dates in WooCommerce for each discounted pro
 
 When the setting is **Day before product went on sale**, the plugin calculates the lowest price in the configured period before the sale start moment and excludes the promotional price at the sale start.
 
-If that configured period before the sale has no stored price changes (for example, the product was not edited for a long time), the plugin uses the lowest price from older history that is still before the sale start, instead of showing the "no price change" fallback message.
+If there are no price change events inside that window (for example, the product was not edited for a long time), the plugin uses the **last known price before the window** as the effective price for the entire window. It does not fall back to the global minimum from older history outside the window.
+
+If there is no price history at all before the sale start, the plugin uses the **Old history** setting (`hide`, `current price`, or custom text).
 
 If an on-sale product has no sale start date, the plugin falls back to counting from the current day and logs the product in **WooCommerce -> Status -> Logs** with a source starting with `wc-price-history`.
 
