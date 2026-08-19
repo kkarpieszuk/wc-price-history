@@ -288,7 +288,7 @@ class SettingsPage {
 												name="wc_price_history_settings[display_text]"
 												class="wc-price-history-wide-field"
 												<?php /* translators: Do not translate {price}, it is template slug! */ ?>
-												value="<?php echo isset( $settings['display_text'] ) ? esc_html( $settings['display_text'] ) : esc_html__( '30-day low: {price}', 'wc-price-history' ); ?>"
+												value="<?php echo isset( $settings['display_text'] ) ? esc_attr( $settings['display_text'] ) : esc_attr__( '30-day low: {price}', 'wc-price-history' ); ?>"
 											/>
 										</label>
 									</p>
@@ -358,7 +358,7 @@ class SettingsPage {
 												name="wc_price_history_settings[old_history_custom_text]"
 												class="wc-price-history-wide-field"
 												<?php /* translators: Do not translate {days}, it is template slug! */ ?>
-												value="<?php echo isset( $settings['old_history_custom_text'] ) ? esc_html( $settings['old_history_custom_text'] ) : esc_html__( 'Price in the last {days} days is the same as current', 'wc-price-history' ); ?>"
+												value="<?php echo isset( $settings['old_history_custom_text'] ) ? esc_attr( $settings['old_history_custom_text'] ) : esc_attr__( 'Price in the last {days} days is the same as current', 'wc-price-history' ); ?>"
 											/>
 										</label>
 									</p>
