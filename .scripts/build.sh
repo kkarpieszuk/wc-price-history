@@ -39,9 +39,8 @@ esac
 
 # make build directory and copy all files to it.
 rm -rf build
-mkdir build
-mkdir build/gitversion
-rsync -av --exclude='build' . build/gitversion/
+mkdir -p build/gitversion
+rsync -av --exclude='build' --exclude-from='.distignore' . build/gitversion/
 
 # Go to the build directory.
 cd build/gitversion
@@ -52,13 +51,6 @@ composer install --no-dev
 
 # make pot file.
 wp i18n make-pot . languages/wc-price-history.pot
-
-# Remove not needed files.
-rm -rf .git .github .husky .scripts node_modules \
- tests .gitignore .phpunit.result.cache composer.* \
- package-lock.json package.json phpunit.xml \
- phpstan.neon phpstan.neon.dist phpstan-custom-rules \
- README.md screenshot-1.png docs pr
 
 replace_version_number
 replace_version_always_top
