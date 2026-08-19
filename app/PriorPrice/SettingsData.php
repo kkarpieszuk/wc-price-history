@@ -51,8 +51,9 @@ class SettingsData {
 
 		// Handle settings added in 1.3.
 		if ( ! isset( $settings['display_text'] ) || $settings['display_text'] === '30-day low: %s' ) {
-			/* translators: Do not translate {price}, it is template slug! */
-			$settings['display_text'] = esc_html__( '30-day low: {price}', 'wc-price-history' );
+			/* translators: %s - the lowest price in the last 30 days. */
+			$old_format = esc_html__( '30-day low: %s', 'wc-price-history' );
+			$settings['display_text'] = str_replace( [ '30', '%s' ], [ '{days}', '{price}' ], $old_format );
 			$update                   = true;
 		}
 
@@ -193,8 +194,9 @@ class SettingsData {
 
 		$settings = get_option( 'wc_price_history_settings' );
 		if ( ! isset( $settings['display_text'] ) ) {
-			/* translators: Do not translate {price}, it is template slug! */
-			return esc_html__( '30-day low: {price}', 'wc-price-history' );
+			/* translators: %s - the lowest price in the last 30 days. */
+			$old_format = esc_html__( '30-day low: %s', 'wc-price-history' );
+			return str_replace( [ '30', '%s' ], [ '{days}', '{price}' ], $old_format );
 		}
 		return esc_html( $settings['display_text'] );
 	}
