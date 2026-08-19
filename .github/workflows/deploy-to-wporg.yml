@@ -51,7 +51,6 @@ jobs:
           SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
           SLUG: wc-price-history
           VERSION: ${{ steps.version.outputs.version }}
-          BUILD_DIR: '.'
           ASSETS_DIR: '.wordpress-org'
 
       - name: Create GitHub Release
