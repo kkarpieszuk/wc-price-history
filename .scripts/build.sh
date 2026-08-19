@@ -45,15 +45,9 @@ rsync -av --exclude='build' --exclude-from='.distignore' . build/gitversion/
 # Go to the build directory.
 cd build/gitversion
 
-# Run composer install.
+# Run shared release preparation (composer, pot, version replace).
 rm -rf vendor
-composer install --no-dev
-
-# make pot file.
-wp i18n make-pot . languages/wc-price-history.pot
-
-replace_version_number
-replace_version_always_top
+bash "$SCRIPT_DIR/prepare-release.sh"
 
 # create a zip file.
 zip -r ../wc-price-history.zip .

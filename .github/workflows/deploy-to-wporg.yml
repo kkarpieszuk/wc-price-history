@@ -24,28 +24,17 @@ jobs:
           fi
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
-      - name: Replace version placeholders
-        run: |
-          source .scripts/replace-version.sh
-          replace_version_number
-          replace_version_always_top
-        env:
-          VERSION: ${{ steps.version.outputs.version }}
-
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.1'
+          tools: wp-cli
           coverage: none
 
-      - name: Install production dependencies
-        run: composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
-
-      - name: Generate POT file
-        run: |
-          curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
-          chmod +x wp-cli.phar
-          php wp-cli.phar i18n make-pot . languages/wc-price-history.pot --allow-root
+      - name: Prepare release (composer, POT, version placeholders)
+        run: bash .scripts/prepare-release.sh
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
 
       - name: Deploy to WordPress.org
         uses: 10up/action-wordpress-plugin-deploy@stable
