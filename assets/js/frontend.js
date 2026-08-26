@@ -34,6 +34,7 @@ WCPriceHistory.Frontend = WCPriceHistory.Frontend || ( function( document, windo
 
 			$( 'form.variations_form' ).on( 'found_variation', app.methods.onFoundVariation );
 			$( 'form.variations_form' ).on( 'reset_data', app.methods.onResetData );
+			$( 'form.variations_form' ).trigger( 'check_variations' );
 		},
 
 		/**

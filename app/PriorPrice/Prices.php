@@ -314,7 +314,8 @@ class Prices {
 				$wc_product
 			);
 
-			return $this->display_from_template( $price_raw_non_taxed, $days_number, $wc_product );
+			$price_taxed = $this->taxes->apply_taxes( $price_raw_non_taxed, $wc_product );
+			return $this->display_from_template( $price_taxed, $days_number, $wc_product );
 		}
 
 		$old_history_custom_text = $this->settings_data->get_old_history_custom_text();
@@ -322,11 +323,11 @@ class Prices {
 		$old_history_custom_text = str_replace(
 			[ '{price}', '{days}' ],
 			[
-				$this->display_price_value_html( apply_filters(
+				$this->display_price_value_html( $this->taxes->apply_taxes( apply_filters(
 					'wc_price_history_price_raw_non_taxed',
 					(float) $wc_product->get_price(),
 					$wc_product
-				) ),
+				), $wc_product ) ),
 				$days_number
 			],
 			$old_history_custom_text
@@ -365,5 +366,17 @@ class Prices {
 		$display_text = apply_filters( 'wc_price_history_display_from_template', $display_text, $lowest, $days_number );
 
 		return sprintf( '<div class="wc-price-history prior-price lowest" data-product-id="%s" data-original-price="%s"><span class="wc-price-history-lowest-inner">%s</span></div>', $wc_product->get_id(), $lowest, $display_text );
+	}
+
+	/**
+	 * Apply taxes to the price.
+	 *
+	 * @param float       $price
+	 * @param \WC_Product $wc_product
+	 *
+	 * @return float
+	 */
+	public function apply_taxes( float $price, \WC_Product $wc_product ) : float {
+		return $this->taxes->apply_taxes( $price, $wc_product );
 	}
 }
