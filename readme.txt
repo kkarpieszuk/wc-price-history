@@ -136,10 +136,6 @@ Yes, I am available for hire. Please contact me at [LinkedIn](https://linkedin.c
 - Fix: Variable products with sale dates on variations no longer show the promotional price as the Omnibus lowest on the parent, shop/category listings, or shortcode when counting from sale start. (#204, #125)
 
 = 3.2.6 =
-- Maintenance: Tested up to WordPress 7.1.
-- Maintenance: Automated WordPress.org deploy workflow. (#217)
-
-= 3.2.5 =
 - Fix: When counting from sale start, an empty 30-day pre-sale window now uses the last known price before the window (carry-forward) instead of the global minimum from all older history. (#213)
 
 = 3.2.4 =
