@@ -6,8 +6,14 @@ use WP_Mock\Tools\TestCase;
 
 class SaleStartDateTest extends TestCase {
 
+	/**
+	 * @var SaleStartDate
+	 */
+	private $subject;
+
 	public function setUp() : void {
 		\WP_Mock::setUp();
+		$this->subject = new SaleStartDate();
 	}
 
 	public function tearDown() : void {
@@ -25,7 +31,7 @@ class SaleStartDateTest extends TestCase {
 		$product->method( 'get_date_on_sale_from' )
 			->willReturn( $sale_start );
 
-		$this->assertSame( $sale_start, SaleStartDate::resolve( $product ) );
+		$this->assertSame( $sale_start, $this->subject->resolve( $product ) );
 	}
 
 	public function test_resolve_returns_null_for_simple_product_without_sale_start(): void {
@@ -37,7 +43,7 @@ class SaleStartDateTest extends TestCase {
 		$product->method( 'get_date_on_sale_from' )
 			->willReturn( null );
 
-		$this->assertNull( SaleStartDate::resolve( $product ) );
+		$this->assertNull( $this->subject->resolve( $product ) );
 	}
 
 	public function test_resolve_uses_earliest_on_sale_variation_date_for_variable_parent(): void {
@@ -59,7 +65,7 @@ class SaleStartDateTest extends TestCase {
 			->with( 'objects' )
 			->willReturn( [ $variation_later, $variation_off, $variation_earlier ] );
 
-		$this->assertSame( $earlier, SaleStartDate::resolve( $product ) );
+		$this->assertSame( $earlier, $this->subject->resolve( $product ) );
 	}
 
 	public function test_resolve_returns_null_when_variable_children_have_no_sale_dates(): void {
@@ -76,7 +82,7 @@ class SaleStartDateTest extends TestCase {
 			->with( 'objects' )
 			->willReturn( [ $variation ] );
 
-		$this->assertNull( SaleStartDate::resolve( $product ) );
+		$this->assertNull( $this->subject->resolve( $product ) );
 	}
 
 	/**

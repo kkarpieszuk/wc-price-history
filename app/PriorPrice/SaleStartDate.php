@@ -23,7 +23,7 @@ class SaleStartDate {
 	 *
 	 * @return \WC_DateTime|null
 	 */
-	public static function resolve( \WC_Product $product ) {
+	public function resolve( \WC_Product $product ) {
 
 		$sale_start = $product->get_date_on_sale_from();
 
