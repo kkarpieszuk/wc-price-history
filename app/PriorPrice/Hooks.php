@@ -58,7 +58,7 @@ class Hooks {
 		$frontend_assets = new FrontEndAssets();
 		$frontend_assets->register_hooks();
 
-		$shortcode = new Shortcode( $history_storage, new Taxes(), $settings_data );
+		$shortcode = new Shortcode( $prices, new Taxes(), $settings_data );
 		$shortcode->register_hooks();
 
 		$marketing = new Marketing();

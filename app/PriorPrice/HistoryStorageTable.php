@@ -10,6 +10,26 @@ namespace PriorPrice;
 class HistoryStorageTable {
 
 	/**
+	 * Sale start date resolver.
+	 *
+	 * @since 3.2.7
+	 *
+	 * @var SaleStartDate
+	 */
+	private $sale_start_date;
+
+	/**
+	 * Constructor.
+	 *
+	 * @since 3.2.7
+	 *
+	 * @param SaleStartDate|null $sale_start_date Sale start date resolver.
+	 */
+	public function __construct( ?SaleStartDate $sale_start_date = null ) {
+		$this->sale_start_date = $sale_start_date ?? new SaleStartDate();
+	}
+
+	/**
 	 * Get minimal price for $product_id in last $days.
 	 *
 	 * @since 3.0.0
@@ -58,7 +78,7 @@ class HistoryStorageTable {
 	 */
 	public function get_minimal_from_sale_start( \WC_Product $wc_product, int $days = 30, string $count_from = 'sale_start' ): float {
 
-		$sale_start = $wc_product->get_date_on_sale_from();
+		$sale_start = $this->sale_start_date->resolve( $wc_product );
 
 		if ( ! $sale_start ) {
 			$logger = wc_get_logger();

@@ -32,12 +32,23 @@ class HistoryStorage {
 	private $table_storage;
 
 	/**
+	 * Sale start date resolver.
+	 *
+	 * @since 3.2.7
+	 *
+	 * @var SaleStartDate
+	 */
+	private $sale_start_date;
+
+	/**
 	 * Constructor.
 	 *
 	 * @since 3.0.0
+	 * @since 3.2.7 Instantiates SaleStartDate for Omnibus sale-start resolution.
 	 */
 	public function __construct() {
-		$this->table_storage = new HistoryStorageTable();
+		$this->sale_start_date = new SaleStartDate();
+		$this->table_storage   = new HistoryStorageTable( $this->sale_start_date );
 	}
 
 	/**
@@ -127,7 +138,7 @@ class HistoryStorage {
 		}
 
 		// Legacy post_meta implementation.
-		$sale_start = $wc_product->get_date_on_sale_from();
+		$sale_start = $this->sale_start_date->resolve( $wc_product );
 
 		if ( ! $sale_start ) {
 			$logger = wc_get_logger();
