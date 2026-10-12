@@ -135,6 +135,7 @@ class Prices {
 	 * Get the lowest price raw value (non-taxed).
 	 *
 	 * @since 2.1
+	 * @since 3.2.7 Variable parents aggregate on-sale variation Omnibus prices when defer is off.
 	 *
 	 * @param \WC_Product $wc_product WC Product.
 	 *
@@ -142,14 +143,75 @@ class Prices {
 	 */
 	public function get_lowest_price_raw_non_taxed( \WC_Product $wc_product ): float {
 
+		if ( $wc_product instanceof \WC_Product_Variable ) {
+			return $this->get_lowest_price_raw_non_taxed_for_variable( $wc_product );
+		}
+
+		return $this->get_lowest_price_raw_non_taxed_for_product( $wc_product );
+	}
+
+	/**
+	 * Get the lowest price for a simple product or variation (non-taxed).
+	 *
+	 * @since 3.2.7
+	 *
+	 * @param \WC_Product $wc_product WC Product.
+	 *
+	 * @return float
+	 */
+	private function get_lowest_price_raw_non_taxed_for_product( \WC_Product $wc_product ): float {
+
 		$days_number = $this->settings_data->get_days_number();
 		$count_from  = $this->settings_data->get_count_from();
 
-		if ( in_array( $count_from, [ 'sale_start', 'sale_start_inclusive' ] ) && $wc_product->is_on_sale() ) {
+		if ( in_array( $count_from, [ 'sale_start', 'sale_start_inclusive' ], true ) && $wc_product->is_on_sale() ) {
 			return $this->history_storage->get_minimal_from_sale_start( $wc_product, $days_number, $count_from );
 		}
 
 		return (float) $this->history_storage->get_minimal( $wc_product->get_id(), $days_number );
+	}
+
+	/**
+	 * Get the lowest price for a variable parent (non-taxed).
+	 *
+	 * Sale schedules and price history live on variations. Computing Omnibus from the
+	 * parent alone falls back to the last 30 days (including the promo price). Instead,
+	 * take the minimum correct per-variation lowest price among on-sale children when
+	 * counting from sale start; otherwise among all available variations.
+	 *
+	 * @since 3.2.7
+	 *
+	 * @param \WC_Product_Variable $wc_product Variable product.
+	 *
+	 * @return float
+	 */
+	private function get_lowest_price_raw_non_taxed_for_variable( \WC_Product_Variable $wc_product ): float {
+
+		$count_from = $this->settings_data->get_count_from();
+		$sale_based = in_array( $count_from, [ 'sale_start', 'sale_start_inclusive' ], true );
+		$candidates = [];
+
+		foreach ( $wc_product->get_available_variations( 'objects' ) as $variation ) {
+			if ( ! $variation instanceof \WC_Product ) {
+				continue;
+			}
+
+			if ( $sale_based && ! $variation->is_on_sale() ) {
+				continue;
+			}
+
+			$lowest = $this->get_lowest_price_raw_non_taxed_for_product( $variation );
+
+			if ( $lowest > 0 ) {
+				$candidates[] = $lowest;
+			}
+		}
+
+		if ( $candidates === [] ) {
+			return $this->get_lowest_price_raw_non_taxed_for_product( $wc_product );
+		}
+
+		return (float) min( $candidates );
 	}
 
 	/**

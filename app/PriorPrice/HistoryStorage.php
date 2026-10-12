@@ -127,7 +127,7 @@ class HistoryStorage {
 		}
 
 		// Legacy post_meta implementation.
-		$sale_start = $wc_product->get_date_on_sale_from();
+		$sale_start = SaleStartDate::resolve( $wc_product );
 
 		if ( ! $sale_start ) {
 			$logger = wc_get_logger();

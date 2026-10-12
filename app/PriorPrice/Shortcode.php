@@ -17,16 +17,16 @@ class Shortcode {
 	public $settings_data;
 
 	/**
-	 * @since 1.2
-	 *
-	 * @var \PriorPrice\HistoryStorage
-	 */
-	private $history_storage;
-
-	/**
 	 * @var \PriorPrice\Taxes
 	 */
 	private $taxes;
+
+	/**
+	 * @since 3.2.7
+	 *
+	 * @var \PriorPrice\Prices
+	 */
+	private $prices;
 
 	/**
 	 * Constructor.
@@ -34,16 +34,17 @@ class Shortcode {
 	 * @since 1.2
 	 * @since 1.6.2 uses Taxes class.
 	 * @since 1.7 uses SettingsData class.
+	 * @since 3.2.7 uses Prices for lowest-price calculation (keeps shortcode aligned with price HTML).
 	 *
-	 * @param \PriorPrice\HistoryStorage $history_storage Prices object.
-	 * @param \PriorPrice\Taxes          $taxes           Taxes object.
-	 * @param \PriorPrice\SettingsData   $settings_data   Settings data object.
+	 * @param \PriorPrice\Prices       $prices        Prices calculator.
+	 * @param \PriorPrice\Taxes        $taxes         Taxes object.
+	 * @param \PriorPrice\SettingsData $settings_data Settings data object.
 	 */
-	public function __construct( HistoryStorage $history_storage, Taxes $taxes, SettingsData $settings_data ) {
+	public function __construct( Prices $prices, Taxes $taxes, SettingsData $settings_data ) {
 
-		$this->history_storage = $history_storage;
-		$this->taxes           = $taxes;
-		$this->settings_data   = $settings_data;
+		$this->prices        = $prices;
+		$this->taxes         = $taxes;
+		$this->settings_data = $settings_data;
 	}
 
 	public function register_hooks() : void {
@@ -104,14 +105,7 @@ class Shortcode {
 			return $this->shortcode_deferred_variable_output( $product, $atts );
 		}
 
-		$days_number = $this->settings_data->get_days_number();
-		$count_from  = $this->settings_data->get_count_from();
-
-		if ( in_array( $count_from, [ 'sale_start', 'sale_start_inclusive' ] ) && $product->is_on_sale() ) {
-			$lowest = $this->history_storage->get_minimal_from_sale_start( $product, $days_number, $count_from );
-		} else {
-			$lowest = $this->history_storage->get_minimal( $id, $days_number );
-		}
+		$lowest = $this->prices->get_lowest_price_raw_non_taxed( $product );
 
 		if ( ! $lowest ) {
 			return '';

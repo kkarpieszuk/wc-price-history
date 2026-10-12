@@ -58,7 +58,7 @@ class HistoryStorageTable {
 	 */
 	public function get_minimal_from_sale_start( \WC_Product $wc_product, int $days = 30, string $count_from = 'sale_start' ): float {
 
-		$sale_start = $wc_product->get_date_on_sale_from();
+		$sale_start = SaleStartDate::resolve( $wc_product );
 
 		if ( ! $sale_start ) {
 			$logger = wc_get_logger();
