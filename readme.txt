@@ -134,6 +134,7 @@ Yes, I am available for hire. Please contact me at [LinkedIn](https://linkedin.c
 
 = {VERSION_ALWAYS_TOP} =
 - Fix: When counting from sale start, an empty 30-day pre-sale window now uses the last known price before the window (carry-forward) instead of the global minimum from all older history. (#213)
+- Fix: Variable products with sale dates on variations no longer show the promotional price as the Omnibus lowest on the parent, shop/category listings, or shortcode when counting from sale start. (#204, #125)
 
 = 3.2.4 =
 - Enhancement: Optional WooCommerce REST API fields `wc_price_history.lowest` and `wc_price_history.history` (settings under WooCommerce → Price History, off by default). (#202)
