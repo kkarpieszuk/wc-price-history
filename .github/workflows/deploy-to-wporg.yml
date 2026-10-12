@@ -31,6 +31,16 @@ jobs:
           tools: wp-cli
           coverage: none
 
+      # setup-php may report "Could not setup wp-cli" without failing the step.
+      - name: Ensure WP-CLI is available
+        run: |
+          if ! command -v wp >/dev/null 2>&1; then
+            echo "setup-php did not provide wp; installing WP-CLI phar to /usr/local/bin/wp"
+            sudo curl -fsSL -o /usr/local/bin/wp https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+            sudo chmod +x /usr/local/bin/wp
+          fi
+          wp --info --allow-root
+
       - name: Prepare release (composer, POT, version placeholders)
         run: bash .scripts/prepare-release.sh
         env:
