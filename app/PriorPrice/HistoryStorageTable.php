@@ -78,20 +78,7 @@ class HistoryStorageTable {
 			$candidates[] = (float) $carry_forward;
 		}
 
-		if ( empty( $candidates ) ) {
-			return 0.0;
-		}
-
-		$valid_candidates = array_filter(
-			$candidates,
-			static fn( $price ) => (float) $price > 0
-		);
-
-		if ( empty( $valid_candidates ) ) {
-			return 0.0;
-		}
-
-		return (float) min( $valid_candidates );
+		return $this->reduce_to_minimal( $candidates );
 	}
 
 	/**
@@ -150,14 +137,11 @@ class HistoryStorageTable {
 			$candidates[] = (float) $window_min;
 		}
 
-		$carry_forward = $this->query_price_at_last_entry_before_cutoff( $product_id, $cutoff_date, $sale_start_date, $end_op );
+		// cutoff is always before sale start, so carry-forward only needs date_gmt < cutoff.
+		$carry_forward = $this->query_last_price_before( $product_id, $cutoff_date );
 
 		if ( $carry_forward !== null ) {
 			$candidates[] = (float) $carry_forward;
-		}
-
-		if ( empty( $candidates ) ) {
-			return 0.0;
 		}
 
 		/**
@@ -176,16 +160,7 @@ class HistoryStorageTable {
 			$sale_start_timestamp
 		);
 
-		$valid_candidates = array_filter(
-			$candidates,
-			static fn( $price ) => (float) $price > 0
-		);
-
-		if ( empty( $valid_candidates ) ) {
-			return 0.0;
-		}
-
-		return (float) min( $valid_candidates );
+		return $this->reduce_to_minimal( $candidates );
 	}
 
 	/**
@@ -621,51 +596,10 @@ class HistoryStorageTable {
 	}
 
 	/**
-	 * Query price from the latest history entry before the sale-start window.
-	 *
-	 * @param int    $product_id      Product ID.
-	 * @param string $cutoff_date     Cutoff date (Y-m-d H:i:s UTC).
-	 * @param string $sale_start_date Sale start date (Y-m-d H:i:s UTC).
-	 * @param string $end_op          Comparison before sale start ('<' or '<=').
-	 *
-	 * @return string|null Price as string, or null when no matching rows.
-	 */
-	private function query_price_at_last_entry_before_cutoff(
-		int $product_id,
-		string $cutoff_date,
-		string $sale_start_date,
-		string $end_op
-	): ?string {
-
-		global $wpdb;
-
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.DirectQuery
-		$result = $wpdb->get_var(
-			$wpdb->prepare(
-				"SELECT price
-				FROM {$wpdb->prefix}wc_price_history
-				WHERE product_id = %d
-				AND date_gmt < %s
-				AND date_gmt {$end_op} %s
-				AND include_in_history = 1
-				AND price > 0
-				ORDER BY date_gmt DESC
-				LIMIT 1",
-				$product_id,
-				$cutoff_date,
-				$sale_start_date
-			)
-		);
-
-		if ( $result === null ) {
-			return null;
-		}
-
-		return (string) $result;
-	}
-
-	/**
 	 * Query price from the latest history entry before a cutoff datetime.
+	 *
+	 * Shared by last-N-days and sale-start windows: carry-forward only needs
+	 * the newest row strictly before the window start.
 	 *
 	 * @param int    $product_id  Product ID.
 	 * @param string $cutoff_date Cutoff date (Y-m-d H:i:s UTC).
@@ -697,6 +631,33 @@ class HistoryStorageTable {
 		}
 
 		return (string) $result;
+	}
+
+	/**
+	 * Reduce candidate prices to the positive minimum.
+	 *
+	 * @param array<float|string> $prices Candidate prices.
+	 *
+	 * @return float
+	 */
+	private function reduce_to_minimal( array $prices ): float {
+
+		if ( empty( $prices ) ) {
+			return 0.0;
+		}
+
+		$valid_prices = array_filter(
+			$prices,
+			static function ( $price ) {
+				return (float) $price > 0;
+			}
+		);
+
+		if ( empty( $valid_prices ) ) {
+			return 0.0;
+		}
+
+		return (float) min( $valid_prices );
 	}
 
 	/**
