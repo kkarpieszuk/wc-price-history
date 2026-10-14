@@ -2,6 +2,8 @@
 
 namespace PriorPrice;
 
+use PriorPrice\Helpers\AdminScreen;
+
 /**
  * Warn merchants when sale-start Omnibus counting cannot resolve a sale start date.
  *
@@ -22,6 +24,13 @@ class SaleStartWarning {
 	 * @var SaleStartDate
 	 */
 	private $sale_start_date;
+
+	/**
+	 * Cached sale-start count_from check for the current request.
+	 *
+	 * @var bool|null
+	 */
+	private $sale_start_count_from_cached = null;
 
 	/**
 	 * Constructor.
@@ -49,27 +58,6 @@ class SaleStartWarning {
 	}
 
 	/**
-	 * Whether the product needs a sale-start configuration warning.
-	 *
-	 * @since 3.2.8
-	 *
-	 * @param \WC_Product $product Product.
-	 *
-	 * @return bool
-	 */
-	public function needs_warning( \WC_Product $product ): bool {
-		if ( ! $this->is_sale_start_count_from() ) {
-			return false;
-		}
-
-		if ( ! $product->is_on_sale() ) {
-			return false;
-		}
-
-		return $this->sale_start_date->resolve( $product ) === null;
-	}
-
-	/**
 	 * Display warning on the product edit screen.
 	 *
 	 * @since 3.2.8
@@ -77,7 +65,11 @@ class SaleStartWarning {
 	 * @return void
 	 */
 	public function maybe_display_product_edit_notice(): void {
-		if ( ! $this->is_product_edit_screen() ) {
+		if ( ! AdminScreen::is_product_edit_page() ) {
+			return;
+		}
+
+		if ( ! $this->is_sale_start_count_from() ) {
 			return;
 		}
 
@@ -127,6 +119,10 @@ class SaleStartWarning {
 			return $post_states;
 		}
 
+		if ( ! $this->is_sale_start_count_from() ) {
+			return $post_states;
+		}
+
 		if ( ! function_exists( 'wc_get_product' ) ) {
 			return $post_states;
 		}
@@ -149,36 +145,50 @@ class SaleStartWarning {
 	}
 
 	/**
+	 * Whether the product needs a sale-start configuration warning.
+	 *
+	 * Caller must already know count_from is sale-start based when performance matters
+	 * (e.g. products list), or rely on the check inside this method.
+	 *
+	 * @since 3.2.8
+	 *
+	 * @param \WC_Product $product Product.
+	 *
+	 * @return bool
+	 */
+	private function needs_warning( \WC_Product $product ): bool {
+		if ( ! $this->is_sale_start_count_from() ) {
+			return false;
+		}
+
+		if ( ! $product->is_on_sale() ) {
+			return false;
+		}
+
+		return $this->sale_start_date->resolve( $product ) === null;
+	}
+
+	/**
 	 * Whether count_from is based on sale start.
+	 *
+	 * Cached for the request so products list can early-exit cheaply.
 	 *
 	 * @since 3.2.8
 	 *
 	 * @return bool
 	 */
 	private function is_sale_start_count_from(): bool {
-		$count_from = $this->settings_data->get_count_from();
+		if ( $this->sale_start_count_from_cached === null ) {
+			$count_from = $this->settings_data->get_count_from();
 
-		return in_array( $count_from, [ 'sale_start', 'sale_start_inclusive' ], true );
-	}
-
-	/**
-	 * Whether the current screen is a product edit screen.
-	 *
-	 * @since 3.2.8
-	 *
-	 * @return bool
-	 */
-	private function is_product_edit_screen(): bool {
-		if ( ! function_exists( 'get_current_screen' ) ) {
-			return false;
+			$this->sale_start_count_from_cached = in_array(
+				$count_from,
+				[ 'sale_start', 'sale_start_inclusive' ],
+				true
+			);
 		}
 
-		$screen = get_current_screen();
-		if ( ! $screen ) {
-			return false;
-		}
-
-		return $screen->post_type === 'product' && $screen->base === 'post';
+		return $this->sale_start_count_from_cached;
 	}
 
 	/**

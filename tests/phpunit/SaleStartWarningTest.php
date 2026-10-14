@@ -39,7 +39,7 @@ class SaleStartWarningTest extends TestCase {
 
 		$product = $this->create_product_mock( true );
 
-		$this->assertTrue( $this->subject->needs_warning( $product ) );
+		$this->assertTrue( $this->invoke_needs_warning( $product ) );
 	}
 
 	public function test_needs_warning_when_sale_start_inclusive_mode(): void {
@@ -48,7 +48,7 @@ class SaleStartWarningTest extends TestCase {
 
 		$product = $this->create_product_mock( true );
 
-		$this->assertTrue( $this->subject->needs_warning( $product ) );
+		$this->assertTrue( $this->invoke_needs_warning( $product ) );
 	}
 
 	public function test_no_warning_when_count_from_current_day(): void {
@@ -56,7 +56,7 @@ class SaleStartWarningTest extends TestCase {
 
 		$product = $this->create_product_mock( true );
 
-		$this->assertFalse( $this->subject->needs_warning( $product ) );
+		$this->assertFalse( $this->invoke_needs_warning( $product ) );
 	}
 
 	public function test_no_warning_when_product_not_on_sale(): void {
@@ -64,7 +64,7 @@ class SaleStartWarningTest extends TestCase {
 
 		$product = $this->create_product_mock( false );
 
-		$this->assertFalse( $this->subject->needs_warning( $product ) );
+		$this->assertFalse( $this->invoke_needs_warning( $product ) );
 	}
 
 	public function test_no_warning_when_sale_start_date_resolves(): void {
@@ -80,7 +80,7 @@ class SaleStartWarningTest extends TestCase {
 
 		$product = $this->create_product_mock( true );
 
-		$this->assertFalse( $this->subject->needs_warning( $product ) );
+		$this->assertFalse( $this->invoke_needs_warning( $product ) );
 	}
 
 	public function test_register_hooks_adds_notice_and_post_states(): void {
@@ -119,6 +119,24 @@ class SaleStartWarningTest extends TestCase {
 		$this->assertStringContainsString( 'Price history issue', $states['wc_price_history_sale_start'] );
 	}
 
+	public function test_product_list_state_skips_wc_get_product_when_current_day(): void {
+		$this->ensure_wp_post_stub();
+
+		$this->settings_data->method( 'get_count_from' )->willReturn( 'current_day' );
+
+		\WP_Mock::userFunction( 'wc_get_product', [
+			'times' => 0,
+		] );
+
+		$post            = new \WP_Post();
+		$post->ID        = 11;
+		$post->post_type = 'product';
+
+		$states = $this->subject->maybe_add_product_list_state( [], $post );
+
+		$this->assertSame( [], $states );
+	}
+
 	/**
 	 * @param bool $on_sale Whether the product is on sale.
 	 *
@@ -132,6 +150,20 @@ class SaleStartWarningTest extends TestCase {
 		$product->method( 'is_on_sale' )->willReturn( $on_sale );
 
 		return $product;
+	}
+
+	/**
+	 * Invoke private needs_warning via reflection.
+	 *
+	 * @param \WC_Product $product Product.
+	 *
+	 * @return bool
+	 */
+	private function invoke_needs_warning( \WC_Product $product ): bool {
+		$method = new \ReflectionMethod( SaleStartWarning::class, 'needs_warning' );
+		$method->setAccessible( true );
+
+		return (bool) $method->invoke( $this->subject, $product );
 	}
 
 	/**
