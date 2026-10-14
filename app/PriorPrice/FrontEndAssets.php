@@ -27,15 +27,18 @@ class FrontEndAssets {
 		wp_enqueue_style( 'wc-price-history-frontend', WC_PRICE_HISTORY_PLUGIN_URL . 'assets/css/frontend.css', [], '{VERSION_ALWAYS_TOP}' );
 
 		if ( is_product() ) {
-			wp_enqueue_script( 'wc-price-history-frontend', WC_PRICE_HISTORY_PLUGIN_URL . 'assets/js/frontend.js', [ 'jquery' ], '{VERSION_ALWAYS_TOP}', true );
-
-			$price_format = [
-				'thousand_separator' => wc_get_price_thousand_separator(),
-				'decimal_separator'  => wc_get_price_decimal_separator(),
-				'decimals'           => wc_get_price_decimals(),
-			];
-
-			wp_localize_script( 'wc-price-history-frontend', 'wc_price_history_frontend', $price_format );
+			$product = wc_get_product( get_the_ID() );
+			if ( $product && $product->is_type( 'variable' ) ) {
+				wp_enqueue_script( 'wc-price-history-frontend', WC_PRICE_HISTORY_PLUGIN_URL . 'assets/js/frontend.js', [ 'jquery' ], '{VERSION_ALWAYS_TOP}', true );
+	
+				$price_format = [
+					'thousand_separator' => wc_get_price_thousand_separator(),
+					'decimal_separator'  => wc_get_price_decimal_separator(),
+					'decimals'           => wc_get_price_decimals(),
+				];
+	
+				wp_localize_script( 'wc-price-history-frontend', 'wc_price_history_frontend', $price_format );
+			}
 		}
 	}
 }

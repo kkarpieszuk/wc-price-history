@@ -57,7 +57,7 @@ class Variations {
 
 		if ( $lowest <= 0 ) {
 			$current_price = $variation->get_price();
-			$lowest = $current_price > 0 ? $current_price : 0;
+			$lowest = $current_price > 0 ? $this->prices->apply_taxes( (float) $current_price, $variation ) : 0;
 		}
 
 		/**
