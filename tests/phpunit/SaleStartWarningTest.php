@@ -1,0 +1,109 @@
+<?php
+
+namespace PriorPrice;
+
+use WP_Mock\Tools\TestCase;
+
+class SaleStartWarningTest extends TestCase {
+
+	/**
+	 * @var SettingsData&\PHPUnit\Framework\MockObject\MockObject
+	 */
+	private $settings_data;
+
+	/**
+	 * @var SaleStartDate&\PHPUnit\Framework\MockObject\MockObject
+	 */
+	private $sale_start_date;
+
+	/**
+	 * @var SaleStartWarning
+	 */
+	private $subject;
+
+	public function setUp() : void {
+		\WP_Mock::setUp();
+
+		$this->settings_data   = $this->createMock( SettingsData::class );
+		$this->sale_start_date = $this->createMock( SaleStartDate::class );
+		$this->subject         = new SaleStartWarning( $this->settings_data, $this->sale_start_date );
+	}
+
+	public function tearDown() : void {
+		\WP_Mock::tearDown();
+	}
+
+	public function test_needs_warning_when_sale_start_mode_on_sale_without_date(): void {
+		$this->settings_data->method( 'get_count_from' )->willReturn( 'sale_start' );
+		$this->sale_start_date->method( 'resolve' )->willReturn( null );
+
+		$product = $this->create_product_mock( true );
+
+		$this->assertTrue( $this->subject->needs_warning( $product ) );
+	}
+
+	public function test_needs_warning_when_sale_start_inclusive_mode(): void {
+		$this->settings_data->method( 'get_count_from' )->willReturn( 'sale_start_inclusive' );
+		$this->sale_start_date->method( 'resolve' )->willReturn( null );
+
+		$product = $this->create_product_mock( true );
+
+		$this->assertTrue( $this->subject->needs_warning( $product ) );
+	}
+
+	public function test_no_warning_when_count_from_current_day(): void {
+		$this->settings_data->method( 'get_count_from' )->willReturn( 'current_day' );
+
+		$product = $this->create_product_mock( true );
+
+		$this->assertFalse( $this->subject->needs_warning( $product ) );
+	}
+
+	public function test_no_warning_when_product_not_on_sale(): void {
+		$this->settings_data->method( 'get_count_from' )->willReturn( 'sale_start' );
+
+		$product = $this->create_product_mock( false );
+
+		$this->assertFalse( $this->subject->needs_warning( $product ) );
+	}
+
+	public function test_no_warning_when_sale_start_date_resolves(): void {
+		$this->settings_data->method( 'get_count_from' )->willReturn( 'sale_start' );
+
+		$sale_start = new class() {
+			public function getTimestamp(): int {
+				return strtotime( '2026-06-18 00:00:00' );
+			}
+		};
+
+		$this->sale_start_date->method( 'resolve' )->willReturn( $sale_start );
+
+		$product = $this->create_product_mock( true );
+
+		$this->assertFalse( $this->subject->needs_warning( $product ) );
+	}
+
+	public function test_register_hooks_adds_notice_and_post_states(): void {
+		\WP_Mock::expectActionAdded( 'admin_notices', [ $this->subject, 'maybe_display_product_edit_notice' ] );
+		\WP_Mock::expectFilterAdded( 'display_post_states', [ $this->subject, 'maybe_add_product_list_state' ], 10, 2 );
+
+		$this->subject->register_hooks();
+
+		$this->assertConditionsMet();
+	}
+
+	/**
+	 * @param bool $on_sale Whether the product is on sale.
+	 *
+	 * @return \WC_Product&\PHPUnit\Framework\MockObject\MockObject
+	 */
+	private function create_product_mock( bool $on_sale ) {
+		$product = $this->getMockBuilder( \WC_Product::class )
+			->disableOriginalConstructor()
+			->addMethods( [ 'is_on_sale' ] )
+			->getMock();
+		$product->method( 'is_on_sale' )->willReturn( $on_sale );
+
+		return $product;
+	}
+}

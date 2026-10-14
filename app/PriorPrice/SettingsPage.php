@@ -230,9 +230,9 @@ class SettingsPage {
 									</p>
 									<p class="description">
 										<span class="wc-price-history-warning"><?php esc_attr_e( 'Heads up!', 'wc-price-history' ); ?></span><br>
-										<?php esc_html_e( 'Option "Day when product went on sale" works only for products with "Sale price dates" set on Edit product page (setting sale start date will be enough).', 'wc-price-history' ); ?>
+										<?php esc_html_e( 'Sale-start counting modes work only for products with "Sale price dates" set on the Edit product page (setting a sale start date is enough).', 'wc-price-history' ); ?>
 										<br>
-										<?php esc_html_e( 'If product does not have scheduled such date, minimal price will be counted from current day and this option will be ignored.', 'wc-price-history' ); ?>
+										<?php esc_html_e( 'If a product does not have a scheduled sale start date, the lowest price will be counted from the current day and this option will be ignored for that product. You will also see a warning on the product edit screen and on the products list.', 'wc-price-history' ); ?>
 										<br>
 										<?php
 										$admin_page_url = admin_url( 'admin.php?page=wc-status&tab=logs' );

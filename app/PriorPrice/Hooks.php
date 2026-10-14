@@ -76,6 +76,9 @@ class Hooks {
 		$educational_tab = new EducationalTab();
 		$educational_tab->register_hooks();
 
+		$sale_start_warning = new SaleStartWarning( $settings_data );
+		$sale_start_warning->register_hooks();
+
 		// Register database migration classes.
 		$db_migration_notice = new \PriorPrice\Database\AdminNotice();
 		$db_migration_notice->register_hooks();
