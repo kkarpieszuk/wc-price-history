@@ -3,6 +3,7 @@
 namespace PriorPrice;
 
 use PriorPrice\Database\DbMigration;
+use PriorPrice\Helpers\AdminScreen;
 
 class AdminAssets {
 
@@ -56,7 +57,11 @@ class AdminAssets {
 		// Enqueue migration scripts if migration is pending or in progress.
 		$this->maybe_enqueue_migration_scripts( $nonce );
 
-		if ( ! $this->is_settings_page() && ! $this->is_product_edit_page() ) {
+		if (
+			! AdminScreen::is_settings_page()
+			&& ! AdminScreen::is_product_edit_page()
+			&& ! AdminScreen::is_products_list_page()
+		) {
 			return;
 		}
 
@@ -147,24 +152,5 @@ class AdminAssets {
 		if ( DbMigration::needs_migration() ) {
 			update_option( DbMigration::OPTION_MIGRATION_STATUS, DbMigration::STATUS_PENDING );
 		}
-	}
-
-	private function is_product_edit_page() : bool {
-
-		if ( ! function_exists( 'get_current_screen' ) ) {
-			return false;
-		}
-
-		$screen = get_current_screen();
-
-		if ( ! $screen ) {
-			return false;
-		}
-
-		return $screen->post_type === 'product' && $screen->base === 'post';
-	}
-
-	private function is_settings_page() : bool {
-		return isset( $_GET['page'] ) && $_GET['page'] === 'wc-price-history'; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	}
 }

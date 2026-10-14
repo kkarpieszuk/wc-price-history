@@ -3,28 +3,22 @@
 	width: 90%;
 }
 
-.wc-price-history-old-history-custom-text-p {
+.wc-price-history-old-history-custom-text-p,
+.wc-price-history-variable-product-placeholder-p,
+.wc-price-history-sale-start-heads-up {
 	opacity: 1;
 	height: 100%;
 	overflow: hidden;
 	transition: opacity 0.5s, height 0.5s;
 }
 
-.wc-price-history-old-history-custom-text-p.hidden-fade {
+.wc-price-history-old-history-custom-text-p.hidden-fade,
+.wc-price-history-variable-product-placeholder-p.hidden-fade,
+.wc-price-history-sale-start-heads-up.hidden-fade {
 	opacity: 0;
 	height: 0;
-}
-
-.wc-price-history-variable-product-placeholder-p {
-	opacity: 1;
-	height: 100%;
-	overflow: hidden;
-	transition: opacity 0.5s, height 0.5s;
-}
-
-.wc-price-history-variable-product-placeholder-p.hidden-fade {
-	opacity: 0;
-	height: 0;
+	margin: 0;
+	padding: 0;
 }
 
 .wc-history-price-admin__left {
@@ -65,6 +59,26 @@
 
 .wc-price-history-warning {
 	color: #ff6600;
+}
+
+/* Products list: sale-start misconfiguration marker as a pill badge. */
+.wc-price-history-issue-badge {
+	display: inline-block;
+	margin-left: 2px;
+	padding: 1px 8px;
+	border-radius: 999px;
+	background: #fcf0e3;
+	color: #9a6700;
+	font-size: 11px;
+	font-weight: 600;
+	font-style: normal;
+	line-height: 1.6;
+	vertical-align: baseline;
+}
+
+span.post-state:has(.wc-price-history-issue-badge) {
+	font-style: normal;
+	color: inherit;
 }
 
 .wc-price-history-related-product-label {

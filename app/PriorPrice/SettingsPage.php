@@ -193,14 +193,18 @@ class SettingsPage {
 						<tr>
 							<th scope="row"><?php esc_html_e( 'For products being on sale, count minimal price from:', 'wc-price-history' ); ?></th>
 							<td>
-								<fieldset>
+								<?php
+								$count_from_setting = isset( $settings['count_from'] ) ? $settings['count_from'] : 'sale_start';
+								$show_sale_start_heads_up = in_array( $count_from_setting, [ 'sale_start', 'sale_start_inclusive' ], true );
+								?>
+								<fieldset id="wc-price-history-count-from-fieldset">
 									<p>
 										<label>
 											<input
 												type="radio"
 												name="wc_price_history_settings[count_from]"
 												value="current_day"
-												<?php checked( isset( $settings['count_from'] ) ? $settings['count_from'] : false, 'current_day' ); ?>
+												<?php checked( $count_from_setting, 'current_day' ); ?>
 											/>
 											<?php esc_html_e( 'Current day', 'wc-price-history' ); ?>
 										</label>
@@ -210,7 +214,7 @@ class SettingsPage {
 												type="radio"
 												name="wc_price_history_settings[count_from]"
 												value="sale_start"
-												<?php checked( isset( $settings['count_from'] ) ? $settings['count_from'] : false, 'sale_start' ); ?>
+												<?php checked( $count_from_setting, 'sale_start' ); ?>
 											/>
 											<?php esc_html_e( 'Day before product went on sale (excludes promotional price)', 'wc-price-history' ); ?>
 										</label>
@@ -220,7 +224,7 @@ class SettingsPage {
 												type="radio"
 												name="wc_price_history_settings[count_from]"
 												value="sale_start_inclusive"
-												<?php checked( isset( $settings['count_from'] ) ? $settings['count_from'] : false, 'sale_start_inclusive' ); ?>
+												<?php checked( $count_from_setting, 'sale_start_inclusive' ); ?>
 											/>
 											<?php esc_html_e( 'Day when product went on sale (includes promotional price)', 'wc-price-history' ); ?>
 										</label>
@@ -228,11 +232,11 @@ class SettingsPage {
 									<p class="description">
 										<?php esc_html_e( 'Omnibus: European Union Guidance requires displaying the lowest price before the sale started.', 'wc-price-history' ); ?>
 									</p>
-									<p class="description">
+									<p class="description wc-price-history-sale-start-heads-up<?php echo $show_sale_start_heads_up ? '' : ' hidden-fade'; ?>">
 										<span class="wc-price-history-warning"><?php esc_attr_e( 'Heads up!', 'wc-price-history' ); ?></span><br>
-										<?php esc_html_e( 'Option "Day when product went on sale" works only for products with "Sale price dates" set on Edit product page (setting sale start date will be enough).', 'wc-price-history' ); ?>
+										<?php esc_html_e( 'Both sale-start counting modes (day before and day when the product went on sale) work only for products with "Sale price dates" set on the Edit product page (setting a sale start date is enough).', 'wc-price-history' ); ?>
 										<br>
-										<?php esc_html_e( 'If product does not have scheduled such date, minimal price will be counted from current day and this option will be ignored.', 'wc-price-history' ); ?>
+										<?php esc_html_e( 'If a product does not have a scheduled sale start date, the lowest price will be counted from the current day and this option will be ignored for that product. You will also see a warning on the product edit screen and on the products list.', 'wc-price-history' ); ?>
 										<br>
 										<?php
 										$admin_page_url = admin_url( 'admin.php?page=wc-status&tab=logs' );
