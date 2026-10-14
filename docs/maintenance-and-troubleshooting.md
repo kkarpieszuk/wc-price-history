@@ -151,6 +151,8 @@ That is expected. The plugin skips draft products and starts/updates history aft
 
 Compatibility depends on how the other plugin changes WooCommerce product prices. If a discount plugin does not update the values WC Price History reads, history or display may not match your promotion. Test on a staging site before relying on a dynamic-pricing workflow.
 
+For WooCommerce Product Bundles, WC Price History Pro compatibility, and the pricing filter used by integrations, see [Pricing Integrations and Product Bundles](pricing-integrations-and-bundles.md).
+
 ## What to include in a support request
 
 Include:

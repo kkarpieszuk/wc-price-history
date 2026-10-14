@@ -16,6 +16,7 @@ WC Price History is a powerful WordPress plugin designed specifically for WooCom
 - Shortcode support for custom placement
 - Optional WooCommerce REST API exposure of lowest price and full history (off by default; see Plugin Configuration)
 - Support for product variations and sales
+- Compatibility path for WooCommerce Product Bundles when WC Price History Pro 1.0.1 or later supplies the bundle-aware pricing integration
 
 #### Benefits of using the plugin
 
@@ -360,6 +361,9 @@ The most common causes are: the product is not on sale, the display location is 
 **Does the plugin support variable products?**
 Yes. History is tracked per variation. If the defer setting is enabled, the storefront and shortcode show placeholder text until a customer selects a variation.
 
+**Does the plugin support WooCommerce Product Bundles?**
+Yes, when bundled products are priced individually and WC Price History Pro 1.0.1 or later is active. See [Pricing Integrations and Product Bundles](pricing-integrations-and-bundles.md).
+
 **Does the REST API expose history automatically?**
 No. REST fields are off by default. Enable them under **WooCommerce -> Price History** only when an integration needs them.
 
@@ -399,5 +403,6 @@ When reporting a product-specific issue, include:
 - [Display and Shortcode Guide](display-and-shortcode.md)
 - [Maintenance and Troubleshooting](maintenance-and-troubleshooting.md)
 - [Migration to Database Tables](migration-to-db-tables.md)
+- [Pricing Integrations and Product Bundles](pricing-integrations-and-bundles.md)
 - [European Commission guidance on price indication](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:52021XC1229(06))
 - [WooCommerce REST API documentation](https://woocommerce.github.io/woocommerce-rest-api-docs/)
