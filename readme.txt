@@ -133,7 +133,7 @@ Yes, I am available for hire. Please contact me at [LinkedIn](https://linkedin.c
 == Changelog ==
 
 = {VERSION_ALWAYS_TOP} =
-- Enhancement: Warn on the product edit screen (classic and WooCommerce block/React product editor) and products list when sale-start Omnibus counting is enabled but a product on sale has no scheduled sale start date. (#130)
+- Enhancement: Warn on the product edit screen (classic and WooCommerce block/React product editor, including SPA navigation) and products list when sale-start Omnibus counting is enabled but a product on sale has no scheduled sale start date — including variable products where only some on-sale variations lack a start date. (#130)
 
 = 3.2.7 =
 - Fix: Variable products with sale dates on variations no longer show the promotional price as the Omnibus lowest on the parent, shop/category listings, or shortcode when counting from sale start. (#204, #125)

@@ -25,31 +25,14 @@ class AdminScreen {
 	}
 
 	/**
-	 * Whether the current screen is the WooCommerce block/React product editor.
-	 *
-	 * URL shape: admin.php?page=wc-admin&path=/product/{id}
+	 * Whether the current request is a WooCommerce Admin (wc-admin) page.
 	 *
 	 * @since 3.2.8
 	 *
 	 * @return bool
 	 */
-	public static function is_block_product_edit_page(): bool {
-		if ( ! isset( $_GET['page'] ) || $_GET['page'] !== 'wc-admin' ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			return false;
-		}
-
-		return self::get_block_product_id() > 0;
-	}
-
-	/**
-	 * Whether any supported product edit surface is active (classic or block editor).
-	 *
-	 * @since 3.2.8
-	 *
-	 * @return bool
-	 */
-	public static function is_any_product_edit_page(): bool {
-		return self::is_product_edit_page() || self::is_block_product_edit_page();
+	public static function is_wc_admin_page(): bool {
+		return isset( $_GET['page'] ) && $_GET['page'] === 'wc-admin'; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	}
 
 	/**
@@ -97,13 +80,13 @@ class AdminScreen {
 	}
 
 	/**
-	 * Parse product ID from WC Admin path query arg.
+	 * Parse product ID from WC Admin path query arg on the current request.
 	 *
 	 * @since 3.2.8
 	 *
 	 * @return int
 	 */
-	public static function get_block_product_id(): int {
+	private static function get_block_product_id(): int {
 		if ( ! isset( $_GET['path'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			return 0;
 		}
@@ -111,7 +94,7 @@ class AdminScreen {
 		$path = \wp_unslash( $_GET['path'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		$path = rawurldecode( (string) $path );
 
-		if ( ! preg_match( '#^/product/(\d+)(?:/|$)#', $path, $matches ) ) {
+		if ( ! preg_match( '#(?:^|/)product/(\d+)(?:/|$)#', $path, $matches ) ) {
 			return 0;
 		}
 

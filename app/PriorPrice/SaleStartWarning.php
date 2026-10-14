@@ -11,19 +11,16 @@ use PriorPrice\Helpers\AdminScreen;
  */
 class SaleStartWarning {
 
+	const AJAX_ACTION = 'wc_price_history_sale_start_warning_check';
+
+	const NOTICE_ID = 'wc-price-history-sale-start-warning';
+
 	/**
 	 * Settings data.
 	 *
 	 * @var SettingsData
 	 */
 	private $settings_data;
-
-	/**
-	 * Sale start date resolver.
-	 *
-	 * @var SaleStartDate
-	 */
-	private $sale_start_date;
 
 	/**
 	 * Cached sale-start count_from check for the current request.
@@ -37,12 +34,10 @@ class SaleStartWarning {
 	 *
 	 * @since 3.2.8
 	 *
-	 * @param SettingsData       $settings_data   Settings data.
-	 * @param SaleStartDate|null $sale_start_date Sale start date resolver.
+	 * @param SettingsData $settings_data Settings data.
 	 */
-	public function __construct( SettingsData $settings_data, ?SaleStartDate $sale_start_date = null ) {
-		$this->settings_data   = $settings_data;
-		$this->sale_start_date = $sale_start_date ?? new SaleStartDate();
+	public function __construct( SettingsData $settings_data ) {
+		$this->settings_data = $settings_data;
 	}
 
 	/**
@@ -55,6 +50,7 @@ class SaleStartWarning {
 	public function register_hooks(): void {
 		add_action( 'admin_notices', [ $this, 'maybe_display_product_edit_notice' ] );
 		add_action( 'admin_enqueue_scripts', [ $this, 'maybe_enqueue_block_editor_notice' ] );
+		add_action( 'wp_ajax_' . self::AJAX_ACTION, [ $this, 'ajax_check_product_warning' ] );
 		add_filter( 'display_post_states', [ $this, 'maybe_add_product_list_state' ], 10, 2 );
 	}
 
@@ -74,8 +70,8 @@ class SaleStartWarning {
 			return;
 		}
 
-		$product = $this->get_edited_product_needing_warning();
-		if ( ! $product ) {
+		$product_id = AdminScreen::get_edited_product_id();
+		if ( $product_id <= 0 || ! $this->product_id_needs_warning( $product_id ) ) {
 			return;
 		}
 
@@ -83,16 +79,17 @@ class SaleStartWarning {
 	}
 
 	/**
-	 * Enqueue core/notices warning for the WooCommerce block product editor.
+	 * Enqueue SPA-aware core/notices script for WooCommerce Admin product editor.
 	 *
-	 * Classic admin_notices are hidden on wc-admin pages; use wp.data notices instead.
+	 * Loaded on all wc-admin pages when sale-start counting is enabled so soft
+	 * navigation between products can show/hide/update the notice.
 	 *
 	 * @since 3.2.8
 	 *
 	 * @return void
 	 */
 	public function maybe_enqueue_block_editor_notice(): void {
-		if ( ! AdminScreen::is_block_product_edit_page() ) {
+		if ( ! AdminScreen::is_wc_admin_page() ) {
 			return;
 		}
 
@@ -100,15 +97,14 @@ class SaleStartWarning {
 			return;
 		}
 
-		$product = $this->get_edited_product_needing_warning();
-		if ( ! $product ) {
+		if ( ! current_user_can( 'edit_products' ) ) {
 			return;
 		}
 
 		wp_enqueue_script(
 			'wc-price-history-sale-start-warning',
 			WC_PRICE_HISTORY_PLUGIN_URL . 'assets/js/sale-start-warning.js',
-			[ 'wp-data', 'wp-notices' ],
+			[ 'jquery', 'wp-data', 'wp-notices' ],
 			WC_PRICE_HISTORY_VERSION,
 			true
 		);
@@ -117,8 +113,48 @@ class SaleStartWarning {
 			'wc-price-history-sale-start-warning',
 			'wcPriceHistorySaleStartWarning',
 			[
-				'show'    => true,
-				'message' => $this->get_warning_message(),
+				'ajaxUrl'   => admin_url( 'admin-ajax.php' ),
+				'action'    => self::AJAX_ACTION,
+				'nonce'     => wp_create_nonce( 'wc_price_history' ),
+				'noticeId'  => self::NOTICE_ID,
+				'title'     => __( 'Price history issues', 'wc-price-history' ),
+				'message'   => $this->get_warning_message(),
+				'initialProductId' => AdminScreen::get_edited_product_id(),
+			]
+		);
+	}
+
+	/**
+	 * AJAX: whether a product needs the sale-start warning (for SPA route changes).
+	 *
+	 * @since 3.2.8
+	 *
+	 * @return void
+	 */
+	public function ajax_check_product_warning(): void {
+		if ( ! check_ajax_referer( 'wc_price_history', 'security', false ) ) {
+			wp_send_json_error( [ 'message' => esc_html__( 'Invalid nonce', 'wc-price-history' ) ], 403 );
+		}
+
+		if ( ! current_user_can( 'edit_products' ) ) {
+			wp_send_json_error( [ 'message' => esc_html__( 'Forbidden', 'wc-price-history' ) ], 403 );
+		}
+
+		if ( ! $this->is_sale_start_count_from() ) {
+			wp_send_json_success(
+				[
+					'needsWarning' => false,
+				]
+			);
+		}
+
+		$product_id = isset( $_POST['product_id'] ) ? absint( $_POST['product_id'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Missing
+
+		wp_send_json_success(
+			[
+				'needsWarning' => $product_id > 0 && $this->product_id_needs_warning( $product_id ),
+				'title'        => __( 'Price history issues', 'wc-price-history' ),
+				'message'      => $this->get_warning_message(),
 			]
 		);
 	}
@@ -142,16 +178,7 @@ class SaleStartWarning {
 			return $post_states;
 		}
 
-		if ( ! function_exists( 'wc_get_product' ) ) {
-			return $post_states;
-		}
-
-		$product = wc_get_product( $post->ID );
-		if ( ! $product instanceof \WC_Product ) {
-			return $post_states;
-		}
-
-		if ( ! $this->needs_warning( $product ) ) {
+		if ( ! $this->product_id_needs_warning( (int) $post->ID ) ) {
 			return $post_states;
 		}
 
@@ -164,28 +191,28 @@ class SaleStartWarning {
 	}
 
 	/**
-	 * Get the product currently being edited when it needs a warning.
+	 * Whether a product ID needs the sale-start warning.
+	 *
+	 * Uses a light meta-based check (no get_available_variations) and warns when
+	 * any on-sale variation is missing a sale start date (partial coverage).
 	 *
 	 * @since 3.2.8
 	 *
-	 * @return \WC_Product|null
+	 * @param int $product_id Product ID.
+	 *
+	 * @return bool
 	 */
-	private function get_edited_product_needing_warning(): ?\WC_Product {
-		$product_id = AdminScreen::get_edited_product_id();
+	private function product_id_needs_warning( int $product_id ): bool {
 		if ( $product_id <= 0 || ! function_exists( 'wc_get_product' ) ) {
-			return null;
+			return false;
 		}
 
 		$product = wc_get_product( $product_id );
 		if ( ! $product instanceof \WC_Product ) {
-			return null;
+			return false;
 		}
 
-		if ( ! $this->needs_warning( $product ) ) {
-			return null;
-		}
-
-		return $product;
+		return $this->needs_warning( $product );
 	}
 
 	/**
@@ -197,7 +224,7 @@ class SaleStartWarning {
 	 */
 	private function render_classic_notice(): void {
 		?>
-		<div class="notice notice-warning wc-price-history-sale-start-warning">
+		<div class="notice notice-warning is-dismissible wc-price-history-sale-start-warning">
 			<p>
 				<strong><?php esc_html_e( 'Price history issues', 'wc-price-history' ); ?></strong>
 			</p>
@@ -217,16 +244,13 @@ class SaleStartWarning {
 	 */
 	private function get_warning_message(): string {
 		return __(
-			'You configured the lowest price relative to the sale start, but this product has no scheduled sale start date. Set at least a sale start date on the promotional price so Omnibus counting can work correctly.',
+			'You configured the lowest price relative to the sale start, but this product (or at least one on-sale variation) has no scheduled sale start date. Set a sale start date on the promotional price so Omnibus counting can work correctly.',
 			'wc-price-history'
 		);
 	}
 
 	/**
 	 * Whether the product needs a sale-start configuration warning.
-	 *
-	 * Caller must already know count_from is sale-start based when performance matters
-	 * (e.g. products list), or rely on the check inside this method.
 	 *
 	 * @since 3.2.8
 	 *
@@ -243,7 +267,95 @@ class SaleStartWarning {
 			return false;
 		}
 
-		return $this->sale_start_date->resolve( $product ) === null;
+		if ( $product->is_type( 'variable' ) ) {
+			return $this->variable_needs_warning( $product );
+		}
+
+		return ! $this->has_sale_start_meta( $product->get_id() );
+	}
+
+	/**
+	 * Variable product warning: any on-sale variation without a sale start date.
+	 *
+	 * Uses get_children() + post meta instead of get_available_variations().
+	 *
+	 * @since 3.2.8
+	 *
+	 * @param \WC_Product $product Variable product.
+	 *
+	 * @return bool
+	 */
+	private function variable_needs_warning( \WC_Product $product ): bool {
+		$children = $product->get_children();
+		if ( $children === [] ) {
+			return ! $this->has_sale_start_meta( $product->get_id() );
+		}
+
+		$found_on_sale = false;
+
+		foreach ( $children as $child_id ) {
+			$child_id = (int) $child_id;
+			if ( ! $this->variation_is_on_sale_light( $child_id ) ) {
+				continue;
+			}
+
+			$found_on_sale = true;
+
+			if ( ! $this->has_sale_start_meta( $child_id ) ) {
+				return true;
+			}
+		}
+
+		if ( ! $found_on_sale ) {
+			return ! $this->has_sale_start_meta( $product->get_id() );
+		}
+
+		return false;
+	}
+
+	/**
+	 * Light on-sale check for a variation via post meta (no full WC_Product_Variation load path for schedules beyond meta).
+	 *
+	 * @since 3.2.8
+	 *
+	 * @param int $variation_id Variation ID.
+	 *
+	 * @return bool
+	 */
+	private function variation_is_on_sale_light( int $variation_id ): bool {
+		$sale_price = \get_post_meta( $variation_id, '_sale_price', true );
+		if ( $sale_price === '' || $sale_price === null ) {
+			return false;
+		}
+
+		$now = time();
+
+		$from = \get_post_meta( $variation_id, '_sale_price_dates_from', true );
+		if ( $from !== '' && $from !== null && (int) $from > $now ) {
+			return false;
+		}
+
+		$to = \get_post_meta( $variation_id, '_sale_price_dates_to', true );
+		if ( $to !== '' && $to !== null && (int) $to < $now ) {
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * Whether sale start date meta is set for a product/variation.
+	 *
+	 * @since 3.2.8
+	 *
+	 * @param int $product_id Product or variation ID.
+	 *
+	 * @return bool
+	 */
+	private function has_sale_start_meta( int $product_id ): bool {
+		$from = \get_post_meta( $product_id, '_sale_price_dates_from', true );
+
+		return $from !== '' && $from !== null && (int) $from > 0;
 	}
 
 	/**
