@@ -16,6 +16,7 @@ WC Price History is a powerful WordPress plugin designed specifically for WooCom
 - Shortcode support for custom placement
 - Optional WooCommerce REST API exposure of lowest price and full history (off by default; see Plugin Configuration)
 - Support for product variations and sales
+- Compatibility guidance for dynamic pricing plugins and bundle products
 
 #### Benefits of using the plugin
 
@@ -190,13 +191,23 @@ Configure the calculation method for lowest price:
 
 **Calculation Methods:**
 - **Current Day**: Count 30 days back from today
-- **Day Before Sale Started**: Count 30 days before sale start date (excludes promotional price)
+- **Day Before Sale Started**: Count 30 days before the sale start date (uses history entries strictly before the sale start moment, excluding the promotional price at sale start)
 - **Day When Sale Started**: Count 30 days from sale start date (includes promotional price)
 
 **Sale Date Requirements:**
 - For sale-based calculations, products must have "Sale price dates" set
 - If no sale start date is set, falls back to "Current Day" method
 - Products without sale dates are logged for review
+
+#### What Price is Tracked
+
+WC Price History stores the raw WooCommerce product price it reads when a product or variation is created, saved, or backfilled. That stored history value is what the plugin searches when calculating the lowest price.
+
+Important details:
+- Sale price is stored separately in database-table storage for debugging and future use, but the lowest-price lookup uses the stored history price.
+- The **Day before product went on sale** mode excludes history rows at the sale start moment, so the promotional price is not counted as the prior lowest price.
+- Taxes are not stored as part of the history value. The plugin applies WooCommerce tax display settings when rendering the storefront message or REST `lowest` value.
+- Developers integrating dynamic pricing can adjust the raw non-taxed value before storage with the `wc_price_history_price_raw_non_taxed` filter. See [Pricing Integrations and Bundles](pricing-integrations-and-bundles.md).
 
 #### Customizing Display Text
 
@@ -222,7 +233,7 @@ When price history is older than the set period:
 
 Under **WooCommerce → Price History**, two optional checkboxes control whether price history data is attached to **WooCommerce REST API** product and variation responses (`/wp-json/wc/v2/products`, `/wp-json/wc/v3/products`, and the matching variation endpoints). **Both are disabled by default.**
 
-- **Expose lowest prior price in the WooCommerce REST API** — When enabled, each response includes a `wc_price_history` object with a `lowest` property: a floating-point value that matches the tax-inclusive lowest price logic used on the storefront.
+- **Expose lowest prior price in the WooCommerce REST API** — When enabled, each response includes a `wc_price_history` object with a `lowest` property: a floating-point value that follows the same WooCommerce tax display logic used on the storefront.
 - **Expose full price history in the WooCommerce REST API** — When enabled, `wc_price_history` also includes `history`: an object whose keys are Unix timestamps (as strings in JSON) and whose values are prices (floats). Anyone who can read products through the REST API will see this data; enable only if your integrations need it. If nothing is stored yet, `history` is empty; reading products via the REST API does **not** create or backfill history rows.
 
 This applies to the classic WooCommerce REST API, **not** the separate Store API used by some blocks (`/wc/store/...`).
@@ -278,6 +289,7 @@ Price history is stored automatically. Most stores do not need manual maintenanc
 - After activation, the plugin scans published products with prices so existing products receive initial history.
 - While the scan is running, the admin notice asks you not to edit products.
 - The settings page can force-finish a stuck scan or restart the scan if some products still have no history.
+- On current database-table storage, the first saved price for a product is written for the current moment and also 24 and 48 hours earlier. This lets a new product have usable "last 30 days" history from day one without inventing older price changes.
 
 **Storage status**
 - Go to **WooCommerce -> Price History** and open the **Status** panel in the right column.
@@ -292,6 +304,7 @@ Price history is stored automatically. Most stores do not need manual maintenanc
 - On a product edit screen, use the **Price History** side box to export debug data to JSON.
 - The export includes product data, price history, plugin settings, storage method details, and the product permalink.
 - For variable products, each variation is exported with its own history and permalink.
+- The downloaded JSON contains a `product_name` and a PHP-serialized `serialized` payload. Use the helper described in [Maintenance and Troubleshooting](maintenance-and-troubleshooting.md#export-debug-data) if you need a readable timeline.
 
 For support workflows and common fixes, see [Maintenance and Troubleshooting](maintenance-and-troubleshooting.md).
 
@@ -313,6 +326,8 @@ If there is no price history at all before the sale start, the plugin uses the *
 If an on-sale product has no sale start date, the plugin falls back to counting from the current day and logs the product in **WooCommerce -> Status -> Logs** with a source starting with `wc-price-history`.
 
 For variable products, set price history inputs on each variation. The parent variable product does not have its own sale dates in the same way variations do.
+
+For discount engines, bundles, and custom pricing logic, review [Pricing Integrations and Bundles](pricing-integrations-and-bundles.md) before relying on the output in production.
 
 ### 8. Appearance Customization
 
@@ -363,6 +378,12 @@ Yes. History is tracked per variation. If the defer setting is enabled, the stor
 **Does the REST API expose history automatically?**
 No. REST fields are off by default. Enable them under **WooCommerce -> Price History** only when an integration needs them.
 
+**Why does a new product already have multiple history entries?**
+On current database-table storage, the first price is saved for now, 24 hours earlier, and 48 hours earlier. These entries use the same price and make the configured day-window calculation usable immediately.
+
+**Does the plugin work with dynamic pricing or bundles?**
+Some workflows need staging verification because pricing plugins can change prices at different stages. See [Pricing Integrations and Bundles](pricing-integrations-and-bundles.md).
+
 **Does this replace legal advice?**
 No. The plugin provides technical support for lowest-price display, but store owners remain responsible for legal compliance.
 
@@ -397,7 +418,9 @@ When reporting a product-specific issue, include:
 ### 13. Additional Resources
 
 - [Display and Shortcode Guide](display-and-shortcode.md)
+- [Pricing Integrations and Bundles](pricing-integrations-and-bundles.md)
 - [Maintenance and Troubleshooting](maintenance-and-troubleshooting.md)
 - [Migration to Database Tables](migration-to-db-tables.md)
+- [Polish Omnibus Directive legal text](legal/dykretywa-omnibus-lang-pl.html)
 - [European Commission guidance on price indication](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:52021XC1229(06))
 - [WooCommerce REST API documentation](https://woocommerce.github.io/woocommerce-rest-api-docs/)

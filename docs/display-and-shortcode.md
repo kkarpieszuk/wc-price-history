@@ -62,6 +62,22 @@ Constraints:
 - The front-end variation script is loaded on single product pages.
 - The parent variable product does not replace the need for per-variation prices and sale dates.
 - If no variation has a usable lowest price yet, WooCommerce may still have no meaningful value to show.
+- Variation data is added to WooCommerce's available-variation payload, including templates rendered with WooCommerce Blocks. The live replacement still depends on the page firing WooCommerce's `found_variation` and `reset_data` events from a `form.variations_form` element.
+- If a block theme or page builder replaces the standard variation form, use the shortcode for manual placement and test variation selection on the front end.
+
+## Blocks, page builders, and custom templates
+
+Automatic display works by appending the lowest-price message to WooCommerce price HTML. Most themes and product templates use that price HTML, but highly customized block or page-builder layouts can move, duplicate, or replace it.
+
+Recommended checks:
+
+1. Enable the intended display location under **WooCommerce -> Price History**.
+2. View a simple product and confirm the message appears below the price.
+3. View a variable product and select a variation.
+4. Confirm the displayed lowest price changes to the selected variation's value.
+5. If the layout does not render the automatic output where you need it, disable that automatic location and place `[wc_price_history]` manually.
+
+The plugin stylesheet forces the automatic message onto a new line for themes that use inline or flex price layouts. If your theme still places it beside the price, target `.wc-price-history.prior-price.lowest` in your theme CSS.
 
 ## Shortcode usage
 
@@ -143,3 +159,5 @@ This reads history for that variation, not the parent variable product.
 ### Integrate with a custom layout
 
 Use automatic display when possible. If your layout cannot use WooCommerce price HTML, use the shortcode and style `.wc-price-history-shortcode`.
+
+For dynamic pricing plugins, bundle products, and other price-changing integrations, see [Pricing Integrations and Bundles](pricing-integrations-and-bundles.md).
