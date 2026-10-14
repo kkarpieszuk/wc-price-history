@@ -50,9 +50,13 @@ class SettingsData {
 		}
 
 		// Handle settings added in 1.3.
-		if ( ! isset( $settings['display_text'] ) || $settings['display_text'] === '30-day low: %s' ) {
-			/* translators: Do not translate {price}, it is template slug! */
-			$settings['display_text'] = esc_html__( '30-day low: {price}', 'wc-price-history' );
+		if ( ! isset( $settings['display_text'] ) ) {
+			/* translators: %s - the lowest price in the last 30 days. */
+			$old_format = esc_html__( '30-day low: %s', 'wc-price-history' );
+			$settings['display_text'] = str_replace( [ '30', '%s' ], [ '{days}', '{price}' ], $old_format );
+			$update                   = true;
+		} elseif ( is_string( $settings['display_text'] ) && strpos( $settings['display_text'], '%s' ) !== false && strpos( $settings['display_text'], '{price}' ) === false ) {
+			$settings['display_text'] = str_replace( '%s', '{price}', $settings['display_text'] );
 			$update                   = true;
 		}
 
@@ -195,8 +199,7 @@ class SettingsData {
 		if ( ! isset( $settings['display_text'] ) ) {
 			/* translators: %s - the lowest price in the last 30 days. */
 			$old_format = esc_html__( '30-day low: %s', 'wc-price-history' );
-			$with_placeholders = str_replace( [ '30', '%s' ], [ '{days}', '{price}' ], $old_format );
-			return $with_placeholders;
+			return str_replace( [ '30', '%s' ], [ '{days}', '{price}' ], $old_format );
 		}
 		return esc_html( $settings['display_text'] );
 	}
