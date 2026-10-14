@@ -140,7 +140,10 @@ class SaleStartWarning {
 			return $post_states;
 		}
 
-		$post_states['wc_price_history_sale_start'] = esc_html__( 'Price history issue', 'wc-price-history' );
+		$post_states['wc_price_history_sale_start'] = sprintf(
+			'<span class="wc-price-history-issue-badge">%s</span>',
+			esc_html__( 'Price history issue', 'wc-price-history' )
+		);
 
 		return $post_states;
 	}

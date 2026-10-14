@@ -92,6 +92,33 @@ class SaleStartWarningTest extends TestCase {
 		$this->assertConditionsMet();
 	}
 
+	public function test_product_list_state_renders_badge_markup(): void {
+		$this->ensure_wp_post_stub();
+
+		$this->settings_data->method( 'get_count_from' )->willReturn( 'sale_start' );
+		$this->sale_start_date->method( 'resolve' )->willReturn( null );
+
+		$product = $this->create_product_mock( true );
+
+		\WP_Mock::userFunction( 'wc_get_product', [
+			'args'   => [ 11 ],
+			'return' => $product,
+		] );
+		\WP_Mock::userFunction( 'esc_html__', [
+			'return_arg' => 0,
+		] );
+
+		$post            = new \WP_Post();
+		$post->ID        = 11;
+		$post->post_type = 'product';
+
+		$states = $this->subject->maybe_add_product_list_state( [], $post );
+
+		$this->assertArrayHasKey( 'wc_price_history_sale_start', $states );
+		$this->assertStringContainsString( 'wc-price-history-issue-badge', $states['wc_price_history_sale_start'] );
+		$this->assertStringContainsString( 'Price history issue', $states['wc_price_history_sale_start'] );
+	}
+
 	/**
 	 * @param bool $on_sale Whether the product is on sale.
 	 *
@@ -105,5 +132,20 @@ class SaleStartWarningTest extends TestCase {
 		$product->method( 'is_on_sale' )->willReturn( $on_sale );
 
 		return $product;
+	}
+
+	/**
+	 * Provide a minimal WP_Post stub for unit tests.
+	 *
+	 * @return void
+	 */
+	private function ensure_wp_post_stub(): void {
+		if ( class_exists( '\WP_Post', false ) ) {
+			return;
+		}
+
+		eval( // phpcs:ignore Squiz.PHP.Eval.Discouraged
+			'class WP_Post { public $ID; public $post_type; }'
+		);
 	}
 }

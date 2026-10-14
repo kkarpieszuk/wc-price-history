@@ -12,6 +12,19 @@ jQuery(document).ready(function($) {
 		}
 	);
 
+	// Show Heads up for both sale-start count_from modes (not for current day).
+	$( '#wc-price-history-count-from-fieldset input[name="wc_price_history_settings[count_from]"]' ).on(
+		'change',
+		function() {
+			var countFrom = $( '#wc-price-history-count-from-fieldset input[name="wc_price_history_settings[count_from]"]:checked' ).val();
+			if ( countFrom === 'sale_start' || countFrom === 'sale_start_inclusive' ) {
+				$( '.wc-price-history-sale-start-heads-up' ).removeClass( 'hidden-fade' );
+			} else {
+				$( '.wc-price-history-sale-start-heads-up' ).addClass( 'hidden-fade' );
+			}
+		}
+	);
+
 	// Toggle the variable product placeholder text field when the defer checkbox is checked.
 	$( '#wc-price-history-variable-product-defer' ).on(
 		'change',

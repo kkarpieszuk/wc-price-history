@@ -56,7 +56,7 @@ class AdminAssets {
 		// Enqueue migration scripts if migration is pending or in progress.
 		$this->maybe_enqueue_migration_scripts( $nonce );
 
-		if ( ! $this->is_settings_page() && ! $this->is_product_edit_page() ) {
+		if ( ! $this->is_settings_page() && ! $this->is_product_edit_page() && ! $this->is_products_list_page() ) {
 			return;
 		}
 
@@ -162,6 +162,28 @@ class AdminAssets {
 		}
 
 		return $screen->post_type === 'product' && $screen->base === 'post';
+	}
+
+	/**
+	 * Whether the current screen is the products list.
+	 *
+	 * @since 3.2.8
+	 *
+	 * @return bool
+	 */
+	private function is_products_list_page() : bool {
+
+		if ( ! function_exists( 'get_current_screen' ) ) {
+			return false;
+		}
+
+		$screen = get_current_screen();
+
+		if ( ! $screen ) {
+			return false;
+		}
+
+		return $screen->post_type === 'product' && $screen->base === 'edit';
 	}
 
 	private function is_settings_page() : bool {
