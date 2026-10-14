@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-14T10:31:18+00:00\n"
+"POT-Creation-Date: 2026-10-14T10:41:14+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: wc-price-history\n"
@@ -342,16 +342,16 @@ msgstr ""
 msgid "Visit site"
 msgstr ""
 
-#: app/PriorPrice/SaleStartWarning.php:93
+#: app/PriorPrice/SaleStartWarning.php:160
+msgid "Price history issue"
+msgstr ""
+
+#: app/PriorPrice/SaleStartWarning.php:202
 msgid "Price history issues"
 msgstr ""
 
-#: app/PriorPrice/SaleStartWarning.php:97
+#: app/PriorPrice/SaleStartWarning.php:219
 msgid "You configured the lowest price relative to the sale start, but this product has no scheduled sale start date. Set at least a sale start date on the promotional price so Omnibus counting can work correctly."
-msgstr ""
-
-#: app/PriorPrice/SaleStartWarning.php:141
-msgid "Price history issue"
 msgstr ""
 
 #. translators: Do not translate {price}, it is template slug!

@@ -25,6 +25,34 @@ class AdminScreen {
 	}
 
 	/**
+	 * Whether the current screen is the WooCommerce block/React product editor.
+	 *
+	 * URL shape: admin.php?page=wc-admin&path=/product/{id}
+	 *
+	 * @since 3.2.8
+	 *
+	 * @return bool
+	 */
+	public static function is_block_product_edit_page(): bool {
+		if ( ! isset( $_GET['page'] ) || $_GET['page'] !== 'wc-admin' ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			return false;
+		}
+
+		return self::get_block_product_id() > 0;
+	}
+
+	/**
+	 * Whether any supported product edit surface is active (classic or block editor).
+	 *
+	 * @since 3.2.8
+	 *
+	 * @return bool
+	 */
+	public static function is_any_product_edit_page(): bool {
+		return self::is_product_edit_page() || self::is_block_product_edit_page();
+	}
+
+	/**
 	 * Whether the current screen is the products list.
 	 *
 	 * @since 3.2.8
@@ -48,6 +76,46 @@ class AdminScreen {
 	 */
 	public static function is_settings_page(): bool {
 		return isset( $_GET['page'] ) && $_GET['page'] === 'wc-price-history'; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+	}
+
+	/**
+	 * Get product ID being edited on classic or block product editor.
+	 *
+	 * @since 3.2.8
+	 *
+	 * @return int
+	 */
+	public static function get_edited_product_id(): int {
+		if ( isset( $_GET['post'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			$classic_id = \absint( $_GET['post'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			if ( $classic_id > 0 ) {
+				return $classic_id;
+			}
+		}
+
+		return self::get_block_product_id();
+	}
+
+	/**
+	 * Parse product ID from WC Admin path query arg.
+	 *
+	 * @since 3.2.8
+	 *
+	 * @return int
+	 */
+	public static function get_block_product_id(): int {
+		if ( ! isset( $_GET['path'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			return 0;
+		}
+
+		$path = \wp_unslash( $_GET['path'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		$path = rawurldecode( (string) $path );
+
+		if ( ! preg_match( '#^/product/(\d+)(?:/|$)#', $path, $matches ) ) {
+			return 0;
+		}
+
+		return \absint( $matches[1] );
 	}
 
 	/**

@@ -54,11 +54,12 @@ class SaleStartWarning {
 	 */
 	public function register_hooks(): void {
 		add_action( 'admin_notices', [ $this, 'maybe_display_product_edit_notice' ] );
+		add_action( 'admin_enqueue_scripts', [ $this, 'maybe_enqueue_block_editor_notice' ] );
 		add_filter( 'display_post_states', [ $this, 'maybe_add_product_list_state' ], 10, 2 );
 	}
 
 	/**
-	 * Display warning on the product edit screen.
+	 * Display warning on the classic product edit screen.
 	 *
 	 * @since 3.2.8
 	 *
@@ -73,35 +74,53 @@ class SaleStartWarning {
 			return;
 		}
 
-		$product_id = $this->get_edited_product_id();
-		if ( $product_id <= 0 ) {
+		$product = $this->get_edited_product_needing_warning();
+		if ( ! $product ) {
 			return;
 		}
 
-		$product = wc_get_product( $product_id );
-		if ( ! $product instanceof \WC_Product ) {
+		$this->render_classic_notice();
+	}
+
+	/**
+	 * Enqueue core/notices warning for the WooCommerce block product editor.
+	 *
+	 * Classic admin_notices are hidden on wc-admin pages; use wp.data notices instead.
+	 *
+	 * @since 3.2.8
+	 *
+	 * @return void
+	 */
+	public function maybe_enqueue_block_editor_notice(): void {
+		if ( ! AdminScreen::is_block_product_edit_page() ) {
 			return;
 		}
 
-		if ( ! $this->needs_warning( $product ) ) {
+		if ( ! $this->is_sale_start_count_from() ) {
 			return;
 		}
 
-		?>
-		<div class="notice notice-warning wc-price-history-sale-start-warning">
-			<p>
-				<strong><?php esc_html_e( 'Price history issues', 'wc-price-history' ); ?></strong>
-			</p>
-			<p>
-				<?php
-				esc_html_e(
-					'You configured the lowest price relative to the sale start, but this product has no scheduled sale start date. Set at least a sale start date on the promotional price so Omnibus counting can work correctly.',
-					'wc-price-history'
-				);
-				?>
-			</p>
-		</div>
-		<?php
+		$product = $this->get_edited_product_needing_warning();
+		if ( ! $product ) {
+			return;
+		}
+
+		wp_enqueue_script(
+			'wc-price-history-sale-start-warning',
+			WC_PRICE_HISTORY_PLUGIN_URL . 'assets/js/sale-start-warning.js',
+			[ 'wp-data', 'wp-notices' ],
+			WC_PRICE_HISTORY_VERSION,
+			true
+		);
+
+		wp_localize_script(
+			'wc-price-history-sale-start-warning',
+			'wcPriceHistorySaleStartWarning',
+			[
+				'show'    => true,
+				'message' => $this->get_warning_message(),
+			]
+		);
 	}
 
 	/**
@@ -142,6 +161,65 @@ class SaleStartWarning {
 		);
 
 		return $post_states;
+	}
+
+	/**
+	 * Get the product currently being edited when it needs a warning.
+	 *
+	 * @since 3.2.8
+	 *
+	 * @return \WC_Product|null
+	 */
+	private function get_edited_product_needing_warning(): ?\WC_Product {
+		$product_id = AdminScreen::get_edited_product_id();
+		if ( $product_id <= 0 || ! function_exists( 'wc_get_product' ) ) {
+			return null;
+		}
+
+		$product = wc_get_product( $product_id );
+		if ( ! $product instanceof \WC_Product ) {
+			return null;
+		}
+
+		if ( ! $this->needs_warning( $product ) ) {
+			return null;
+		}
+
+		return $product;
+	}
+
+	/**
+	 * Render classic admin notice HTML.
+	 *
+	 * @since 3.2.8
+	 *
+	 * @return void
+	 */
+	private function render_classic_notice(): void {
+		?>
+		<div class="notice notice-warning wc-price-history-sale-start-warning">
+			<p>
+				<strong><?php esc_html_e( 'Price history issues', 'wc-price-history' ); ?></strong>
+			</p>
+			<p>
+				<?php echo esc_html( $this->get_warning_message() ); ?>
+			</p>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Warning message body (shared by classic and block editor surfaces).
+	 *
+	 * @since 3.2.8
+	 *
+	 * @return string
+	 */
+	private function get_warning_message(): string {
+		return __(
+			'You configured the lowest price relative to the sale start, but this product has no scheduled sale start date. Set at least a sale start date on the promotional price so Omnibus counting can work correctly.',
+			'wc-price-history'
+		);
 	}
 
 	/**
@@ -189,20 +267,5 @@ class SaleStartWarning {
 		}
 
 		return $this->sale_start_count_from_cached;
-	}
-
-	/**
-	 * Get the product ID being edited.
-	 *
-	 * @since 3.2.8
-	 *
-	 * @return int
-	 */
-	private function get_edited_product_id(): int {
-		if ( ! isset( $_GET['post'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			return 0;
-		}
-
-		return absint( $_GET['post'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	}
 }

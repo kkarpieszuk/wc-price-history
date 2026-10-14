@@ -85,6 +85,7 @@ class SaleStartWarningTest extends TestCase {
 
 	public function test_register_hooks_adds_notice_and_post_states(): void {
 		\WP_Mock::expectActionAdded( 'admin_notices', [ $this->subject, 'maybe_display_product_edit_notice' ] );
+		\WP_Mock::expectActionAdded( 'admin_enqueue_scripts', [ $this->subject, 'maybe_enqueue_block_editor_notice' ] );
 		\WP_Mock::expectFilterAdded( 'display_post_states', [ $this->subject, 'maybe_add_product_list_state' ], 10, 2 );
 
 		$this->subject->register_hooks();
