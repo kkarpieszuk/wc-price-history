@@ -54,6 +54,22 @@ class HistoryStorageTest extends TestCase {
 	}
 
 	/**
+	 * @dataProvider data_provider_table_get_minimal_uses_effective_window_prices
+	 */
+	public function test_table_get_minimal_uses_effective_window_prices( $window_min_price, $carry_forward_price, $expected_minimal ) {
+
+		$product_id = 1;
+
+		$this->mock_table_wpdb_for_get_minimal( $window_min_price, $carry_forward_price );
+
+		$subject = new HistoryStorageTable();
+
+		$minimal = $subject->get_minimal( $product_id, 30 );
+
+		$this->assertEquals( $expected_minimal, $minimal );
+	}
+
+	/**
 	 * @dataProvider data_provider_get_minimal_when_not_set
 	 */
 	public function test_get_minimal_when_minimal_not_set( $history, $expected_minimal ) {
@@ -308,6 +324,15 @@ class HistoryStorageTest extends TestCase {
 		};
 	}
 
+	/**
+	 * @param string|null $window_min_price    MIN(price) in the last-N-days window, or null when empty.
+	 * @param string|null $carry_forward_price Price from the latest entry before the cutoff, or null when empty.
+	 */
+	private function mock_table_wpdb_for_get_minimal( ?string $window_min_price, ?string $carry_forward_price ): void {
+
+		$this->mock_table_wpdb_for_sale_start( $window_min_price, $carry_forward_price );
+	}
+
 	private function mock_product_with_sale_start( int $product_id, int $sale_start_timestamp ): \WC_Product {
 
 		$sale_start = new class( $sale_start_timestamp ) {
@@ -409,11 +434,31 @@ class HistoryStorageTest extends TestCase {
 			time() - ( 33 * DAY_IN_SECONDS - 10 ) => '330',
 		];
 
+		// Merchant regression (WP.org "not showing the correct price"):
+		// stable lower price before cutoff, then a raise inside the window.
+		$history_price_raise = [
+			time() - ( 60 * DAY_IN_SECONDS ) => '106.75',
+			time() - ( 1 * DAY_IN_SECONDS )  => '122.5',
+		];
+
 		return [
 			[ [ time() => '0' ], 0 ],
 			[ [ time() => '100' ], 100 ],
-			[ $history, 200 ],
-			[ $history_older_than_month, 0 ],
+			[ $history, 100 ],
+			[ $history_older_than_month, 110 ],
+			[ $history_price_raise, 106.75 ],
+		];
+	}
+
+	public function data_provider_table_get_minimal_uses_effective_window_prices() {
+
+		return [
+			'empty window uses carry-forward price before cutoff' => [ null, '106.75', 106.75 ],
+			'non-empty window uses min of carry-forward and in-window entries' => [ '122.5', '106.75', 106.75 ],
+			'in-window drop beats carry-forward' => [ '99.00', '106.75', 99.0 ],
+			'merchant regression price raise keeps pre-raise lowest' => [ '1178.5', '1168.25', 1168.25 ],
+			'no history returns zero' => [ null, null, 0.0 ],
+			'only in-window entries' => [ '200.00', null, 200.0 ],
 		];
 	}
 
