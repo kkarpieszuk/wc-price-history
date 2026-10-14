@@ -105,19 +105,26 @@ class HistoryStorage {
 
 		// Legacy post_meta implementation.
 		$history = $this->get_history( $product_id );
+		$cutoff  = $this->get_time_with_offset() - ( $days * DAY_IN_SECONDS );
 
-		$this_ = $this;
+		$candidates         = [];
+		$last_before_cutoff = null;
+		$last_before_key    = null;
 
-		// Get only $days last items.
-		$the_last = array_filter(
-			$history,
-			static function( $timestamp ) use ( $days, $this_ ) {
-				return $timestamp >= ( $this_->get_time_with_offset() - ( $days * DAY_IN_SECONDS ) );
-			},
-			ARRAY_FILTER_USE_KEY
-		);
+		foreach ( $history as $timestamp => $price ) {
+			if ( $timestamp >= $cutoff ) {
+				$candidates[ $timestamp ] = (float) $price;
+			} elseif ( $last_before_key === null || $timestamp > $last_before_key ) {
+				$last_before_key    = $timestamp;
+				$last_before_cutoff = (float) $price;
+			}
+		}
 
-		return $this->reduce_to_minimal( $the_last );
+		if ( $last_before_cutoff !== null ) {
+			$candidates[] = $last_before_cutoff;
+		}
+
+		return $this->reduce_to_minimal( $candidates );
 	}
 
 	/**

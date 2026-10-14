@@ -32,6 +32,10 @@ class HistoryStorageTable {
 	/**
 	 * Get minimal price for $product_id in last $days.
 	 *
+	 * Uses effective prices in the window: change events inside the period plus
+	 * carry-forward from the last history entry before the cutoff (same semantics
+	 * as get_minimal_from_sale_start()).
+	 *
 	 * @since 3.0.0
 	 *
 	 * @param int $product_id Product ID.
@@ -48,8 +52,10 @@ class HistoryStorageTable {
 		// - get_time_with_offset() returns offset-adjusted timestamp, which would cause incorrect cutoff date
 		$cutoff_date = gmdate( 'Y-m-d H:i:s', time() - ( $days * DAY_IN_SECONDS ) );
 
+		$candidates = [];
+
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.DirectDatabaseQuery.DirectQuery
-		$result = $wpdb->get_var(
+		$window_min = $wpdb->get_var(
 			$wpdb->prepare(
 				"SELECT MIN(price)
 				FROM {$wpdb->prefix}wc_price_history
@@ -62,7 +68,30 @@ class HistoryStorageTable {
 			)
 		);
 
-		return (float) ( $result ?? 0.0 );
+		if ( $window_min !== null ) {
+			$candidates[] = (float) $window_min;
+		}
+
+		$carry_forward = $this->query_last_price_before( $product_id, $cutoff_date );
+
+		if ( $carry_forward !== null ) {
+			$candidates[] = (float) $carry_forward;
+		}
+
+		if ( empty( $candidates ) ) {
+			return 0.0;
+		}
+
+		$valid_candidates = array_filter(
+			$candidates,
+			static fn( $price ) => (float) $price > 0
+		);
+
+		if ( empty( $valid_candidates ) ) {
+			return 0.0;
+		}
+
+		return (float) min( $valid_candidates );
 	}
 
 	/**
@@ -625,6 +654,41 @@ class HistoryStorageTable {
 				$product_id,
 				$cutoff_date,
 				$sale_start_date
+			)
+		);
+
+		if ( $result === null ) {
+			return null;
+		}
+
+		return (string) $result;
+	}
+
+	/**
+	 * Query price from the latest history entry before a cutoff datetime.
+	 *
+	 * @param int    $product_id  Product ID.
+	 * @param string $cutoff_date Cutoff date (Y-m-d H:i:s UTC).
+	 *
+	 * @return string|null Price as string, or null when no matching rows.
+	 */
+	private function query_last_price_before( int $product_id, string $cutoff_date ): ?string {
+
+		global $wpdb;
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.DirectDatabaseQuery.DirectQuery
+		$result = $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT price
+				FROM {$wpdb->prefix}wc_price_history
+				WHERE product_id = %d
+				AND date_gmt < %s
+				AND include_in_history = 1
+				AND price > 0
+				ORDER BY date_gmt DESC
+				LIMIT 1",
+				$product_id,
+				$cutoff_date
 			)
 		);
 
