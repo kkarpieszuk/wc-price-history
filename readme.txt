@@ -133,6 +133,8 @@ Yes, I am available for hire. Please contact me at [LinkedIn](https://linkedin.c
 == Changelog ==
 
 = {VERSION_ALWAYS_TOP} =
+
+= 3.2.8 =
 - Fix: Lowest price in the last N days (database tables and legacy storage) now includes the last known price before the window (carry-forward), so a recent price increase no longer hides the earlier lower price that was still in effect during most of the period. (#222)
 - Enhancement: Warn on the product edit screen (classic and WooCommerce block/React product editor, including SPA navigation) and products list when sale-start Omnibus counting is enabled but a product on sale has no scheduled sale start date — including variable products where only some on-sale variations lack a start date. (#130)
 
