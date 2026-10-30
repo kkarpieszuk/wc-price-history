@@ -12,6 +12,13 @@ class ProductUpdates {
 	 */
 	private $history_storage;
 
+	/**
+	 * Product IDs currently being processed (per-product recursion guard).
+	 *
+	 * @var array<int, true>
+	 */
+	private $processing = [];
+
 	public function __construct( HistoryStorage $history_storage ) {
 
 		$this->history_storage = $history_storage;
@@ -33,35 +40,46 @@ class ProductUpdates {
 	/**
 	 * Update price history.
 	 *
+	 * Uses a per-product recursion guard so nested re-entry for the same product
+	 * is skipped, while other products updated in the same request still get history.
+	 *
 	 * @since 1.1
 	 *
 	 * @param int $product_id Product ID.
 	 */
 	public function update_price_history( int $product_id ): void {
 
-		remove_action( 'woocommerce_update_product', [ $this, 'update_price_history' ] );
-
-		if ( get_post_status( $product_id ) === 'draft' ) {
+		if ( isset( $this->processing[ $product_id ] ) ) {
 			return;
 		}
 
-		$product = wc_get_product( $product_id );
+		$this->processing[ $product_id ] = true;
 
-		if ( ! $product ) {
-			return;
-		}
+		try {
+			if ( get_post_status( $product_id ) === 'draft' ) {
+				return;
+			}
 
-		$price_raw_non_taxed = apply_filters(
-			'wc_price_history_price_raw_non_taxed',
-			(float) $product->get_price(),
-			$product
-		);
+			$product = wc_get_product( $product_id );
 
-		$this->history_storage->add_price( $product_id, $price_raw_non_taxed, false );
+			if ( ! $product ) {
+				return;
+			}
 
-		if ( $product->is_type( 'variable' ) ) {
-			/** @var WC_Product_Variable $product */
-			$this->maybe_update_price_history_for_variation( $product );
+			$price_raw_non_taxed = apply_filters(
+				'wc_price_history_price_raw_non_taxed',
+				(float) $product->get_price(),
+				$product
+			);
+
+			$this->history_storage->add_price( $product_id, $price_raw_non_taxed, false );
+
+			if ( $product->is_type( 'variable' ) ) {
+				/** @var WC_Product_Variable $product */
+				$this->maybe_update_price_history_for_variation( $product );
+			}
+		} finally {
+			unset( $this->processing[ $product_id ] );
 		}
 
 	}

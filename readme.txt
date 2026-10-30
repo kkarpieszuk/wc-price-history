@@ -133,6 +133,7 @@ Yes, I am available for hire. Please contact me at [LinkedIn](https://linkedin.c
 == Changelog ==
 
 = {VERSION_ALWAYS_TOP} =
+- Fix: Price history updates no longer drop subsequent products in the same request. Replaced request-wide `remove_action` on `woocommerce_update_product` with a per-product recursion guard released in `finally`, so a draft (or other early return) no longer disables history for later products. (#226)
 
 = 3.2.8 =
 - Fix: Lowest price in the last N days (database tables and legacy storage) now includes the last known price before the window (carry-forward), so a recent price increase no longer hides the earlier lower price that was still in effect during most of the period. (#222)
